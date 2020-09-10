@@ -11,5 +11,7 @@ object Config {
 
     const val genUrl = "/api/v1"
 
+    const val tokenParameterName = "auth"
+
     var version = "6"
 }

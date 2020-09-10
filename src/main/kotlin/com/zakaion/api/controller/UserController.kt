@@ -62,7 +62,7 @@ class UserController(private val userRepository: UserRepository) {
     }
 
     @GetMapping("/user")
-    fun user(@RequestHeader(name = "auth") token: String): DataResponse<UserEntity> {
+    fun user(@RequestHeader(name = Config.tokenParameterName) token: String): DataResponse<UserEntity> {
         userRepository.validateUserToken(token)
 
         val user = userRepository.userByToken(token)
@@ -77,7 +77,7 @@ class UserController(private val userRepository: UserRepository) {
     }
 
     @GetMapping("/user/{id}")
-    fun user(@RequestHeader(name = "auth") token: String,
+    fun user(@RequestHeader(name = Config.tokenParameterName) token: String,
              @PathVariable("id") userID: String): DataResponse<UserEntity> {
         userRepository.validateUserToken(token)
 
@@ -97,7 +97,7 @@ class UserController(private val userRepository: UserRepository) {
     }
 
     @PutMapping("/user/update/{id}")
-    fun update(@RequestHeader(name = "auth") token: String,
+    fun update(@RequestHeader(name = Config.tokenParameterName) token: String,
                @PathVariable("id") userID: String,
                @RequestBody userEntity: UserEntity): DataResponse<UserEntity> {
 
@@ -140,9 +140,9 @@ class UserController(private val userRepository: UserRepository) {
     }
 
     @PutMapping("/user/update/{id}/password")
-    fun changePassword(@RequestHeader(name = "auth") token: String,
-               @PathVariable("id") userID: String,
-               @RequestBody userChangePasswordRequest: UserChangePasswordRequest): DataResponse<UserEntity> {
+    fun changePassword(@RequestHeader(name = Config.tokenParameterName) token: String,
+                       @PathVariable("id") userID: String,
+                       @RequestBody userChangePasswordRequest: UserChangePasswordRequest): DataResponse<UserEntity> {
 
         val myUser = user(token).data!!
         var updateUser = user(token, userID).data!!
@@ -163,6 +163,20 @@ class UserController(private val userRepository: UserRepository) {
                 success = true,
                 error = null,
                 data = updateUser
+        )
+    }
+
+    @GetMapping("/user/list")
+    fun list(@RequestHeader(name = Config.tokenParameterName) token: String): DataResponse<List<UserEntity>> {
+        userRepository.validateUserToken(token)
+
+        return DataResponse(
+                success = true,
+                data = userRepository.users().map {
+                    it.apply {
+                        it.password = "****"
+                    }
+                }
         )
     }
 
