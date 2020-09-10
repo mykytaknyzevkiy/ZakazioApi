@@ -14,7 +14,7 @@ springBoot {
 	buildInfo {
 		properties {
 			artifact = "app.jar"
-			version = "1"
+			version = version
 			name = "app"
 		}
 	}
@@ -27,7 +27,7 @@ allOpen {
 }
 
 group = "com.zakaion"
-version = "0.0.1-SNAPSHOT"
+version = "0.0.4-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {

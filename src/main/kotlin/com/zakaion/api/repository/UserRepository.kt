@@ -26,7 +26,7 @@ class UserRepository(private val userDao: UserDao, private val userTokenDao: Use
     }
 
     fun user(email: String, password: String): Optional<UserEntity> {
-        val user = userDao.findAll().find { it.email == email || it.password == password }
+        val user = userDao.findAll().find { it.email == email && it.password == password }
 
         return Optional.ofNullable(user)
     }

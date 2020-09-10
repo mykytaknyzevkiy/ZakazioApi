@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
 
+@CrossOrigin
 @RestController
 @RequestMapping(value = [Config.genUrl])
 class UserController(private val userRepository: UserRepository) {
@@ -69,7 +70,9 @@ class UserController(private val userRepository: UserRepository) {
         return DataResponse(
                 success = true,
                 error = null,
-                data = user
+                data = user.apply {
+                    this.password = "****"
+                }
         )
     }
 
@@ -87,16 +90,18 @@ class UserController(private val userRepository: UserRepository) {
         return DataResponse(
                 success = true,
                 error = null,
-                data = user
+                data = user.apply {
+                    this.password = "****"
+                }
         )
     }
 
-    @PostMapping("/user/update/{id}")
+    @PutMapping("/user/update/{id}")
     fun update(@RequestHeader(name = "auth") token: String,
                @PathVariable("id") userID: String,
                @RequestBody userEntity: UserEntity): DataResponse<UserEntity> {
 
-        val myUser = user(token).data!!
+        val myUser = user(token).data as UserEntity
         var updateUser = user(token, userID).data!!
 
         if (userID != myUser.id
@@ -134,7 +139,7 @@ class UserController(private val userRepository: UserRepository) {
         )
     }
 
-    @PostMapping("/user/update/{id}/password")
+    @PutMapping("/user/update/{id}/password")
     fun changePassword(@RequestHeader(name = "auth") token: String,
                @PathVariable("id") userID: String,
                @RequestBody userChangePasswordRequest: UserChangePasswordRequest): DataResponse<UserEntity> {
