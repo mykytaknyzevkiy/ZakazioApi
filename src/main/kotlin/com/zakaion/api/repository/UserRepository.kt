@@ -5,6 +5,7 @@ import com.zakaion.api.dao.UserTokenDao
 import com.zakaion.api.entity.UserEntity
 import com.zakaion.api.entity.UserTokenEntity
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.PageRequest
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
@@ -32,6 +33,10 @@ class UserRepository(private val userDao: UserDao, private val userTokenDao: Use
     }
 
     fun users() = userDao.findAll().toList()
+
+    fun users(pageNo: Int, pageSize: Int): List<UserEntity> {
+        return userDao.findAll(PageRequest.of(pageNo, pageSize)).toList()
+    }
 
     fun createToken(userID: String): UserTokenEntity {
         return userTokenDao.save(UserTokenEntity(
