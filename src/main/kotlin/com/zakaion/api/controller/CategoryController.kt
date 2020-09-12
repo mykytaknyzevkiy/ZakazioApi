@@ -5,10 +5,13 @@ import com.zakaion.api.UnitN
 import com.zakaion.api.controller.reponse.DataResponse
 import com.zakaion.api.controller.reponse.PageResponse
 import com.zakaion.api.entity.CategoryEntity
+import com.zakaion.api.entity.UserEntity
 import com.zakaion.api.repository.CategoryRepository
 import com.zakaion.api.repository.StorageService
+import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
+import org.springframework.web.server.ResponseStatusException
 
 @CrossOrigin
 @RestController
@@ -37,17 +40,57 @@ class CategoryController(private val userController: UserController,
     }
 
     @PostMapping("/create")
-    fun create(@RequestBody categoryEntity: CategoryEntity,
-               @RequestParam("image") file: MultipartFile)
+    fun create(
+            @RequestHeader(name = Config.tokenParameterName) token: String,
+            @RequestBody categoryEntity: CategoryEntity,
+            @RequestParam("image") file: MultipartFile)
             : DataResponse<CategoryEntity> {
-        categoryEntity.apply {
-            image = filesController.save(file)
-        }
 
-        return DataResponse(
-                success = true,
-                data = categoryRepository.save(categoryEntity)
-        )
+        val myUser = userController.user(token).data as UserEntity
+
+        if (myUser.isSuperAdmin || myUser.isAdmin || myUser.isEditor) {
+            categoryEntity.apply {
+                image = filesController.save(file)
+            }
+
+            return DataResponse(
+                    success = true,
+                    data = categoryRepository.save(categoryEntity)
+            )
+        }
+        else {
+            throw ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED, "Allow dined"
+            )
+        }
+    }
+
+    @PutMapping("/update")
+    fun update(
+            @RequestHeader(name = Config.tokenParameterName) token: String,
+            @RequestBody categoryEntity: CategoryEntity,
+            @RequestParam("image") file: MultipartFile)
+            : DataResponse<CategoryEntity> {
+
+        val myUser = userController.user(token).data as UserEntity
+
+        if (myUser.isSuperAdmin || myUser.isAdmin || myUser.isEditor) {
+
+            categoryEntity.apply {
+                image = filesController.save(file)
+            }
+
+            return DataResponse(
+                    success = true,
+                    data = categoryRepository.save(categoryEntity)
+            )
+
+        }
+        else {
+            throw ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED, "Allow dined"
+            )
+        }
     }
 
 
