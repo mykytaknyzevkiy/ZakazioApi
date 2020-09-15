@@ -14,7 +14,7 @@ import java.nio.file.Paths
 @Service
 class StorageService {
 
-    private val root: Path = Paths.get("/Users/nikita/Documents/ZakarioApi/build/libs")
+    private val root: Path = Paths.get("/root/storage")
 
     fun init() {
         try {
@@ -34,8 +34,14 @@ class StorageService {
         }
     }
 
-    /*fun loadAll(): Stream<Path>
-    fun load(filename: String): Path*/
+    fun delete(filename: String): Boolean {
+        return try {
+            Files.delete(this.root.resolve(filename))
+            true
+        } catch (e: Exception) {
+            false
+        }
+    }
 
     fun loadAsResource(filename: String): Resource {
         return try {
@@ -51,5 +57,4 @@ class StorageService {
         }
     }
 
-    //fun deleteAll()
 }

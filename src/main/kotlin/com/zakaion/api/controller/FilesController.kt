@@ -28,4 +28,9 @@ class FilesController(private val storageService: StorageService) {
                 .body(resource)
     }
 
+    @DeleteMapping("/{filename:.+}")
+    fun delete(@PathVariable filename: String): Boolean {
+        return storageService.delete(filename)
+    }
+
 }

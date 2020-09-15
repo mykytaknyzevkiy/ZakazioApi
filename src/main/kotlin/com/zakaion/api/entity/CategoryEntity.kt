@@ -13,5 +13,5 @@ data class CategoryEntity(
         val id: String = "",
         var active: Boolean = true,
         var name: String,
-        var image: String
+        var image: String? = null
 )

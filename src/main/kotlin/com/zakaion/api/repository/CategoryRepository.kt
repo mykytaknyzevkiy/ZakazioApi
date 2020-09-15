@@ -13,4 +13,6 @@ class CategoryRepository(private val categoryDao: CategoryDao) {
 
     fun list() = categoryDao.findAll()
 
+    fun delete(categoryEntity: CategoryEntity) = categoryDao.delete(categoryEntity)
+
 }

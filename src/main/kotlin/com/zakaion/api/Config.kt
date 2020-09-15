@@ -13,5 +13,5 @@ object Config {
 
     const val tokenParameterName = "auth"
 
-    var version = "8"
+    var version = "9"
 }

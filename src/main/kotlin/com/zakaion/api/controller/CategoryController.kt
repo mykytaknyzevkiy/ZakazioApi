@@ -24,8 +24,8 @@ class CategoryController(private val userController: UserController,
     fun list(@RequestHeader(name = Config.tokenParameterName) token: String,
              @RequestParam(name = "page", required = false, defaultValue = "1") page: Int = 1,
              @RequestParam(name = "size", required = false, defaultValue = "10") size: Int = 10,
-             @RequestParam(name = "onlyActives", required = false, defaultValue = "false") onlyActives: Boolean = false)
-            : DataResponse<PageResponse<CategoryEntity>> {
+             @RequestParam(name = "onlyActives", required = false, defaultValue = "false") onlyActives: Boolean = false
+    ): DataResponse<PageResponse<CategoryEntity>> {
         val myUser = userController.user(token)
 
         val list = categoryRepository.list().filter {
@@ -42,21 +42,49 @@ class CategoryController(private val userController: UserController,
     @PostMapping("/create")
     fun create(
             @RequestHeader(name = Config.tokenParameterName) token: String,
-            @RequestBody categoryEntity: CategoryEntity,
-            @RequestParam("image") file: MultipartFile)
-            : DataResponse<CategoryEntity> {
+            @RequestBody categoryEntity: CategoryEntity
+    ): DataResponse<CategoryEntity> {
 
         val myUser = userController.user(token).data as UserEntity
 
         if (myUser.isSuperAdmin || myUser.isAdmin || myUser.isEditor) {
-            categoryEntity.apply {
-                image = filesController.save(file)
-            }
 
             return DataResponse(
                     success = true,
                     data = categoryRepository.save(categoryEntity)
             )
+        } else {
+            throw ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED, "Allow dined"
+            )
+        }
+    }
+
+    @PutMapping("/update/{id}")
+    fun update(
+            @RequestHeader(name = Config.tokenParameterName) token: String,
+            @RequestBody categoryEntity: CategoryEntity,
+            @PathVariable("id") id: String
+    ): DataResponse<CategoryEntity> {
+
+        val myUser = userController.user(token).data as UserEntity
+
+        if (myUser.isSuperAdmin || myUser.isAdmin || myUser.isEditor) {
+
+            val category = categoryRepository.list().find { it.id == id }?:throw ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "No category"
+            )
+
+            category.apply {
+                this.active = categoryEntity.active
+                this.name = categoryEntity.name
+            }
+
+            return DataResponse(
+                    success = true,
+                    data = categoryRepository.save(category)
+            )
+
         }
         else {
             throw ResponseStatusException(
@@ -65,24 +93,29 @@ class CategoryController(private val userController: UserController,
         }
     }
 
-    @PutMapping("/update")
-    fun update(
+    @PutMapping("/update/{id}/image")
+    fun updateImage(
             @RequestHeader(name = Config.tokenParameterName) token: String,
-            @RequestBody categoryEntity: CategoryEntity,
-            @RequestParam("image") file: MultipartFile)
-            : DataResponse<CategoryEntity> {
-
+            @RequestParam("image") file: MultipartFile,
+            @PathVariable("id") id: String
+    ): DataResponse<CategoryEntity> {
         val myUser = userController.user(token).data as UserEntity
 
         if (myUser.isSuperAdmin || myUser.isAdmin || myUser.isEditor) {
 
-            categoryEntity.apply {
-                image = filesController.save(file)
+            val category = categoryRepository.list().find { it.id == id }?:throw ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "No category"
+            )
+
+            if (category.image != null) {
+                filesController.delete(category.image!!)
             }
+
+            category.image = filesController.save(file)
 
             return DataResponse(
                     success = true,
-                    data = categoryRepository.save(categoryEntity)
+                    data = categoryRepository.save(category)
             )
 
         }
@@ -91,6 +124,34 @@ class CategoryController(private val userController: UserController,
                     HttpStatus.UNAUTHORIZED, "Allow dined"
             )
         }
+
+    }
+
+    @DeleteMapping("/delete/{id}")
+    fun delete(
+            @RequestHeader(name = Config.tokenParameterName) token: String,
+            @PathVariable("id") id: String
+    ): DataResponse<Boolean> {
+        val myUser = userController.user(token).data as UserEntity
+
+        if (myUser.isSuperAdmin || myUser.isAdmin || myUser.isEditor) {
+            val category = categoryRepository.list().find { it.id == id }?:throw ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "No category"
+            )
+
+            categoryRepository.delete(category)
+
+            return DataResponse(
+                    success = true,
+                    data = true
+            )
+        }
+        else {
+            throw ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED, "Allow dined"
+            )
+        }
+
     }
 
 
