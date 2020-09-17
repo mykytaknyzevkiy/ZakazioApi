@@ -1,9 +1,5 @@
 package com.zakaion.api
 
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.info.BuildProperties
-
-
 object Config {
 
     /*@Autowired
@@ -13,5 +9,5 @@ object Config {
 
     const val tokenParameterName = "auth"
 
-    var version = "9"
+    var version = "15"
 }

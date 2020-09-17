@@ -76,9 +76,7 @@ class UserController(private val userRepository: UserRepository) {
         return DataResponse(
                 success = true,
                 error = null,
-                data = user.apply {
-                    this.password = "****"
-                }
+                data = user
         )
     }
 
@@ -102,9 +100,7 @@ class UserController(private val userRepository: UserRepository) {
             return DataResponse(
                     success = true,
                     error = null,
-                    data = user.apply {
-                        this.password = "****"
-                    }
+                    data = user
             )
         } else {
             throw ResponseStatusException(

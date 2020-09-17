@@ -4,17 +4,19 @@ import org.springframework.core.io.Resource
 import org.springframework.core.io.UrlResource
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
+import java.io.File
 import java.io.IOException
 import java.net.MalformedURLException
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import kotlin.streams.toList
 
 
 @Service
 class StorageService {
 
-    private val root: Path = Paths.get("/root/storage")
+    private val root: Path = Paths.get("/tmp")
 
     fun init() {
         try {
@@ -22,6 +24,10 @@ class StorageService {
         } catch (e: IOException) {
             throw RuntimeException("Could not initialize folder for upload!")
         }
+    }
+
+    fun list(): List<String> {
+        return Files.list(root).map { it.toString() }.toList()
     }
 
     fun store(file: MultipartFile): String {

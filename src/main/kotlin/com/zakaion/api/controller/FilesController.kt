@@ -15,7 +15,13 @@ class FilesController(private val storageService: StorageService) {
 
     @PostMapping("/save")
     fun save(@RequestParam("file") file: MultipartFile): String {
+        System.out.println()
         return storageService.store(file)
+    }
+
+    @PostMapping("/list")
+    fun save(): List<String> {
+        return storageService.list()
     }
 
     @GetMapping("/{filename:.+}")
