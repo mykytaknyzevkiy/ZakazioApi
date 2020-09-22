@@ -1,5 +1,7 @@
 package com.zakaion.api.entity
 
+import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonProperty
 import org.hibernate.annotations.GenericGenerator
 import javax.persistence.*
 
@@ -10,6 +12,7 @@ data class UserEntity(
         @GenericGenerator(name="system-uuid", strategy = "uuid")
         val id: String = "",
         var email: String,
+        @JsonProperty( value = "password", access = JsonProperty.Access.WRITE_ONLY)
         var password: String,
         var phoneNumber: String?,
         @Column(name = "first_name")
@@ -33,7 +36,13 @@ data class UserEntity(
         @Column(name = "is_editor")
         var isEditor: Boolean,
         @Column(name = "agent_ref_id")
-        var agentRefID: String? = null
+        var agentRefID: String? = null,
+
+        @Column(name = "is_phone_active", nullable = false)
+        var isPhoneActive: Boolean = false,
+
+        @Column(name = "is_email_active", nullable = false)
+        var isEmailActive: Boolean = false
 )
 
 @Entity(name = "passport")
