@@ -4,7 +4,7 @@ import com.zakaion.api.Config
 
 data class DataResponse<T>(
         val version: String = Config.version,
-        val success: Boolean,
+        val success: Boolean = true,
         val error: String? = null,
         val data: T?
 )
