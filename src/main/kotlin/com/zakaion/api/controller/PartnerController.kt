@@ -11,10 +11,10 @@ import org.springframework.web.server.ResponseStatusException
 
 @CrossOrigin
 @RestController
-@RequestMapping(value = [Config.genUrl + "/partner/"])
+@RequestMapping(value = [Config.genUrl + "/partner"])
 class PartnerController (private val userController: UserController) {
 
-    @GetMapping("/user")
+    @GetMapping("/")
     fun user(@RequestHeader(name = Config.tokenParameterName) token: String): DataResponse<UserEntity> {
         val myUser = userController.user(token).data as UserEntity
         if (myUser.isPartner) {
@@ -29,9 +29,15 @@ class PartnerController (private val userController: UserController) {
         }
     }
 
-    @PostMapping("/user/signup")
+    @PostMapping("/sign/up")
     fun signUp(@RequestBody userEntity: UserEntity): DataResponse<UserSignUpResponse> {
         userEntity.isPartner = true
+        userEntity.isPhoneActive = true
+
+        if (userEntity.phoneNumber.isNullOrEmpty())
+            throw ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "phone is empty"
+            )
 
         return userController.signUP(userEntity)
     }

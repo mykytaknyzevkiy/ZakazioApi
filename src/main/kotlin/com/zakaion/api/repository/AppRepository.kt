@@ -10,10 +10,11 @@ import org.springframework.web.server.ResponseStatusException
 @Service
 class AppRepository(private val userDao: UserDao, private val appDao: AppDao) {
 
-    fun create(partnerID: String, name: String): AppEntity {
+    fun create(partnerID: String, secretKey: String, name: String): AppEntity {
         val data = AppEntity(
                 name = name,
-                partner = userDao.findById(partnerID).get()
+                partner = userDao.findById(partnerID).get(),
+                privateKey = secretKey
         )
 
         return appDao.save(data)

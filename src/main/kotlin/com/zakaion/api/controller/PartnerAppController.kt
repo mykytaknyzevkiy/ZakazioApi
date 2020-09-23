@@ -29,7 +29,7 @@ class PartnerAppController(
         val myUser = partnerController.user(token).data as UserEntity
 
         return DataResponse(
-                data = appRepository.create(myUser.id, appRequestBody.name)
+                data = appRepository.create(myUser.id, appRequestBody.title, appRequestBody.secret)
         )
     }
 
@@ -63,7 +63,7 @@ class PartnerAppController(
 
         if (myUser.isSuperAdmin || myUser.isAdmin || myUser.isEditor || app.partner.id == myUser.id) {
             return DataResponse(
-                    data = appRepository.update(appID, appRequestBody.name)
+                    data = appRepository.update(appID, appRequestBody.title)
             )
         } else {
             throw ResponseStatusException(
