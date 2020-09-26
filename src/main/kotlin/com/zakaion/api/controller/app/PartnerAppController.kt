@@ -1,7 +1,9 @@
-package com.zakaion.api.controller
+package com.zakaion.api.controller.app
 
 import com.zakaion.api.Config
 import com.zakaion.api.UnitN
+import com.zakaion.api.controller.PartnerController
+import com.zakaion.api.controller.UserController
 import com.zakaion.api.controller.reponse.DataResponse
 import com.zakaion.api.controller.reponse.PageResponse
 import com.zakaion.api.controller.request.AppRequestBody
@@ -114,6 +116,13 @@ class PartnerAppController(
                     HttpStatus.NOT_FOUND, "user is not partner"
             )
         }
+    }
+
+    @GetMapping("/")
+    fun key(@RequestHeader(name = Config.appKeyParameterName) apiKey: String): DataResponse<AppEntity> {
+        return DataResponse(
+                data = appRepository.app(apiKey)
+        )
     }
 
 }
