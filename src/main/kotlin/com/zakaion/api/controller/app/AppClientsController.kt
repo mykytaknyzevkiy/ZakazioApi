@@ -6,7 +6,6 @@ import com.zakaion.api.controller.reponse.DataResponse
 import com.zakaion.api.controller.reponse.PageResponse
 import com.zakaion.api.dao.OrderDao
 import com.zakaion.api.entity.AppEntity
-import com.zakaion.api.entity.CategoryEntity
 import com.zakaion.api.model.ClientModel
 import com.zakaion.api.repository.UserRepository
 import org.springframework.web.bind.annotation.*
