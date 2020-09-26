@@ -66,6 +66,7 @@ class AppOrderController (
         val map: MutableMap<String, Any> = HashMap()
         map["title"] = "New order"
         map["orderID"] = orderEntity.id
+        map["message"] = ""
 
         // build the request
         val entity = HttpEntity(map, headers)
