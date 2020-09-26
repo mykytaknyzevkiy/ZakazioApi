@@ -18,5 +18,5 @@ data class AppEntity(
         @OneToOne
         @JoinColumn(name = "partner_id", nullable = false)
         val partner: UserEntity,
-        val notifyCurl: String?=null
+        var notifyCurl: String?=null
 )

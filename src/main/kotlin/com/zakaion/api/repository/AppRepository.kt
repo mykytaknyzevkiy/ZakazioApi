@@ -38,10 +38,11 @@ class AppRepository(private val userDao: UserDao, private val appDao: AppDao) {
 
     fun listAll() = appDao.findAll().toList()
 
-    fun update(appID: String, name: String): AppEntity {
+    fun update(appID: String, name: String, notifyCurl: String): AppEntity {
         val app = get(appID)
         app.apply {
             this.name = name
+            this.notifyCurl = notifyCurl
         }
         return appDao.save(app)
     }

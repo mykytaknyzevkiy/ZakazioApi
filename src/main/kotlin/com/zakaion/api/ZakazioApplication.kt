@@ -3,9 +3,9 @@ package com.zakaion.api
 import com.zakaion.api.repository.StorageService
 import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.runApplication
 import org.springframework.context.annotation.Bean
+import org.springframework.web.client.RestTemplate
 
 
 @SpringBootApplication
@@ -22,4 +22,9 @@ fun init(storageService: StorageService): CommandLineRunner? {
 		//storageService.deleteAll()
 		storageService.init()
 	}
+}
+
+@Bean
+fun restTemplate(): RestTemplate {
+	return RestTemplate()
 }

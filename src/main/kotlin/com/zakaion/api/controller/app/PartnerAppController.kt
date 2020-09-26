@@ -7,6 +7,7 @@ import com.zakaion.api.controller.UserController
 import com.zakaion.api.controller.reponse.DataResponse
 import com.zakaion.api.controller.reponse.PageResponse
 import com.zakaion.api.controller.request.AppRequestBody
+import com.zakaion.api.controller.request.AppRequestUpdateBody
 import com.zakaion.api.entity.AppEntity
 import com.zakaion.api.entity.UserEntity
 import com.zakaion.api.repository.AppRepository
@@ -57,7 +58,7 @@ class PartnerAppController(
     @PutMapping("/{id}")
     fun update(@RequestHeader(name = Config.tokenParameterName) token: String,
                @PathVariable("id") appID: String,
-               @RequestBody appRequestBody: AppRequestBody): DataResponse<AppEntity> {
+               @RequestBody appRequestBody: AppRequestUpdateBody): DataResponse<AppEntity> {
 
         val myUser = userController.user(token).data as UserEntity
 
@@ -65,7 +66,7 @@ class PartnerAppController(
 
         if (myUser.isSuperAdmin || myUser.isAdmin || myUser.isEditor || app.partner.id == myUser.id) {
             return DataResponse(
-                    data = appRepository.update(appID, appRequestBody.title)
+                    data = appRepository.update(appID, appRequestBody.title, appRequestBody.notifyCurl)
             )
         } else {
             throw ResponseStatusException(

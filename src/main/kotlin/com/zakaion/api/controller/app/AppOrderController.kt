@@ -9,6 +9,7 @@ import com.zakaion.api.entity.OrderStatus
 import com.zakaion.api.entity.UserEntity
 import com.zakaion.api.repository.CategoryRepository
 import com.zakaion.api.repository.UserRepository
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.*
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.client.RestTemplate
@@ -22,9 +23,10 @@ class AppOrderController (
         private val partnerAppController: PartnerAppController,
         private val userRepository: UserRepository,
         private val categoryRepository: CategoryRepository,
-        private val orderDao: OrderDao,
+        private val orderDao: OrderDao/*,
+        @Autowired
         private val restTemplate: RestTemplate
-) {
+*/) {
 
     fun client(email: String,
                phoneNumber: String,
@@ -73,7 +75,7 @@ class AppOrderController (
 
         // send POST request
 
-        this.restTemplate.postForEntity(url, entity, String::class.java)
+      //  this.restTemplate.postForEntity(url, entity, String::class.java)
     }
 
     @PostMapping("/add")
