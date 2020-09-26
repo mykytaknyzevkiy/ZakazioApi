@@ -10,6 +10,14 @@ import org.springframework.web.server.ResponseStatusException
 @Service
 class AppRepository(private val userDao: UserDao, private val appDao: AppDao) {
 
+    fun app(publicKey: String): AppEntity {
+        val app = appDao.findAll().find { it.publicKey == publicKey }
+
+        return app?:throw ResponseStatusException(
+                HttpStatus.UNAUTHORIZED, "No app found"
+        )
+    }
+
     fun create(partnerID: String, secretKey: String, name: String): AppEntity {
         val data = AppEntity(
                 name = name,
