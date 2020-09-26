@@ -10,11 +10,11 @@ data class UserEntity(
         @Id
         @GeneratedValue(generator="system-uuid")
         @GenericGenerator(name="system-uuid", strategy = "uuid")
-        val id: String = "",
+        var id: String = "",
         var email: String,
         @JsonProperty( value = "password", access = JsonProperty.Access.WRITE_ONLY)
-        var password: String,
-        var phoneNumber: String?,
+        var password: String = "",
+        var phoneNumber: String? = null,
         @Column(name = "first_name")
         var firstName: String,
         @Column(name = "last_name")
@@ -22,19 +22,19 @@ data class UserEntity(
         @Column(name = "midle_name")
         var midleName: String,
         @Column(name = "is_user")
-        var isUser: Boolean,
+        var isUser: Boolean = false,
         @Column(name = "is_patner")
-        var isPartner: Boolean,
+        var isPartner: Boolean = false,
         @Column(name = "is_executor")
-        var isExecutor: Boolean,
+        var isExecutor: Boolean = false,
         @Column(name = "is_agent")
-        var isAgent: Boolean,
+        var isAgent: Boolean = false,
         @Column(name = "is_admin")
-        var isAdmin: Boolean,
+        var isAdmin: Boolean = false,
         @Column(name = "is_super_admin")
-        var isSuperAdmin: Boolean,
+        var isSuperAdmin: Boolean = false,
         @Column(name = "is_editor")
-        var isEditor: Boolean,
+        var isEditor: Boolean = false,
         @Column(name = "agent_ref_id")
         var agentRefID: String? = null,
 
