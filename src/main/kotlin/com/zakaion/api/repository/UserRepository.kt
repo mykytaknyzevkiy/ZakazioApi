@@ -32,6 +32,12 @@ class UserRepository(private val userDao: UserDao, private val userTokenDao: Use
         return Optional.ofNullable(user)
     }
 
+    fun userByEmail(email: String): Optional<UserEntity> {
+        val user = userDao.findAll().find { it.email == email}
+
+        return Optional.ofNullable(user)
+    }
+
     fun users() = userDao.findAll().toList()
 
     fun users(pageNo: Int, pageSize: Int): List<UserEntity> {
