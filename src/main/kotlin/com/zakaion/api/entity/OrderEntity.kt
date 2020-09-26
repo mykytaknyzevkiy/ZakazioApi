@@ -40,6 +40,7 @@ data class OrderEntity(
 enum class OrderStatus(val data: String) {
         PROCESS("process"),
         EXECUTING("executing"),
+        EXECUTED("executed"),
         CANCEL("cancel"),
         DONE("done")
 }
