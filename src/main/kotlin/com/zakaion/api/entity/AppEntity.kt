@@ -17,5 +17,6 @@ data class AppEntity(
         val publicKey: String = System.currentTimeMillis().toString(),
         @OneToOne
         @JoinColumn(name = "partner_id", nullable = false)
-        val partner: UserEntity
+        val partner: UserEntity,
+        val notifyCurl: String?=null
 )
