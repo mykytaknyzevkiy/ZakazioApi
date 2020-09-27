@@ -32,7 +32,7 @@ data class OrderEntity(
         @OneToOne
        // @JoinColumn(name = "agentExecutorID", nullable = true)
         var executorAgent: UserEntity? = null,
-        val content: String,
+        var content: String,
         var status: String,
         var totalPrice: Float = 0f,
         var currence: String = MoneyCurrency.RUB.data,

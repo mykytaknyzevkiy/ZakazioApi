@@ -5,6 +5,7 @@ import com.zakaion.api.UnitN
 import com.zakaion.api.controller.app.PartnerAppController
 import com.zakaion.api.controller.reponse.DataResponse
 import com.zakaion.api.controller.reponse.PageResponse
+import com.zakaion.api.controller.request.SetOrderExecutorRequest
 import com.zakaion.api.dao.OrderDao
 import com.zakaion.api.entity.CategoryEntity
 import com.zakaion.api.entity.OrderEntity
@@ -74,5 +75,253 @@ class OrderController(
                 data = UnitN.makePaginationResponse(list, pageNo = page, pageSize = size)
         )
     }
+
+    @GetMapping("/{id}")
+    fun get(@RequestHeader(name = Config.tokenParameterName) token: String,
+            @PathVariable(name = "id") id: String): DataResponse<OrderEntity> {
+        val myUser = userController.user(token).data as UserEntity
+
+        val mOrder = orderDao.findById(id).orElseGet {
+            throw ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "Order not found"
+            )
+        }
+
+        if (myUser.isEditor
+                || myUser.isAdmin
+                || myUser.isSuperAdmin
+                || mOrder.app.partner.id == myUser.id
+                || mOrder.executor?.id == myUser.id
+                || mOrder.executorAgent?.id == mOrder.id
+                || mOrder.client.id == mOrder.id) {
+            return DataResponse(
+                    data = orderDao.save(mOrder)
+            )
+        } else {
+            throw ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED, "No permission"
+            )
+        }
+    }
+
+    @PutMapping("/{id}")
+    fun update(@RequestHeader(name = Config.tokenParameterName) token: String,
+               @PathVariable(name = "id") id: String,
+               @RequestBody orderEntity: OrderEntity): DataResponse<OrderEntity> {
+        val myUser = userController.user(token).data as UserEntity
+
+        val mOrder = get(token, id).data as OrderEntity
+
+        if (myUser.isEditor || myUser.isAdmin || myUser.isSuperAdmin || mOrder.app.partner.id == myUser.id) {
+            mOrder.apply {
+                this.content = orderEntity.content
+                this.totalPrice = orderEntity.totalPrice
+            }
+
+            return DataResponse(
+                    data = orderDao.save(mOrder)
+            )
+        } else {
+            throw ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED, "No permission"
+            )
+        }
+    }
+
+    @PutMapping("/{id}/set/executor")
+    fun setExecutor(@RequestHeader(name = Config.tokenParameterName) token: String,
+                    @PathVariable(name = "id") id: String,
+                    @RequestBody setOrderExecutorRequest: SetOrderExecutorRequest): DataResponse<OrderEntity> {
+
+        val myUser = userController.user(token).data as UserEntity
+
+        val executor = userController.user(token, setOrderExecutorRequest.id).data as UserEntity
+
+        val mOrder = get(token, id).data as OrderEntity
+
+        if (myUser.isEditor
+                || myUser.isSuperAdmin
+                || myUser.isAdmin
+                || mOrder.app.partner.id == myUser.id) {
+
+            if ((mOrder.executor != null || mOrder.executorAgent != null) && mOrder.executorAgent?.id != myUser.id)
+                cancelExecutor(token, id)
+
+            when {
+                mOrder.executorAgent?.id != myUser.id -> {
+                    when {
+                        executor.isEditor -> mOrder.executor = executor
+                        executor.isAgent -> mOrder.executorAgent = executor
+                        else -> throw ResponseStatusException(
+                                HttpStatus.BAD_REQUEST, "User is not executor"
+                        )
+                    }
+                }
+                executor.isExecutor-> {
+                    mOrder.executor = executor
+                }
+                else -> {
+                    throw ResponseStatusException(
+                            HttpStatus.BAD_REQUEST, "User is not executor"
+                    )
+                }
+            }
+
+            return DataResponse(
+                    data = orderDao.save(mOrder)
+            )
+
+        } else {
+            throw ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED, "No permission"
+            )
+        }
+    }
+
+    @PutMapping("/{id}/cancel/executor")
+    fun cancelExecutor(@RequestHeader(name = Config.tokenParameterName) token: String,
+                       @PathVariable(name = "id") id: String): DataResponse<OrderEntity> {
+
+        val myUser = userController.user(token).data as UserEntity
+
+        val mOrder = get(token, id).data as OrderEntity
+
+        val executorID = when {
+            mOrder.executor != null -> mOrder.executor!!.id
+            mOrder.executorAgent != null -> mOrder.executorAgent!!.id
+            else -> throw ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "No executor found"
+            )
+        }
+
+        val executor = userController.user(token, executorID)
+
+        if (myUser.isEditor
+                || myUser.isSuperAdmin
+                || myUser.isAdmin
+                || mOrder.app.partner.id == myUser.id) {
+
+            mOrder.apply {
+                this.executor = null
+                this.executorAgent == null
+            }
+
+            return DataResponse(
+                    data = orderDao.save(mOrder)
+            )
+
+        } else {
+            throw ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED, "No permission"
+            )
+        }
+    }
+
+    @PutMapping("/{id}/status/set/done")
+    fun done(@RequestHeader(name = Config.tokenParameterName) token: String,
+                  @PathVariable(name = "id") id: String): DataResponse<OrderEntity> {
+        val myUser = userController.user(token).data as UserEntity
+
+        val mOrder = get(token, id).data as OrderEntity
+
+        if (myUser.isEditor
+                || myUser.isSuperAdmin
+                || myUser.isAdmin
+                || mOrder.app.partner.id == myUser.id) {
+
+            if (mOrder.status != OrderStatus.EXECUTED.data) {
+                throw ResponseStatusException(
+                        HttpStatus.BAD_REQUEST, "Order is not executed yet"
+                )
+            }
+
+            mOrder.status = OrderStatus.DONE.data
+
+            return DataResponse(
+                    data = orderDao.save(mOrder)
+            )
+
+        } else {
+            throw ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED, "No permission"
+            )
+        }
+    }
+
+    @PutMapping("/{id}/status/set/cancel")
+    fun cancel(@RequestHeader(name = Config.tokenParameterName) token: String,
+                  @PathVariable(name = "id") id: String): DataResponse<OrderEntity> {
+        val myUser = userController.user(token).data as UserEntity
+
+        val mOrder = get(token, id).data as OrderEntity
+
+        if (myUser.isEditor
+                || myUser.isSuperAdmin
+                || myUser.isAdmin
+                || mOrder.app.partner.id == myUser.id) {
+
+            mOrder.status = OrderStatus.CANCEL.data
+
+            return DataResponse(
+                    data = orderDao.save(mOrder)
+            )
+
+        } else {
+            throw ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED, "No permission"
+            )
+        }
+    }
+
+    @PutMapping("/{id}/status/set/executed")
+    fun executed(@RequestHeader(name = Config.tokenParameterName) token: String,
+                 @PathVariable(name = "id") id: String): DataResponse<OrderEntity> {
+        val myUser = userController.user(token).data as UserEntity
+
+        val mOrder = get(token, id).data as OrderEntity
+
+        if (mOrder.executor?.id == myUser.id || mOrder.executorAgent?.id == myUser.id) {
+
+            if (mOrder.status != OrderStatus.EXECUTING.data) {
+                throw ResponseStatusException(
+                        HttpStatus.BAD_REQUEST, "Order is not executed yet"
+                )
+            }
+
+            mOrder.status = OrderStatus.EXECUTED.data
+
+            return DataResponse(
+                    data = orderDao.save(mOrder)
+            )
+
+        } else {
+            throw ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED, "No permission"
+            )
+        }
+    }
+
+    @PutMapping("/{id}/status/set/executing")
+    fun executing(@RequestHeader(name = Config.tokenParameterName) token: String,
+               @PathVariable(name = "id") id: String): DataResponse<OrderEntity> {
+        val myUser = userController.user(token).data as UserEntity
+
+        val mOrder = get(token, id).data as OrderEntity
+
+        if (mOrder.executor?.id == myUser.id || mOrder.executorAgent?.id == myUser.id) {
+
+            mOrder.status = OrderStatus.EXECUTING.data
+
+            return DataResponse(
+                    data = orderDao.save(mOrder)
+            )
+
+        } else {
+            throw ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED, "No permission"
+            )
+        }
+    }
+
 
 }

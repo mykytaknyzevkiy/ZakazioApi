@@ -22,7 +22,8 @@ class AppClientsController (
     @GetMapping("/list")
     fun list(@RequestHeader(name = Config.appKeyParameterName) apiKey: String,
              @RequestParam(name = "page", required = false, defaultValue = "1") page: Int = 1,
-             @RequestParam(name = "size", required = false, defaultValue = "10") size: Int = 10): DataResponse<PageResponse<ClientModel>> {
+             @RequestParam(name = "size", required = false, defaultValue = "10") size: Int = 10)
+            : DataResponse<PageResponse<ClientModel>> {
         val app = partnerAppController.key(apiKey).data as AppEntity
 
         val orderUserIds = orderDao.findAll().filter { it.app == app }.map { it.client.id }
