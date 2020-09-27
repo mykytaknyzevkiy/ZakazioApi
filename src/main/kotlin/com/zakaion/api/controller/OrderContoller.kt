@@ -112,6 +112,11 @@ class OrderController(
 
         val mOrder = get(token, id).data as OrderEntity
 
+        if (mOrder.status == OrderStatus.DONE.data || mOrder.status == OrderStatus.CANCEL.data || mOrder.status == OrderStatus.EXECUTED.data)
+            throw ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED, "U cannot update order more"
+            )
+
         if (myUser.isEditor || myUser.isAdmin || myUser.isSuperAdmin || mOrder.app.partner.id == myUser.id) {
             mOrder.apply {
                 this.content = orderEntity.content
@@ -143,6 +148,11 @@ class OrderController(
                 || myUser.isSuperAdmin
                 || myUser.isAdmin
                 || mOrder.app.partner.id == myUser.id) {
+
+            if (mOrder.status == OrderStatus.DONE.data || mOrder.status == OrderStatus.EXECUTED.data || mOrder.status == OrderStatus.CANCEL.data)
+                throw ResponseStatusException(
+                        HttpStatus.BAD_REQUEST, "No permission"
+                )
 
             if ((mOrder.executor != null || mOrder.executorAgent != null) && mOrder.executorAgent?.id != myUser.id)
                 cancelExecutor(token, id)
@@ -201,14 +211,21 @@ class OrderController(
                 || myUser.isAdmin
                 || mOrder.app.partner.id == myUser.id) {
 
-            mOrder.apply {
-                this.executor = null
-                this.executorAgent == null
-            }
+            if (mOrder.status == OrderStatus.PROCESS.data || mOrder.status == OrderStatus.EXECUTING.data) {
+                mOrder.apply {
+                    this.executor = null
+                    this.executorAgent == null
+                }
 
-            return DataResponse(
-                    data = orderDao.save(mOrder)
-            )
+                return DataResponse(
+                        data = orderDao.save(mOrder)
+                )
+            }
+            else {
+                throw ResponseStatusException(
+                        HttpStatus.BAD_REQUEST, "U cannot cancel this order"
+                )
+            }
 
         } else {
             throw ResponseStatusException(
@@ -260,11 +277,18 @@ class OrderController(
                 || myUser.isAdmin
                 || mOrder.app.partner.id == myUser.id) {
 
-            mOrder.status = OrderStatus.CANCEL.data
+            if (mOrder.status == OrderStatus.PROCESS.data || mOrder.status == OrderStatus.EXECUTING.data) {
+                mOrder.status = OrderStatus.CANCEL.data
 
-            return DataResponse(
-                    data = orderDao.save(mOrder)
-            )
+                return DataResponse(
+                        data = orderDao.save(mOrder)
+                )
+            }
+            else {
+                throw ResponseStatusException(
+                        HttpStatus.BAD_REQUEST, "U cannot cancel this order"
+                )
+            }
 
         } else {
             throw ResponseStatusException(
