@@ -10,6 +10,7 @@ import com.zakaion.api.entity.CategoryEntity
 import com.zakaion.api.entity.OrderEntity
 import com.zakaion.api.entity.OrderStatus
 import com.zakaion.api.entity.UserEntity
+import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
@@ -28,10 +29,10 @@ class OrderController(
     fun list(@RequestHeader(name = Config.tokenParameterName) token: String,
              @RequestParam(name = "page", required = false, defaultValue = "1") page: Int = 1,
              @RequestParam(name = "size", required = false, defaultValue = "10") size: Int = 10,
-             @RequestParam(name = "app_id", required = false, defaultValue = "null") appID: String? = null,
-             @RequestParam(name = "status", required = false, defaultValue = "null") status: String? = null,
-             @RequestParam(name = "start_date", required = false, defaultValue = "null") startDate: Date? = null,
-             @RequestParam(name = "end_date", required = false, defaultValue = "null") endDate: Date? = null
+             @RequestParam(name = "app_id", required = false) appID: String? = null,
+             @RequestParam(name = "status", required = false) status: String? = null,
+             @RequestParam(name = "start_date", required = false) @DateTimeFormat(pattern = "dd.MM.yyyy") startDate: Date? = null,
+             @RequestParam(name = "end_date", required = false) @DateTimeFormat(pattern = "dd.MM.yyyy") endDate: Date? = null
     ): DataResponse<PageResponse<OrderEntity>> {
         val myUser = userController.user(token).data as UserEntity
 

@@ -8,7 +8,7 @@ import java.util.*
 
 interface OrderDao : CrudRepository<OrderEntity, String> {
 
-    @Query("select * from order_n where creation_date_time >= :startDate and creation_date_time <= :endDate")
+    @Query("select * from order_n where creation_date_time >= :startDate and creation_date_time <= :endDate", nativeQuery = true)
     fun findAllByDate(@Param("startDate") startDate: Date,
                       @Param("endDate") endDate: Date)
             : List<OrderEntity>

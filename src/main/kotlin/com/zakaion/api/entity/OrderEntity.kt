@@ -1,8 +1,11 @@
 package com.zakaion.api.entity
 
+import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.GenericGenerator
+import org.hibernate.annotations.UpdateTimestamp
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
+import org.springframework.format.annotation.DateTimeFormat
 import java.util.*
 import javax.persistence.*
 
@@ -31,11 +34,11 @@ data class OrderEntity(
         var executorAgent: UserEntity? = null,
         val content: String,
         var status: String,
-        @Temporal(TemporalType.TIMESTAMP)
-        @CreatedDate
+        @CreationTimestamp
+        @Column(name = "creation_date_time", columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
         val creationDateTime: Date = Date(),
-        @Temporal(TemporalType.TIMESTAMP)
-        @LastModifiedDate
+        @UpdateTimestamp
+        @Column(name = "modified_date_time", columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
         val modifiedDateTime: Date = Date()
 )
 
