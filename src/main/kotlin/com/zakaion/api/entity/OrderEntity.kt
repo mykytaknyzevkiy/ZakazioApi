@@ -34,6 +34,8 @@ data class OrderEntity(
         var executorAgent: UserEntity? = null,
         val content: String,
         var status: String,
+        var totalPrice: Float = 0f,
+        var currence: String = MoneyCurrency.RUB.data,
         @CreationTimestamp
         @Column(name = "creation_date_time", columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
         val creationDateTime: Date = Date(),
@@ -48,4 +50,8 @@ enum class OrderStatus(val data: String) {
         EXECUTED("executed"),
         CANCEL("cancel"),
         DONE("done")
+}
+
+enum class MoneyCurrency(val data: String) {
+        RUB("rub")
 }
