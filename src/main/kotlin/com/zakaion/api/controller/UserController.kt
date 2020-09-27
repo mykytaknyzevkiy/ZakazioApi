@@ -96,6 +96,7 @@ class UserController(private val userRepository: UserRepository) {
                 myUser.isSuperAdmin
                 || (myUser.isAdmin && !user.isSuperAdmin)
                 || (myUser.isAgent && user.agentRefID == myUser.id)
+                || (myUser.isPartner && (user.isExecutor || user.isAgent))
         ) {
             return DataResponse(
                     success = true,
