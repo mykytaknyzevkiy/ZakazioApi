@@ -187,28 +187,23 @@ class UserController(private val userRepository: UserRepository) {
     fun list(@RequestHeader(name = Config.tokenParameterName) token: String,
              @RequestParam(name = "page", required = false, defaultValue = "1") page: Int = 1,
              @RequestParam(name = "size", required = false, defaultValue = "10") size: Int = 10,
-             @RequestParam(name = "users") fUsers: Boolean = true,
-             @RequestParam(name = "partners") fPartners: Boolean = true,
-             @RequestParam(name = "executor") fExecutors: Boolean = true,
-             @RequestParam(name = "agents") fAgents: Boolean = true,
-             @RequestParam(name = "admins") fAdmins: Boolean = true,
-             @RequestParam(name = "superAdmins") fSuperAdmins: Boolean = true,
-             @RequestParam(name = "editors") fEditors: Boolean = true
+             @RequestParam(name = "users", required = false, defaultValue = "true") fUsers: Boolean = true,
+             @RequestParam(name = "partners", required = false, defaultValue = "true") fPartners: Boolean = true,
+             @RequestParam(name = "executor", required = false, defaultValue = "true") fExecutors: Boolean = true,
+             @RequestParam(name = "agents", required = false, defaultValue = "true") fAgents: Boolean = true,
+             @RequestParam(name = "admins", required = false, defaultValue = "true") fAdmins: Boolean = true,
+             @RequestParam(name = "superAdmins", required = false, defaultValue = "true") fSuperAdmins: Boolean = true,
+             @RequestParam(name = "editors", required = false, defaultValue = "true") fEditors: Boolean = true
     ): DataResponse<PageResponse<UserEntity>> {
 
         userRepository.validateUserToken(token)
         val myUser = user(token).data as UserEntity
 
         val usersList = userRepository.users().filter {
-            myUser.isSuperAdmin
+                        myUser.isSuperAdmin
                     || (myUser.isAdmin && !it.isSuperAdmin)
+                    || (myUser.isEditor && !it.isSuperAdmin && !it.isAdmin)
                     || (myUser.isAgent && it.agentRefID == myUser.id)
-                    || (myUser.isEditor && it.isExecutor)
-                    || (myUser.isEditor && it.isPartner)
-        }.map {
-            it.apply {
-                it.password = "****"
-            }
         }
 
         val realUsers = hashSetOf<UserEntity>()

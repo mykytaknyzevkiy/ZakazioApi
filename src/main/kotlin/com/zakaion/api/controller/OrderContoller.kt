@@ -147,27 +147,31 @@ class OrderController(
         if (myUser.isEditor
                 || myUser.isSuperAdmin
                 || myUser.isAdmin
-                || mOrder.app.partner.id == myUser.id) {
+                || mOrder.app.partner.id == myUser.id
+                || myUser.isAgent && mOrder.executorAgent?.id == myUser.id) {
 
             if (mOrder.status == OrderStatus.DONE.data || mOrder.status == OrderStatus.EXECUTED.data || mOrder.status == OrderStatus.CANCEL.data)
                 throw ResponseStatusException(
                         HttpStatus.BAD_REQUEST, "No permission"
                 )
 
-            if ((mOrder.executor != null || mOrder.executorAgent != null) && mOrder.executorAgent?.id != myUser.id)
+            if (myUser.isAgent && mOrder.executor != null) {
+                cancelExecutor(token, id)
+            }
+            else if (mOrder.executor != null || mOrder.executorAgent != null)
                 cancelExecutor(token, id)
 
             when {
-                mOrder.executorAgent?.id != myUser.id -> {
-                    when {
-                        executor.isEditor -> mOrder.executor = executor
-                        executor.isAgent -> mOrder.executorAgent = executor
-                        else -> throw ResponseStatusException(
-                                HttpStatus.BAD_REQUEST, "User is not executor"
-                        )
-                    }
+                executor.isAgent -> {
+                    mOrder.executorAgent = executor
                 }
-                executor.isExecutor-> {
+                myUser.isAgent -> {
+                    if (executor.agentRefID == myUser.id) mOrder.executor = executor
+                    else throw ResponseStatusException(
+                            HttpStatus.BAD_REQUEST, "User is not your executor"
+                    )
+                }
+                executor.isExecutor -> {
                     mOrder.executor = executor
                 }
                 else -> {
