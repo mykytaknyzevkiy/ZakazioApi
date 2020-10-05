@@ -13,5 +13,5 @@ object Config {
 
     const val appKeyParameterName = "key"
 
-    var version = "26"
+    var version = "27"
 }
