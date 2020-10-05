@@ -1,10 +1,9 @@
 package com.zakaion.api.entity
 
+import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.GenericGenerator
-import javax.persistence.Entity
-import javax.persistence.GeneratedValue
-import javax.persistence.Id
-import javax.persistence.OneToOne
+import java.util.*
+import javax.persistence.*
 
 @Entity
 data class OrderHistoryEntity(
@@ -17,5 +16,8 @@ data class OrderHistoryEntity(
         @OneToOne
         val user: UserEntity,
         val operation: String,
-        val data: String
+        val data: String,
+        @CreationTimestamp
+        @Column(name = "creation_date_time", columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
+        val creationDateTime: Date = Date()
 )

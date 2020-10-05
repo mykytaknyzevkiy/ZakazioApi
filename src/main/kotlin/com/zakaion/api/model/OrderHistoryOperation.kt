@@ -6,5 +6,7 @@ enum class OrderHistoryOperation(val data: String) {
     SET_EXECUTOR("set_executor"),
     CANCEL_EXECUTOR("set_executor"),
     CANCEL("cancel"),
-    CLOSE("close")
+    CLOSE("close"),
+    EXECUTING("executing"),
+    EXECUTED("executed")
 }

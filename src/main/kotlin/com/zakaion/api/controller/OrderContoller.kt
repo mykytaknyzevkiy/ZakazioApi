@@ -3,14 +3,13 @@ package com.zakaion.api.controller
 import com.zakaion.api.Config
 import com.zakaion.api.UnitN
 import com.zakaion.api.controller.app.PartnerAppController
+import com.zakaion.api.controller.history.OrderHistoryController
 import com.zakaion.api.controller.reponse.DataResponse
 import com.zakaion.api.controller.reponse.PageResponse
 import com.zakaion.api.controller.request.SetOrderExecutorRequest
 import com.zakaion.api.dao.OrderDao
-import com.zakaion.api.entity.CategoryEntity
-import com.zakaion.api.entity.OrderEntity
-import com.zakaion.api.entity.OrderStatus
-import com.zakaion.api.entity.UserEntity
+import com.zakaion.api.entity.*
+import com.zakaion.api.model.OrderHistoryOperation
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
@@ -23,7 +22,8 @@ import java.util.*
 class OrderController(
         private val userController: UserController,
         private val orderDao: OrderDao,
-        private val partnerAppController: PartnerAppController
+        private val partnerAppController: PartnerAppController,
+        private val orderHistoryController: OrderHistoryController
 ) {
 
     @GetMapping("/list")
@@ -110,7 +110,7 @@ class OrderController(
                @RequestBody orderEntity: OrderEntity): DataResponse<OrderEntity> {
         val myUser = userController.user(token).data as UserEntity
 
-        val mOrder = get(token, id).data as OrderEntity
+        var mOrder = get(token, id).data as OrderEntity
 
         if (mOrder.status == OrderStatus.DONE.data || mOrder.status == OrderStatus.CANCEL.data || mOrder.status == OrderStatus.EXECUTED.data)
             throw ResponseStatusException(
@@ -123,8 +123,15 @@ class OrderController(
                 this.totalPrice = orderEntity.totalPrice
             }
 
+            mOrder = orderDao.save(mOrder)
+
+            addHistory(OrderHistoryOperation.EDIT, myUser, mOrder, "{" +
+                    "\"content\": \"${orderEntity.content}\", " +
+                    "\"totalPrice\": ${orderEntity.totalPrice}" +
+                    "}")
+
             return DataResponse(
-                    data = orderDao.save(mOrder)
+                    data = mOrder
             )
         } else {
             throw ResponseStatusException(
@@ -157,8 +164,7 @@ class OrderController(
 
             if (myUser.isAgent && mOrder.executor != null) {
                 cancelExecutor(token, id)
-            }
-            else if (mOrder.executor != null || mOrder.executorAgent != null)
+            } else if (mOrder.executor != null || mOrder.executorAgent != null)
                 cancelExecutor(token, id)
 
             when {
@@ -180,6 +186,8 @@ class OrderController(
                     )
                 }
             }
+
+            addHistory(OrderHistoryOperation.SET_EXECUTOR, myUser, mOrder, executor.toJson())
 
             return DataResponse(
                     data = orderDao.save(mOrder)
@@ -221,11 +229,12 @@ class OrderController(
                     this.executorAgent == null
                 }
 
+                addHistory(OrderHistoryOperation.CANCEL_EXECUTOR, myUser, mOrder, executor.toJson())
+
                 return DataResponse(
                         data = orderDao.save(mOrder)
                 )
-            }
-            else {
+            } else {
                 throw ResponseStatusException(
                         HttpStatus.BAD_REQUEST, "U cannot cancel this order"
                 )
@@ -240,7 +249,7 @@ class OrderController(
 
     @PutMapping("/{id}/status/set/done")
     fun done(@RequestHeader(name = Config.tokenParameterName) token: String,
-                  @PathVariable(name = "id") id: String): DataResponse<OrderEntity> {
+             @PathVariable(name = "id") id: String): DataResponse<OrderEntity> {
         val myUser = userController.user(token).data as UserEntity
 
         val mOrder = get(token, id).data as OrderEntity
@@ -258,6 +267,8 @@ class OrderController(
 
             mOrder.status = OrderStatus.DONE.data
 
+            addHistory(OrderHistoryOperation.CLOSE, myUser, mOrder, "")
+
             return DataResponse(
                     data = orderDao.save(mOrder)
             )
@@ -271,7 +282,7 @@ class OrderController(
 
     @PutMapping("/{id}/status/set/cancel")
     fun cancel(@RequestHeader(name = Config.tokenParameterName) token: String,
-                  @PathVariable(name = "id") id: String): DataResponse<OrderEntity> {
+               @PathVariable(name = "id") id: String): DataResponse<OrderEntity> {
         val myUser = userController.user(token).data as UserEntity
 
         val mOrder = get(token, id).data as OrderEntity
@@ -284,11 +295,12 @@ class OrderController(
             if (mOrder.status == OrderStatus.PROCESS.data || mOrder.status == OrderStatus.EXECUTING.data) {
                 mOrder.status = OrderStatus.CANCEL.data
 
+                addHistory(OrderHistoryOperation.CANCEL, myUser, mOrder, "")
+
                 return DataResponse(
                         data = orderDao.save(mOrder)
                 )
-            }
-            else {
+            } else {
                 throw ResponseStatusException(
                         HttpStatus.BAD_REQUEST, "U cannot cancel this order"
                 )
@@ -318,6 +330,8 @@ class OrderController(
 
             mOrder.status = OrderStatus.EXECUTED.data
 
+            addHistory(OrderHistoryOperation.EXECUTED, myUser, mOrder, "")
+
             return DataResponse(
                     data = orderDao.save(mOrder)
             )
@@ -331,7 +345,7 @@ class OrderController(
 
     @PutMapping("/{id}/status/set/executing")
     fun executing(@RequestHeader(name = Config.tokenParameterName) token: String,
-               @PathVariable(name = "id") id: String): DataResponse<OrderEntity> {
+                  @PathVariable(name = "id") id: String): DataResponse<OrderEntity> {
         val myUser = userController.user(token).data as UserEntity
 
         val mOrder = get(token, id).data as OrderEntity
@@ -339,6 +353,8 @@ class OrderController(
         if (mOrder.executor?.id == myUser.id || mOrder.executorAgent?.id == myUser.id) {
 
             mOrder.status = OrderStatus.EXECUTING.data
+
+            addHistory(OrderHistoryOperation.EXECUTING, myUser, mOrder, "")
 
             return DataResponse(
                     data = orderDao.save(mOrder)
@@ -352,4 +368,20 @@ class OrderController(
     }
 
 
+    private fun addHistory(operation: OrderHistoryOperation,
+                           user: UserEntity,
+                           orderEntity: OrderEntity,
+                           data: String) {
+        orderHistoryController.add(
+                OrderHistoryEntity(
+                        order = orderEntity,
+                        user = user,
+                        operation = operation.data,
+                        data = data
+                )
+        )
+    }
+
 }
+
+fun Any.toJson() = this.toString()
