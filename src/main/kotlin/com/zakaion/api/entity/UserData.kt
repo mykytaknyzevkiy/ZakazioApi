@@ -36,7 +36,7 @@ data class UserEntity(
         @Column(name = "is_editor")
         var isEditor: Boolean = false,
         @Column(name = "agent_ref_id")
-        var agentRefID: String? = null,
+        var partnerID: String? = null,
         @Column(name = "is_phone_active", nullable = false)
         var isPhoneActive: Boolean = false,
         @Column(name = "is_email_active", nullable = false)

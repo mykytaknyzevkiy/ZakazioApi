@@ -32,6 +32,7 @@ data class OrderEntity(
         @OneToOne
        // @JoinColumn(name = "agentExecutorID", nullable = true)
         var executorAgent: UserEntity? = null,
+        @Column(length = 3000)
         var content: String,
         var status: String,
         var totalPrice: Float = 0f,

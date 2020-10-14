@@ -8,7 +8,7 @@ data class ExecutorModel(
         var phoneNumber: String,
         val firstName: String,
         val lastName: String,
-        val midleName: String,
+        val midleName: String?,
         val isAgent: Boolean,
         val orders: List<OrderEntity>
 )

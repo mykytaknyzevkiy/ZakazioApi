@@ -16,7 +16,9 @@ data class OrderHistoryEntity(
         @OneToOne
         val user: UserEntity,
         val operation: String,
-        val data: String,
+        /*@Lob
+        @Column(columnDefinition="LONGTEXT")
+        val data: String,*/
         @CreationTimestamp
         @Column(name = "creation_date_time", columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
         val creationDateTime: Date = Date()

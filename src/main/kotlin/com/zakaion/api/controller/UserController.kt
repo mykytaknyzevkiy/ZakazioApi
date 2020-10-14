@@ -7,11 +7,8 @@ import com.zakaion.api.controller.reponse.PageResponse
 import com.zakaion.api.controller.reponse.UserSignUpResponse
 import com.zakaion.api.controller.request.UserChangePasswordRequest
 import com.zakaion.api.controller.request.UserSignInRequest
-import com.zakaion.api.dao.UserDao
-import com.zakaion.api.dao.UserTokenDao
 import com.zakaion.api.entity.UserEntity
 import com.zakaion.api.repository.UserRepository
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
@@ -95,8 +92,8 @@ class UserController(private val userRepository: UserRepository) {
         if (
                 myUser.isSuperAdmin
                 || (myUser.isAdmin && !user.isSuperAdmin)
-                || (myUser.isAgent && user.agentRefID == myUser.id)
-                || (myUser.isPartner && (user.isExecutor || user.isAgent))
+                || (myUser.isAgent && user.partnerID == myUser.id)
+                || ((myUser.isPartner || myUser.isExecutor) && (user.isExecutor || user.isAgent))
         ) {
             return DataResponse(
                     success = true,
@@ -121,7 +118,7 @@ class UserController(private val userRepository: UserRepository) {
         if (
                 myUser.isSuperAdmin
                 || (myUser.isAdmin && !updateUser.isSuperAdmin)
-                || (myUser.isAgent && updateUser.agentRefID == myUser.id)
+                || (myUser.isAgent && updateUser.partnerID == myUser.id)
         ) {
             updateUser.apply {
                 this.firstName = userEntity.firstName
@@ -199,12 +196,12 @@ class UserController(private val userRepository: UserRepository) {
         userRepository.validateUserToken(token)
         val myUser = user(token).data as UserEntity
 
-        val usersList = userRepository.users().filter {
+        val usersList = userRepository.users()/*.filter {
                         myUser.isSuperAdmin
                     || (myUser.isAdmin && !it.isSuperAdmin)
                     || (myUser.isEditor && !it.isSuperAdmin && !it.isAdmin)
                     || (myUser.isAgent && it.agentRefID == myUser.id)
-        }
+        }*/
 
         val realUsers = hashSetOf<UserEntity>()
 

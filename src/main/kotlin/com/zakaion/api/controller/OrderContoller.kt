@@ -12,6 +12,8 @@ import com.zakaion.api.entity.*
 import com.zakaion.api.model.OrderHistoryOperation
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.HttpStatus
+import org.springframework.http.RequestEntity
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
 import java.util.*
@@ -25,6 +27,27 @@ class OrderController(
         private val partnerAppController: PartnerAppController,
         private val orderHistoryController: OrderHistoryController
 ) {
+
+    @GetMapping("/list/executor/my")
+    fun listExecutorMy(@RequestHeader(name = Config.tokenParameterName) token: String,
+             @RequestParam(name = "page", required = false, defaultValue = "1") page: Int = 1,
+             @RequestParam(name = "size", required = false, defaultValue = "10") size: Int = 10,
+             @RequestParam(name = "status", required = false) status: String? = null,
+             @RequestParam(name = "start_date", required = false) @DateTimeFormat(pattern = "dd.MM.yyyy") startDate: Date? = null,
+             @RequestParam(name = "end_date", required = false) @DateTimeFormat(pattern = "dd.MM.yyyy") endDate: Date? = null
+    ): DataResponse<PageResponse<OrderEntity>> {
+        val myUser = userController.user(token).data as UserEntity
+
+        return list(
+                token, page, size, null, status, startDate, endDate
+        ).apply {
+            data?.apply {
+                this.items = this.items.filter {
+                    it.executor?.id == myUser.id
+                }
+            }
+        }
+    }
 
     @GetMapping("/list")
     fun list(@RequestHeader(name = Config.tokenParameterName) token: String,
@@ -49,6 +72,7 @@ class OrderController(
                     || it.executor?.id == myUser.id
                     || it.executorAgent?.id == myUser.id
                     || (myUser.isAdmin || myUser.isEditor || myUser.isSuperAdmin)
+                    || (myUser.isExecutor && it.executor == null)
         }
 
         if (appID != null) {
@@ -155,7 +179,7 @@ class OrderController(
                 || myUser.isSuperAdmin
                 || myUser.isAdmin
                 || mOrder.app.partner.id == myUser.id
-                || myUser.isAgent && mOrder.executorAgent?.id == myUser.id) {
+                || (myUser.isExecutor && mOrder.executor == null)) {
 
             if (mOrder.status == OrderStatus.DONE.data || mOrder.status == OrderStatus.EXECUTED.data || mOrder.status == OrderStatus.CANCEL.data)
                 throw ResponseStatusException(
@@ -172,7 +196,7 @@ class OrderController(
                     mOrder.executorAgent = executor
                 }
                 myUser.isAgent -> {
-                    if (executor.agentRefID == myUser.id) mOrder.executor = executor
+                    if (executor.partnerID == myUser.id) mOrder.executor = executor
                     else throw ResponseStatusException(
                             HttpStatus.BAD_REQUEST, "User is not your executor"
                     )
@@ -200,6 +224,25 @@ class OrderController(
         }
     }
 
+    @PutMapping("/{id}/be/executor")
+    fun beExecutor(@RequestHeader(name = Config.tokenParameterName) token: String,
+                    @PathVariable(name = "id") id: String): ResponseEntity<DataResponse<OrderEntity>> {
+        val myUser = userController.user(token).data as UserEntity
+
+        if (!myUser.isExecutor)
+            return ResponseEntity(
+                    DataResponse<OrderEntity>(
+                            success = false,
+                            error = "You arent executor",
+                            data = null
+                    ), HttpStatus.METHOD_NOT_ALLOWED)
+
+        return ResponseEntity(
+                setExecutor(token, id, SetOrderExecutorRequest(name = null, id = myUser.id)),
+                HttpStatus.OK
+        )
+    }
+
     @PutMapping("/{id}/cancel/executor")
     fun cancelExecutor(@RequestHeader(name = Config.tokenParameterName) token: String,
                        @PathVariable(name = "id") id: String): DataResponse<OrderEntity> {
@@ -221,7 +264,9 @@ class OrderController(
         if (myUser.isEditor
                 || myUser.isSuperAdmin
                 || myUser.isAdmin
-                || mOrder.app.partner.id == myUser.id) {
+                || mOrder.app.partner.id == myUser.id
+                || mOrder.executor?.id == myUser.id
+                || mOrder.executorAgent?.id == myUser.id) {
 
             if (mOrder.status == OrderStatus.PROCESS.data || mOrder.status == OrderStatus.EXECUTING.data) {
                 mOrder.apply {
@@ -240,7 +285,8 @@ class OrderController(
                 )
             }
 
-        } else {
+        }
+        else {
             throw ResponseStatusException(
                     HttpStatus.UNAUTHORIZED, "No permission"
             )
@@ -376,8 +422,7 @@ class OrderController(
                 OrderHistoryEntity(
                         order = orderEntity,
                         user = user,
-                        operation = operation.data,
-                        data = data
+                        operation = operation.data
                 )
         )
     }

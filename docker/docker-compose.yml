@@ -4,13 +4,14 @@ services:
 
   mysql-development:
     image: mysql:8.0.17
+    container_name: db
     environment:
       MYSQL_ROOT_PASSWORD: k6G1tgJLM9hMXvwR
       MYSQL_DATABASE: zakazio_db
     ports:
       - "3306:3306"
 
-  words:
+  api:
     image: zakazio/zakazio:latest
     ports:
     - 8080:8080
@@ -22,4 +23,4 @@ services:
     ports:
       - 80:80
     depends_on:
-      - words
+      - api

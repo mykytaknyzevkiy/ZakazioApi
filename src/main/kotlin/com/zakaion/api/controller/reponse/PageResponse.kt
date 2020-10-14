@@ -3,5 +3,5 @@ package com.zakaion.api.controller.reponse
 data class PageResponse<T>(
         val pageNo: Int,
         val maxPages: Int,
-        val items: List<T>
+        var items: List<T>
 )

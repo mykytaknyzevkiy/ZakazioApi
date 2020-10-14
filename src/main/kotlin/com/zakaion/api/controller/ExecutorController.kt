@@ -49,7 +49,7 @@ class ExecutorController(private val userController: UserController,
 
         val executors = userRepository.users()
                 .filter { it.isExecutor || it.isAgent }
-                .filter { (myUser.isAgent && it.agentRefID == myUser.id) || !myUser.isAgent }
+                .filter { (myUser.isAgent && it.partnerID == myUser.id) || !myUser.isAgent }
                 .map {
                     ExecutorModel(
                             id = it.id,

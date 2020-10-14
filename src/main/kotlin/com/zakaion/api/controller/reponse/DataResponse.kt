@@ -6,5 +6,5 @@ data class DataResponse<T>(
         val version: String = Config.version,
         val success: Boolean = true,
         val error: String? = null,
-        val data: T?
+        var data: T?
 )
