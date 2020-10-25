@@ -1,4 +1,4 @@
-package com.zakaion.api
+package com.zakaion.api.unit
 
 object Config {
 
@@ -13,5 +13,5 @@ object Config {
 
     const val appKeyParameterName = "key"
 
-    var version = "30"
+    var version = "40"
 }

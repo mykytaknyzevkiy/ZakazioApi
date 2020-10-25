@@ -1,7 +1,7 @@
 package com.zakaion.api.controller
 
-import com.zakaion.api.Config
-import com.zakaion.api.UnitN
+import com.zakaion.api.unit.Config
+import com.zakaion.api.unit.UnitN
 import com.zakaion.api.controller.reponse.DataResponse
 import com.zakaion.api.controller.reponse.PageResponse
 import com.zakaion.api.controller.reponse.UserSignUpResponse

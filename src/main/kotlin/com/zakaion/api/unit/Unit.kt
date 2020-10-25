@@ -1,4 +1,4 @@
-package com.zakaion.api
+package com.zakaion.api.unit
 
 import com.zakaion.api.controller.reponse.PageResponse
 import org.springframework.http.HttpStatus

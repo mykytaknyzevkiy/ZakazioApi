@@ -1,6 +1,6 @@
 package com.zakaion.api.controller.reponse
 
-import com.zakaion.api.Config
+import com.zakaion.api.unit.Config
 
 data class DataResponse<T>(
         val version: String = Config.version,

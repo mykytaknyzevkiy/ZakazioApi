@@ -1,7 +1,7 @@
 package com.zakaion.api.controller
 
-import com.zakaion.api.Config
-import com.zakaion.api.UnitN
+import com.zakaion.api.unit.Config
+import com.zakaion.api.unit.UnitN
 import com.zakaion.api.controller.app.PartnerAppController
 import com.zakaion.api.controller.history.OrderHistoryController
 import com.zakaion.api.controller.reponse.DataResponse
@@ -10,12 +10,13 @@ import com.zakaion.api.controller.request.SetOrderExecutorRequest
 import com.zakaion.api.dao.OrderDao
 import com.zakaion.api.entity.*
 import com.zakaion.api.model.OrderHistoryOperation
+import com.zakaion.api.model.OrderResponse
+import com.zakaion.api.model.convert
+import com.zakaion.api.repository.CashRepository
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.HttpStatus
-import org.springframework.http.RequestEntity
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.server.ResponseStatusException
 import java.util.*
 
 @CrossOrigin
@@ -25,123 +26,175 @@ class OrderController(
         private val userController: UserController,
         private val orderDao: OrderDao,
         private val partnerAppController: PartnerAppController,
-        private val orderHistoryController: OrderHistoryController
+        private val orderHistoryController: OrderHistoryController,
+        private val cashRepository: CashRepository
 ) {
 
-    @GetMapping("/list/executor/my")
-    fun listExecutorMy(@RequestHeader(name = Config.tokenParameterName) token: String,
-             @RequestParam(name = "page", required = false, defaultValue = "1") page: Int = 1,
-             @RequestParam(name = "size", required = false, defaultValue = "10") size: Int = 10,
-             @RequestParam(name = "status", required = false) status: String? = null,
-             @RequestParam(name = "start_date", required = false) @DateTimeFormat(pattern = "dd.MM.yyyy") startDate: Date? = null,
-             @RequestParam(name = "end_date", required = false) @DateTimeFormat(pattern = "dd.MM.yyyy") endDate: Date? = null
-    ): DataResponse<PageResponse<OrderEntity>> {
-        val myUser = userController.user(token).data as UserEntity
-
-        return list(
-                token, page, size, null, status, startDate, endDate
-        ).apply {
-            data?.apply {
-                this.items = this.items.filter {
-                    it.executor?.id == myUser.id
-                }
-            }
-        }
-    }
-
-    @GetMapping("/list")
-    fun list(@RequestHeader(name = Config.tokenParameterName) token: String,
-             @RequestParam(name = "page", required = false, defaultValue = "1") page: Int = 1,
-             @RequestParam(name = "size", required = false, defaultValue = "10") size: Int = 10,
-             @RequestParam(name = "app_id", required = false) appID: String? = null,
-             @RequestParam(name = "status", required = false) status: String? = null,
-             @RequestParam(name = "start_date", required = false) @DateTimeFormat(pattern = "dd.MM.yyyy") startDate: Date? = null,
-             @RequestParam(name = "end_date", required = false) @DateTimeFormat(pattern = "dd.MM.yyyy") endDate: Date? = null
-    ): DataResponse<PageResponse<OrderEntity>> {
-        val myUser = userController.user(token).data as UserEntity
-
+    fun listAll(appID: String? = null,
+                status: String? = null,
+                startDate: Date? = null,
+                endDate: Date? = null): List<OrderEntity> {
         var list = if (startDate != null && endDate != null) {
             orderDao.findAllByDate(startDate, endDate)
         } else {
             orderDao.findAll()
         }
 
-        list = list.filter {
-            it.client.id == myUser.id
-                    || it.app.partner.id == myUser.id
-                    || it.executor?.id == myUser.id
-                    || it.executorAgent?.id == myUser.id
-                    || (myUser.isAdmin || myUser.isEditor || myUser.isSuperAdmin)
-                    || (myUser.isExecutor && it.executor == null)
+        if (appID != null)
+            list = list.filter { it.app.id == appID}
+
+        if (status != null)
+            list = list.filter { it.status == status }
+
+        return list.toList()
+    }
+
+    @GetMapping("/list/open")
+    fun listOpen(@RequestHeader(name = Config.tokenParameterName) token: String,
+                 @RequestParam(name = "page", required = false, defaultValue = "1") page: Int = 1,
+                 @RequestParam(name = "size", required = false, defaultValue = "10") size: Int = 10,
+                 @RequestParam(name = "app_id", required = false) appID: String? = null,
+                 @RequestParam(name = "status", required = false) status: String? = null,
+                 @RequestParam(name = "start_date", required = false) @DateTimeFormat(pattern = "yyyy-mm-dd") startDate: Date? = null,
+                 @RequestParam(name = "end_date", required = false) @DateTimeFormat(pattern = "yyyy-mm-dd") endDate: Date? = null
+    ): DataResponse<PageResponse<OrderResponse>> {
+        val myUser = userController.user(token).data as UserEntity
+
+        val list = listAll(appID, status, startDate, endDate).filter {
+            it.executor == null
         }
 
-        if (appID != null) {
-            partnerAppController.get(token, appID)
-            list = list.filter {
-                it.app.id == appID
-            }
-        }
-
-        if (status != null) {
-            if (!OrderStatus.values().map { it.data }.contains(status)) {
-                throw ResponseStatusException(
-                        HttpStatus.BAD_REQUEST, "No status type found"
-                )
-            }
-            list = list.filter {
-                it.status == status
+        val realList = list.map {
+            convert(it).apply {
+                if (myUser.isExecutor && this.executor?.id != myUser.id)
+                    this.client = null
+                else if (myUser.isPartner && this.app.partner.id != myUser.id)
+                    this.client = null
             }
         }
 
         return DataResponse(
                 success = true,
                 error = null,
-                data = UnitN.makePaginationResponse(list, pageNo = page, pageSize = size)
+                data = UnitN.makePaginationResponse(realList, pageNo = page, pageSize = size)
+        )
+    }
+
+    @GetMapping("/list/mine")
+    fun listMy(@RequestHeader(name = Config.tokenParameterName) token: String,
+               @RequestParam(name = "page", required = false, defaultValue = "1") page: Int = 1,
+               @RequestParam(name = "size", required = false, defaultValue = "10") size: Int = 10,
+               @RequestParam(name = "app_id", required = false) appID: String? = null,
+               @RequestParam(name = "status", required = false) status: String? = null,
+               @RequestParam(name = "start_date", required = false) @DateTimeFormat(pattern = "yyyy-mm-dd") startDate: Date? = null,
+               @RequestParam(name = "end_date", required = false) @DateTimeFormat(pattern = "yyyy-mm-dd") endDate: Date? = null
+    ): DataResponse<PageResponse<OrderResponse>> {
+        val myUser = userController.user(token).data as UserEntity
+
+        val list = listAll(appID, status, startDate, endDate).filter {
+            myUser.isSuperAdmin
+                    || myUser.isAdmin
+                    || myUser.isEditor
+                    || (myUser.isExecutor && it.executor?.id == myUser.id)
+                    || (myUser.isPartner && it.app.partner.id == myUser.id)
+                    || (myUser.isUser && it.client.id == myUser.id)
+        }
+
+        val realList = list.map {
+            convert(it)
+        }
+
+        return DataResponse(
+                success = true,
+                error = null,
+                data = UnitN.makePaginationResponse(realList, pageNo = page, pageSize = size)
         )
     }
 
     @GetMapping("/{id}")
     fun get(@RequestHeader(name = Config.tokenParameterName) token: String,
-            @PathVariable(name = "id") id: String): DataResponse<OrderEntity> {
+            @PathVariable(name = "id") id: Int): ResponseEntity<DataResponse<OrderResponse>> {
         val myUser = userController.user(token).data as UserEntity
 
-        val mOrder = orderDao.findById(id).orElseGet {
-            throw ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "Order not found"
-            )
+        if (orderDao.findById(id).isEmpty) {
+            return errorResponse(HttpStatus.NOT_FOUND, "order not exist")
         }
 
-        if (myUser.isEditor
-                || myUser.isAdmin
-                || myUser.isSuperAdmin
-                || mOrder.app.partner.id == myUser.id
-                || mOrder.executor?.id == myUser.id
-                || mOrder.executorAgent?.id == mOrder.id
-                || mOrder.client.id == mOrder.id) {
-            return DataResponse(
-                    data = orderDao.save(mOrder)
-            )
-        } else {
-            throw ResponseStatusException(
-                    HttpStatus.UNAUTHORIZED, "No permission"
-            )
+        val mOrder = convert(orderDao.findById(id).get()).apply {
+            if (myUser.isExecutor && this.executor?.id != myUser.id)
+                this.client = null
+            else if (myUser.isPartner && this.app.partner.id != myUser.id)
+                this.client = null
         }
+
+        if (myUser.isSuperAdmin ||
+                myUser.isAdmin ||
+                myUser.isEditor)
+            return ResponseEntity(
+                    DataResponse(
+                            success = true,
+                            error = null,
+                            data = mOrder
+                    ),
+                    HttpStatus.OK
+            )
+
+        if (mOrder.executor == null && !myUser.isUser)
+            return ResponseEntity(
+                    DataResponse(
+                            success = true,
+                            error = null,
+                            data = mOrder
+                    ),
+                    HttpStatus.OK
+            )
+
+        if (myUser.isUser && mOrder.client?.id == myUser.id)
+            return ResponseEntity(
+                    DataResponse(
+                            success = true,
+                            error = null,
+                            data = mOrder
+                    ),
+                    HttpStatus.OK
+            )
+
+        if (mOrder.executor != null &&
+                (mOrder.app.partner.id == myUser.id ||
+                        mOrder.executor.id == myUser.id ||
+                        mOrder.executor.partnerID == myUser.id))
+            return ResponseEntity(
+                    DataResponse(
+                            success = true,
+                            error = null,
+                            data = mOrder
+                    ),
+                    HttpStatus.OK
+            )
+
+        return errorResponse(HttpStatus.METHOD_NOT_ALLOWED, "U dont have permission for this order")
     }
 
     @PutMapping("/{id}")
     fun update(@RequestHeader(name = Config.tokenParameterName) token: String,
-               @PathVariable(name = "id") id: String,
-               @RequestBody orderEntity: OrderEntity): DataResponse<OrderEntity> {
+               @PathVariable(name = "id") id: Int,
+               @RequestBody orderEntity: OrderEntity): ResponseEntity<DataResponse<OrderEntity>> {
         val myUser = userController.user(token).data as UserEntity
 
-        var mOrder = get(token, id).data as OrderEntity
+        if (orderDao.findById(id).isEmpty) {
+            return errorResponse(HttpStatus.NOT_FOUND, "order not exist")
+        }
 
-        if (mOrder.status == OrderStatus.DONE.data || mOrder.status == OrderStatus.CANCEL.data || mOrder.status == OrderStatus.EXECUTED.data)
-            throw ResponseStatusException(
-                    HttpStatus.UNAUTHORIZED, "U cannot update order more"
-            )
+        var mOrder = orderDao.findById(id).get()
 
-        if (myUser.isEditor || myUser.isAdmin || myUser.isSuperAdmin || mOrder.app.partner.id == myUser.id) {
+        if (mOrder.status in listOf(
+                        OrderStatus.DONE.data,
+                        mOrder.status == OrderStatus.CANCEL.data,
+                        mOrder.status == OrderStatus.EXECUTED.data
+                ))
+            return errorResponse(HttpStatus.METHOD_NOT_ALLOWED, "U cannot update order cause order in status ${mOrder.status}")
+
+        if (myUser.isSuperAdmin || myUser.isAdmin || myUser.isEditor || (myUser.isPartner && mOrder.app.partner.id == myUser.id)) {
             mOrder.apply {
                 this.content = orderEntity.content
                 this.totalPrice = orderEntity.totalPrice
@@ -154,79 +207,79 @@ class OrderController(
                     "\"totalPrice\": ${orderEntity.totalPrice}" +
                     "}")
 
-            return DataResponse(
-                    data = mOrder
-            )
-        } else {
-            throw ResponseStatusException(
-                    HttpStatus.UNAUTHORIZED, "No permission"
+            return ResponseEntity(
+                    DataResponse(
+                            success = true,
+                            error = null,
+                            data = mOrder
+                    ),
+                    HttpStatus.OK
             )
         }
+
+        return errorResponse(HttpStatus.METHOD_NOT_ALLOWED, "U dont have permission to update this order")
     }
 
     @PutMapping("/{id}/set/executor")
     fun setExecutor(@RequestHeader(name = Config.tokenParameterName) token: String,
-                    @PathVariable(name = "id") id: String,
-                    @RequestBody setOrderExecutorRequest: SetOrderExecutorRequest): DataResponse<OrderEntity> {
+                    @PathVariable(name = "id") id: Int,
+                    @RequestBody setOrderExecutorRequest: SetOrderExecutorRequest): ResponseEntity<DataResponse<OrderEntity>> {
 
         val myUser = userController.user(token).data as UserEntity
 
         val executor = userController.user(token, setOrderExecutorRequest.id).data as UserEntity
 
-        val mOrder = get(token, id).data as OrderEntity
-
-        if (myUser.isEditor
-                || myUser.isSuperAdmin
-                || myUser.isAdmin
-                || mOrder.app.partner.id == myUser.id
-                || (myUser.isExecutor && mOrder.executor == null)) {
-
-            if (mOrder.status == OrderStatus.DONE.data || mOrder.status == OrderStatus.EXECUTED.data || mOrder.status == OrderStatus.CANCEL.data)
-                throw ResponseStatusException(
-                        HttpStatus.BAD_REQUEST, "No permission"
-                )
-
-            if (myUser.isAgent && mOrder.executor != null) {
-                cancelExecutor(token, id)
-            } else if (mOrder.executor != null || mOrder.executorAgent != null)
-                cancelExecutor(token, id)
-
-            when {
-                executor.isAgent -> {
-                    mOrder.executorAgent = executor
-                }
-                myUser.isAgent -> {
-                    if (executor.partnerID == myUser.id) mOrder.executor = executor
-                    else throw ResponseStatusException(
-                            HttpStatus.BAD_REQUEST, "User is not your executor"
-                    )
-                }
-                executor.isExecutor -> {
-                    mOrder.executor = executor
-                }
-                else -> {
-                    throw ResponseStatusException(
-                            HttpStatus.BAD_REQUEST, "User is not executor"
-                    )
-                }
-            }
-
-            addHistory(OrderHistoryOperation.SET_EXECUTOR, myUser, mOrder, executor.toJson())
-
-            return DataResponse(
-                    data = orderDao.save(mOrder)
-            )
-
-        } else {
-            throw ResponseStatusException(
-                    HttpStatus.UNAUTHORIZED, "No permission"
-            )
+        if (orderDao.findById(id).isEmpty) {
+            return errorResponse(HttpStatus.NOT_FOUND, "order not exist")
         }
+
+        var mOrder = orderDao.findById(id).get()
+
+        if (mOrder.status in listOf(
+                        OrderStatus.DONE.data,
+                        mOrder.status == OrderStatus.CANCEL.data,
+                        mOrder.status == OrderStatus.EXECUTED.data,
+                        mOrder.status == OrderStatus.EXECUTING.data
+                ))
+            return errorResponse(HttpStatus.METHOD_NOT_ALLOWED, "U cannot update order cause order in status ${mOrder.status}")
+
+        if (!executor.isExecutor)
+            return errorResponse(HttpStatus.NOT_FOUND, "No found executor")
+
+        if (myUser.isExecutor && mOrder.executor != null)
+            return errorResponse(HttpStatus.METHOD_NOT_ALLOWED, "You cannot be executor cause executor already exist")
+
+        if (myUser.isPartner && mOrder.executor != null && mOrder.app.partner.id != myUser.id)
+            return errorResponse(HttpStatus.METHOD_NOT_ALLOWED, "You cannot set executor cause executor already exist")
+
+        if (myUser.isPartner && executor.partnerID != myUser.id)
+            return errorResponse(HttpStatus.METHOD_NOT_ALLOWED, "You dont have permission for this executor")
+
+        if (myUser.isUser)
+            return errorResponse(HttpStatus.METHOD_NOT_ALLOWED, "You dont have permission for this order")
+
+        if (mOrder.executor != null)
+            cancelExecutor(token, id)
+
+        mOrder.executor = executor
+
+        mOrder = orderDao.save(mOrder)
+
+        addHistory(OrderHistoryOperation.SET_EXECUTOR, myUser, mOrder, executor.toJson())
+
+        return ResponseEntity(
+                DataResponse(
+                        success = true,
+                        error = null,
+                        data = mOrder
+                ),
+                HttpStatus.OK
+        )
     }
 
     @PutMapping("/{id}/be/executor")
     fun beExecutor(@RequestHeader(name = Config.tokenParameterName) token: String,
-                    @PathVariable(name = "id") id: String): ResponseEntity<DataResponse<OrderEntity>> {
+                   @PathVariable(name = "id") id: Int): ResponseEntity<DataResponse<OrderEntity>> {
         val myUser = userController.user(token).data as UserEntity
 
         if (!myUser.isExecutor)
@@ -237,182 +290,222 @@ class OrderController(
                             data = null
                     ), HttpStatus.METHOD_NOT_ALLOWED)
 
-        return ResponseEntity(
-                setExecutor(token, id, SetOrderExecutorRequest(name = null, id = myUser.id)),
-                HttpStatus.OK
-        )
+        return setExecutor(token, id, SetOrderExecutorRequest(name = null, id = myUser.id))
     }
 
     @PutMapping("/{id}/cancel/executor")
     fun cancelExecutor(@RequestHeader(name = Config.tokenParameterName) token: String,
-                       @PathVariable(name = "id") id: String): DataResponse<OrderEntity> {
+                       @PathVariable(name = "id") id: Int): ResponseEntity<DataResponse<OrderEntity>> {
 
         val myUser = userController.user(token).data as UserEntity
 
-        val mOrder = get(token, id).data as OrderEntity
-
-        val executorID = when {
-            mOrder.executor != null -> mOrder.executor!!.id
-            mOrder.executorAgent != null -> mOrder.executorAgent!!.id
-            else -> throw ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "No executor found"
-            )
+        if (orderDao.findById(id).isEmpty) {
+            return errorResponse(HttpStatus.NOT_FOUND, "order not exist")
         }
+
+        var mOrder = orderDao.findById(id).get()
+
+        if (mOrder.executor == null)
+            return errorResponse(HttpStatus.NOT_FOUND, "Order not exits executor")
+
+        val executorID = mOrder.executor!!.id
 
         val executor = userController.user(token, executorID)
 
-        if (myUser.isEditor
-                || myUser.isSuperAdmin
-                || myUser.isAdmin
-                || mOrder.app.partner.id == myUser.id
-                || mOrder.executor?.id == myUser.id
-                || mOrder.executorAgent?.id == myUser.id) {
+        if (mOrder.status in listOf(
+                        OrderStatus.DONE.data,
+                        mOrder.status == OrderStatus.CANCEL.data,
+                        mOrder.status == OrderStatus.EXECUTED.data,
+                        mOrder.status == OrderStatus.EXECUTING.data
+                ))
+            return errorResponse(HttpStatus.METHOD_NOT_ALLOWED, "U cannot update order cause order in status ${mOrder.status}")
 
-            if (mOrder.status == OrderStatus.PROCESS.data || mOrder.status == OrderStatus.EXECUTING.data) {
-                mOrder.apply {
-                    this.executor = null
-                    this.executorAgent == null
-                }
+        if (myUser.isSuperAdmin ||
+                myUser.isAdmin ||
+                myUser.isEditor ||
+                (myUser.isPartner && mOrder.app.partner.id == myUser.id) ||
+                (myUser.isExecutor && myUser.id == executorID)) {
 
-                addHistory(OrderHistoryOperation.CANCEL_EXECUTOR, myUser, mOrder, executor.toJson())
-
-                return DataResponse(
-                        data = orderDao.save(mOrder)
-                )
-            } else {
-                throw ResponseStatusException(
-                        HttpStatus.BAD_REQUEST, "U cannot cancel this order"
-                )
+            mOrder.apply {
+                this.executor = null
+                this.executorAgent = null
+                this.status = OrderStatus.PROCESS.data
             }
 
-        }
-        else {
-            throw ResponseStatusException(
-                    HttpStatus.UNAUTHORIZED, "No permission"
+            addHistory(OrderHistoryOperation.CANCEL_EXECUTOR, myUser, mOrder, executor.toJson())
+
+            mOrder = orderDao.save(mOrder)
+
+            return ResponseEntity(
+                    DataResponse(
+                            success = true,
+                            error = null,
+                            data = mOrder
+                    ),
+                    HttpStatus.OK
             )
         }
+
+        return errorResponse(HttpStatus.METHOD_NOT_ALLOWED, "U dont have permission for this order")
     }
 
     @PutMapping("/{id}/status/set/done")
     fun done(@RequestHeader(name = Config.tokenParameterName) token: String,
-             @PathVariable(name = "id") id: String): DataResponse<OrderEntity> {
+             @PathVariable(name = "id") id: Int): ResponseEntity<DataResponse<OrderEntity>> {
         val myUser = userController.user(token).data as UserEntity
 
-        val mOrder = get(token, id).data as OrderEntity
+        if (orderDao.findById(id).isEmpty) {
+            return errorResponse(HttpStatus.NOT_FOUND, "order not exist")
+        }
+
+        var mOrder = orderDao.findById(id).get()
+
+        if (mOrder.status != OrderStatus.EXECUTED.data)
+            return errorResponse(HttpStatus.NOT_FOUND, "Order not executed yet")
 
         if (myUser.isEditor
                 || myUser.isSuperAdmin
                 || myUser.isAdmin
                 || mOrder.app.partner.id == myUser.id) {
-
-            if (mOrder.status != OrderStatus.EXECUTED.data) {
-                throw ResponseStatusException(
-                        HttpStatus.BAD_REQUEST, "Order is not executed yet"
-                )
-            }
 
             mOrder.status = OrderStatus.DONE.data
 
             addHistory(OrderHistoryOperation.CLOSE, myUser, mOrder, "")
 
-            return DataResponse(
-                    data = orderDao.save(mOrder)
+            mOrder = orderDao.save(mOrder)
+
+            cashRepository.circularOrder(mOrder)
+
+            return ResponseEntity(
+                    DataResponse(
+                            success = true,
+                            error = null,
+                            data = mOrder
+                    ),
+                    HttpStatus.OK
             )
 
-        } else {
-            throw ResponseStatusException(
-                    HttpStatus.UNAUTHORIZED, "No permission"
-            )
         }
+
+        return errorResponse(HttpStatus.METHOD_NOT_ALLOWED, "You haven`t permission for this order")
     }
 
     @PutMapping("/{id}/status/set/cancel")
     fun cancel(@RequestHeader(name = Config.tokenParameterName) token: String,
-               @PathVariable(name = "id") id: String): DataResponse<OrderEntity> {
+               @PathVariable(name = "id") id: Int): ResponseEntity<DataResponse<OrderEntity>> {
         val myUser = userController.user(token).data as UserEntity
 
-        val mOrder = get(token, id).data as OrderEntity
+        if (orderDao.findById(id).isEmpty) {
+            return errorResponse(HttpStatus.NOT_FOUND, "order not exist")
+        }
+
+        var mOrder = orderDao.findById(id).get()
+
+        if (mOrder.status == OrderStatus.EXECUTED.data)
+            return errorResponse(HttpStatus.NOT_FOUND, "Order is already executed")
 
         if (myUser.isEditor
                 || myUser.isSuperAdmin
                 || myUser.isAdmin
                 || mOrder.app.partner.id == myUser.id) {
 
-            if (mOrder.status == OrderStatus.PROCESS.data || mOrder.status == OrderStatus.EXECUTING.data) {
-                mOrder.status = OrderStatus.CANCEL.data
+            mOrder.status = OrderStatus.CANCEL.data
 
-                addHistory(OrderHistoryOperation.CANCEL, myUser, mOrder, "")
+            addHistory(OrderHistoryOperation.CANCEL, myUser, mOrder, "")
 
-                return DataResponse(
-                        data = orderDao.save(mOrder)
-                )
-            } else {
-                throw ResponseStatusException(
-                        HttpStatus.BAD_REQUEST, "U cannot cancel this order"
-                )
-            }
+            mOrder = orderDao.save(mOrder)
 
-        } else {
-            throw ResponseStatusException(
-                    HttpStatus.UNAUTHORIZED, "No permission"
+            return ResponseEntity(
+                    DataResponse(
+                            success = true,
+                            error = null,
+                            data = mOrder
+                    ),
+                    HttpStatus.OK
             )
+
         }
+
+        return errorResponse(HttpStatus.METHOD_NOT_ALLOWED, "You haven`t permission for this order")
     }
 
     @PutMapping("/{id}/status/set/executed")
     fun executed(@RequestHeader(name = Config.tokenParameterName) token: String,
-                 @PathVariable(name = "id") id: String): DataResponse<OrderEntity> {
+                 @PathVariable(name = "id") id: Int): ResponseEntity<DataResponse<OrderEntity>> {
         val myUser = userController.user(token).data as UserEntity
 
-        val mOrder = get(token, id).data as OrderEntity
+        if (orderDao.findById(id).isEmpty) {
+            return errorResponse(HttpStatus.NOT_FOUND, "order not exist")
+        }
 
-        if (mOrder.executor?.id == myUser.id || mOrder.executorAgent?.id == myUser.id) {
+        var mOrder = orderDao.findById(id).get()
 
-            if (mOrder.status != OrderStatus.EXECUTING.data) {
-                throw ResponseStatusException(
-                        HttpStatus.BAD_REQUEST, "Order is not executed yet"
-                )
-            }
+        if (mOrder.status != OrderStatus.EXECUTING.data)
+            return errorResponse(HttpStatus.NOT_FOUND, "Order is not executing yet")
+
+        if (myUser.isEditor
+                || myUser.isSuperAdmin
+                || myUser.isAdmin
+                || mOrder.executor?.id == myUser.id) {
 
             mOrder.status = OrderStatus.EXECUTED.data
 
             addHistory(OrderHistoryOperation.EXECUTED, myUser, mOrder, "")
 
-            return DataResponse(
-                    data = orderDao.save(mOrder)
+            mOrder = orderDao.save(mOrder)
+
+            return ResponseEntity(
+                    DataResponse(
+                            success = true,
+                            error = null,
+                            data = mOrder
+                    ),
+                    HttpStatus.OK
             )
 
-        } else {
-            throw ResponseStatusException(
-                    HttpStatus.UNAUTHORIZED, "No permission"
-            )
         }
+
+        return errorResponse(HttpStatus.METHOD_NOT_ALLOWED, "You haven`t permission for this order")
     }
 
     @PutMapping("/{id}/status/set/executing")
     fun executing(@RequestHeader(name = Config.tokenParameterName) token: String,
-                  @PathVariable(name = "id") id: String): DataResponse<OrderEntity> {
+                  @PathVariable(name = "id") id: Int): ResponseEntity<DataResponse<OrderEntity>> {
         val myUser = userController.user(token).data as UserEntity
 
-        val mOrder = get(token, id).data as OrderEntity
+        if (orderDao.findById(id).isEmpty) {
+            return errorResponse(HttpStatus.NOT_FOUND, "order not exist")
+        }
 
-        if (mOrder.executor?.id == myUser.id || mOrder.executorAgent?.id == myUser.id) {
+        var mOrder = orderDao.findById(id).get()
+
+        if (mOrder.status != OrderStatus.PROCESS.data)
+            return errorResponse(HttpStatus.NOT_FOUND, "Order is not executing yet")
+
+        if (myUser.isEditor
+                || myUser.isSuperAdmin
+                || myUser.isAdmin
+                || mOrder.executor?.id == myUser.id) {
 
             mOrder.status = OrderStatus.EXECUTING.data
 
             addHistory(OrderHistoryOperation.EXECUTING, myUser, mOrder, "")
 
-            return DataResponse(
-                    data = orderDao.save(mOrder)
+            mOrder = orderDao.save(mOrder)
+
+            return ResponseEntity(
+                    DataResponse(
+                            success = true,
+                            error = null,
+                            data = mOrder
+                    ),
+                    HttpStatus.OK
             )
 
-        } else {
-            throw ResponseStatusException(
-                    HttpStatus.UNAUTHORIZED, "No permission"
-            )
         }
-    }
 
+        return errorResponse(HttpStatus.METHOD_NOT_ALLOWED, "You haven`t permission for this order")
+    }
 
     private fun addHistory(operation: OrderHistoryOperation,
                            user: UserEntity,
@@ -430,3 +523,12 @@ class OrderController(
 }
 
 fun Any.toJson() = this.toString()
+
+fun <T> errorResponse(status: HttpStatus, error: String) = ResponseEntity(
+        DataResponse<T>(
+                success = false,
+                error = error,
+                data = null
+        ),
+        status
+)

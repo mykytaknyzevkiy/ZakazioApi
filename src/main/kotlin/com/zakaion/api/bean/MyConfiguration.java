@@ -1,4 +1,4 @@
-package com.zakaion.api;
+package com.zakaion.api.bean;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

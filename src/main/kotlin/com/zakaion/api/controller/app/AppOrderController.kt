@@ -1,6 +1,6 @@
 package com.zakaion.api.controller.app
 
-import com.zakaion.api.Config
+import com.zakaion.api.unit.Config
 import com.zakaion.api.controller.reponse.DataResponse
 import com.zakaion.api.dao.OrderDao
 import com.zakaion.api.entity.AppEntity
@@ -9,10 +9,8 @@ import com.zakaion.api.entity.OrderStatus
 import com.zakaion.api.entity.UserEntity
 import com.zakaion.api.repository.CategoryRepository
 import com.zakaion.api.repository.UserRepository
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.*
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.client.RestTemplate
 import org.springframework.web.server.ResponseStatusException
 import java.util.*
 

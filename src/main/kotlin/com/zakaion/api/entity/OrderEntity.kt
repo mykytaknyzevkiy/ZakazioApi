@@ -14,9 +14,8 @@ import javax.persistence.*
 @Table(name = "order_n")
 data class OrderEntity(
         @Id
-        @GeneratedValue(generator="system-uuid")
-        @GenericGenerator(name="system-uuid", strategy = "uuid")
-        val id: String = "",
+        @GeneratedValue
+        val id: Int = 0,
         @OneToOne
        // @JoinColumn(name = "app_id", nullable = false)
         var app: AppEntity,

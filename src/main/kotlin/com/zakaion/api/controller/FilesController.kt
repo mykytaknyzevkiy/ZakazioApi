@@ -1,6 +1,6 @@
 package com.zakaion.api.controller
 
-import com.zakaion.api.Config
+import com.zakaion.api.unit.Config
 import com.zakaion.api.repository.StorageService
 import org.springframework.core.io.Resource
 import org.springframework.http.HttpHeaders

@@ -1,5 +1,6 @@
-package com.zakaion.api
+package com.zakaion.api.bean
 
+import com.zakaion.api.ZakazioApplication
 import org.springframework.boot.builder.SpringApplicationBuilder
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 
