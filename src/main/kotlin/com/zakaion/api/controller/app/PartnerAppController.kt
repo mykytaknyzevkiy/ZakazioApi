@@ -32,7 +32,7 @@ class PartnerAppController(
         val myUser = partnerController.user(token).data as UserEntity
 
         return DataResponse(
-                data = appRepository.create(myUser.id, appRequestBody.title, appRequestBody.secret)
+                data = appRepository.create(myUser.id, appRequestBody.secret, appRequestBody.title)
         )
     }
 

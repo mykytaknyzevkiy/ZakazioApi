@@ -12,5 +12,5 @@ data class MoneyCircularEntity(
         val fromExecutor: Int = 15,
         val executorPartner: Int = 6,
         val orderPartner: Int = 6,
-        val project: Int = 0
+        val project: Int = 3
 )

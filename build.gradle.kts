@@ -46,6 +46,12 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-test") {
 		exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
 	}
+
+	implementation("org.springframework.boot:spring-boot-starter-security")
+	implementation("io.jsonwebtoken:jjwt-api:0.11.1")
+	providedRuntime("io.jsonwebtoken:jjwt-impl:0.11.1")
+	providedRuntime("io.jsonwebtoken:jjwt-jackson:0.11.1")
+
 }
 
 tasks.withType<Test> {
