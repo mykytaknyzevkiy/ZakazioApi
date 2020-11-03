@@ -2,6 +2,7 @@ package com.zakaion.api.bean
 
 import com.zakaion.api.exception.NoPermittedMethod
 import com.zakaion.api.exception.NotFound
+import com.zakaion.api.exception.WrongPassword
 import com.zakaion.api.model.DataResponse
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -39,4 +40,16 @@ class ThrowResponse : ResponseEntityExceptionHandler() {
         return responseEntity
     }
 
+    @ExceptionHandler(WrongPassword::class)
+    fun handlerWrongPassword(ex: Exception, request: WebRequest): ResponseEntity<DataResponse<Nothing?>> {
+        val responseEntity = ResponseEntity(
+                DataResponse(
+                        success = false,
+                        error = "Wrong password",
+                        data = null
+                ),
+                HttpStatus.UNAUTHORIZED
+        )
+        return responseEntity
+    }
 }

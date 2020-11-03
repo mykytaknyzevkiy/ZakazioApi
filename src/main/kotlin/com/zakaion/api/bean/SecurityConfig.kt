@@ -9,7 +9,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 
-
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 class SecurityConfig(private val authTokenService: AuthTokenService) : WebSecurityConfigurerAdapter() {
@@ -21,8 +20,7 @@ class SecurityConfig(private val authTokenService: AuthTokenService) : WebSecuri
                 .and()
                 .authorizeRequests()
                 .mvcMatchers(
-                        "/users",
-                        "/users/login"
+                        "/user/login"
                 ).permitAll()
                 .anyRequest().authenticated()
                 .and()

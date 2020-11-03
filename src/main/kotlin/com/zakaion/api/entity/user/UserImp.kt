@@ -1,5 +1,7 @@
 package com.zakaion.api.entity.user
 
+import com.fasterxml.jackson.annotation.JsonProperty
+
 interface UserImp {
     val id: Long
     val firstName: String
@@ -7,6 +9,7 @@ interface UserImp {
     val middleName: String
     val email: String
     val phoneNumber: String
+
     val password: String
 
     val role: RoleType

@@ -29,7 +29,7 @@ class JwtAuthenticationFilter(private val tokenService: AuthTokenService) : Once
             return
         }
 
-        val grantees = arrayListOf<GrantedAuthority>(SimpleGrantedAuthority(user.role.name))
+        val grantees = arrayListOf<GrantedAuthority>(SimpleGrantedAuthority(user.role.data))
 
         val userPasswordToken = UsernamePasswordAuthenticationToken(user, null, grantees)
     }
