@@ -27,7 +27,7 @@ allOpen {
 }
 
 group = "com.zakaion"
-version = "0.0.4-SNAPSHOT"
+version = "1.0.0"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {
@@ -36,18 +36,20 @@ repositories {
 
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+
 	implementation("org.springframework.boot:spring-boot-starter-web")
+
 	implementation( "mysql:mysql-connector-java:8.0.21")
 	runtimeOnly ("mysql:mysql-connector-java")
+
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
-	testImplementation("org.springframework.boot:spring-boot-starter-test") {
-		exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
-	}
 
 	implementation("org.springframework.boot:spring-boot-starter-security")
+
 	implementation("io.jsonwebtoken:jjwt-api:0.11.1")
 	providedRuntime("io.jsonwebtoken:jjwt-impl:0.11.1")
 	providedRuntime("io.jsonwebtoken:jjwt-jackson:0.11.1")

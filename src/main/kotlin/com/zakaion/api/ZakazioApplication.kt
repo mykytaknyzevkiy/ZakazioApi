@@ -9,7 +9,6 @@ import org.springframework.web.client.RestTemplate
 
 
 @SpringBootApplication
-//@EnableConfigurationProperties(StorageProperties.class)
 class ZakazioApplication
 
 fun main(args: Array<String>) {
@@ -22,9 +21,4 @@ fun init(storageService: StorageService): CommandLineRunner? {
 		//storageService.deleteAll()
 		storageService.init()
 	}
-}
-
-@Bean
-fun restTemplate(): RestTemplate {
-	return RestTemplate()
 }

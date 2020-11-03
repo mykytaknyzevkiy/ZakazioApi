@@ -1,7 +1,6 @@
 package com.zakaion.api.dao
 
-import com.zakaion.api.entity.UserEntity
+import com.zakaion.api.entity.user.UserEntity
 import org.springframework.data.repository.CrudRepository
-import org.springframework.data.repository.PagingAndSortingRepository
 
-interface UserDao : PagingAndSortingRepository<UserEntity, String>
+interface UserDao : CrudRepository<UserEntity, Long>
