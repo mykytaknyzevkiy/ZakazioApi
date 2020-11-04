@@ -6,7 +6,6 @@ import com.zakaion.api.entity.user.RoleType
 import com.zakaion.api.entity.user.UserEntity
 import com.zakaion.api.exception.NotFound
 import com.zakaion.api.model.DataResponse
-import com.zakaion.api.roleControllers.CanSuperAdmin
 import com.zakaion.api.roleControllers.CanSuperAdmin_Admin
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -14,22 +13,21 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @CrossOrigin
-@RequestMapping(value = ["admin"])
-class AdminController (private val userDao: UserDao) : BaseController() {
+@RequestMapping(value = ["editor"])
+class EditorController(private val userDao: UserDao) : BaseController() {
 
     @GetMapping("/list")
     @CanSuperAdmin_Admin
     fun list(pageable: Pageable) : DataResponse<Page<UserEntity>> {
-        val data = userDao.findByRole(RoleType.ADMIN, pageable)
         return DataResponse.ok(
-                data
+                userDao.findByRole(RoleType.EDITOR, pageable)
         )
     }
 
     @PostMapping("/add")
-    @CanSuperAdmin
+    @CanSuperAdmin_Admin
     fun add(@RequestBody userEntity: UserEntity) : DataResponse<UserEntity> {
-        val copy = userEntity.copy(role = RoleType.ADMIN)
+        val copy = userEntity.copy(role = RoleType.EDITOR)
 
         return DataResponse.ok(
                 userDao.save(copy)
@@ -37,11 +35,11 @@ class AdminController (private val userDao: UserDao) : BaseController() {
     }
 
     @DeleteMapping("/{id}")
-    @CanSuperAdmin
+    @CanSuperAdmin_Admin
     fun delete(@PathVariable("id") id: Long) : DataResponse<Nothing?> {
         val user = userDao.findById(id).orElseGet { throw NotFound() }
 
-        if (user.role != RoleType.ADMIN)
+        if (user.role != RoleType.EDITOR)
             throw NotFound()
 
         userDao.delete(user)
@@ -51,12 +49,12 @@ class AdminController (private val userDao: UserDao) : BaseController() {
         )
     }
 
-    @CanSuperAdmin_Admin
     @GetMapping("/{id}")
+    @CanSuperAdmin_Admin
     fun get(@PathVariable("id") id: Long) : DataResponse<UserEntity> {
         val user = userDao.findById(id).orElseGet { throw NotFound() }
 
-        if (user.role != RoleType.ADMIN)
+        if (user.role != RoleType.EDITOR)
             throw NotFound()
 
         return DataResponse.ok(

@@ -10,5 +10,5 @@ import static com.zakaion.api.entity.user.RoleTypeKt._SUPER_ADMIN;
 
 @Retention(RetentionPolicy.RUNTIME)
 @PreAuthorize("hasRole('"+ _SUPER_ADMIN +"')")
-public @interface CanAddAdmins {
+public @interface CanSuperAdmin {
 }

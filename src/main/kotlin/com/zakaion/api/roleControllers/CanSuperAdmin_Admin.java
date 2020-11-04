@@ -13,5 +13,5 @@ import static com.zakaion.api.entity.user.RoleTypeKt._SUPER_ADMIN;
 @PreAuthorize("hasRole('"+ _SUPER_ADMIN +"')"
         + " || "
         + "hasRole('"+ _ADMIN +"')")
-public @interface CanViewAdmins {
+public @interface CanSuperAdmin_Admin {
 }
