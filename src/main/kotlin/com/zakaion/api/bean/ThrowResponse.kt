@@ -1,5 +1,6 @@
 package com.zakaion.api.bean
 
+import com.zakaion.api.exception.AlreadyTaken
 import com.zakaion.api.exception.NoPermittedMethod
 import com.zakaion.api.exception.NotFound
 import com.zakaion.api.exception.WrongPassword
@@ -49,6 +50,19 @@ class ThrowResponse : ResponseEntityExceptionHandler() {
                         data = null
                 ),
                 HttpStatus.UNAUTHORIZED
+        )
+        return responseEntity
+    }
+
+    @ExceptionHandler(AlreadyTaken::class)
+    fun handlerAlreadyTaken(ex: Exception, request: WebRequest): ResponseEntity<DataResponse<Nothing?>> {
+        val responseEntity = ResponseEntity(
+                DataResponse(
+                        success = false,
+                        error = "Already taken",
+                        data = null
+                ),
+                HttpStatus.BAD_REQUEST
         )
         return responseEntity
     }

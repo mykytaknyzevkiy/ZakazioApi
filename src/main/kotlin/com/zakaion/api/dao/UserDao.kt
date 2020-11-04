@@ -13,4 +13,9 @@ interface UserDao : PagingAndSortingRepository<UserEntity, Long> {
     @Query(value = "select u from user where u.role = :role", nativeQuery = true)
     fun findByRole(@Param("role") roleType: RoleType, pageable: Pageable) : Page<UserEntity>
 
+    @Query(value = "select u from user where u.role = :role and u.masterID = :masterID", nativeQuery = true)
+    fun findByRoleMasterID(@Param("role") roleType: RoleType,
+                           @Param("masterID") masterID: Long,
+                           pageable: Pageable) : Page<UserEntity>
+
 }

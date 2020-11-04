@@ -53,4 +53,39 @@ class AuthTokenService (private val userDao: UserDao) {
         }
     }
 
+    fun generatePhoneToken(phoneNumber: String, smsCode: String): String {
+        val expirationTime = Instant.now().plus(1, ChronoUnit.HOURS)
+        val expirationDate: Date = Date.from(expirationTime)
+
+        val key: Key = Keys.hmacShaKeyFor(JWT_SECRET.toByteArray())
+
+        return Jwts.builder()
+                .claim("phone_number", phoneNumber)
+                .claim("sms_code", smsCode)
+                .setExpiration(expirationDate)
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact()
+    }
+
+    fun parsePhoneToken(token: String): Pair<String, String>? {
+        val secretBytes = JWT_SECRET.toByteArray()
+
+        try {
+            val jwsClaims = Jwts.parserBuilder()
+                    .setSigningKey(secretBytes)
+                    .build()
+                    .parseClaimsJws(token)
+
+            val phoneNumber = jwsClaims.body
+                    .get("phone_number", String::class.java)
+
+            val smsCode = jwsClaims.body
+                    .get("sms_code", String::class.java)
+
+            return Pair(phoneNumber, smsCode)
+        } catch (e: Exception) {
+            return null
+        }
+    }
+
 }

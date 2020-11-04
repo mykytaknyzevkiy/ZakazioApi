@@ -8,6 +8,7 @@ import com.zakaion.api.model.DataResponse
 import com.zakaion.api.model.LoginModel
 import com.zakaion.api.model.TokenModel
 import com.zakaion.api.service.AuthTokenService
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -25,6 +26,18 @@ class UserController(private val userDao: UserDao,
                 TokenModel(
                         authTokenService.generateToken(user)
                 )
+        )
+    }
+
+    @GetMapping("/")
+    fun get(): DataResponse<UserEntity> {
+        val user = SecurityContextHolder
+                .getContext()
+                .authentication
+                .principal as UserEntity
+
+        return DataResponse.ok(
+                user
         )
     }
 

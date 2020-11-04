@@ -13,8 +13,9 @@ data class UserEntity(@Id override val id: Long,
                       override val email: String,
                       override val phoneNumber: String,
                       @JsonProperty( value = "password", access = JsonProperty.Access.WRITE_ONLY)
-                      override val password: String,
+                      override val password: String = "",
                       @Enumerated override val role: RoleType = RoleType.CLIENT,
                       override val isEmailActive: Boolean,
                       override val isPhoneActive: Boolean,
-                      override val isPassportActive: Boolean) : UserImp
+                      override val isPassportActive: Boolean,
+                      @JsonProperty( value = "masterID", access = JsonProperty.Access.WRITE_ONLY) val masterID: String? = null) : UserImp
