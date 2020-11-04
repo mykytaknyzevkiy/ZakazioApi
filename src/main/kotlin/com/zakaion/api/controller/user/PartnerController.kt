@@ -5,13 +5,12 @@ import com.zakaion.api.dao.UserDao
 import com.zakaion.api.entity.user.RoleType
 import com.zakaion.api.entity.user.UserEntity
 import com.zakaion.api.exception.AlreadyTaken
-import com.zakaion.api.exception.NoPermittedMethod
 import com.zakaion.api.exception.NotFound
 import com.zakaion.api.exception.WrongPassword
 import com.zakaion.api.model.DataResponse
 import com.zakaion.api.model.PhoneRegister
 import com.zakaion.api.model.TokenModel
-import com.zakaion.api.roleControllers.CanSuperAdmin_Admin_Editor_Partner
+import com.zakaion.api.roleControllers.CanSuperAdmin_Admin_Editor
 import com.zakaion.api.service.AuthTokenService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -19,13 +18,13 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @CrossOrigin
-@RequestMapping(value = ["executor"])
-class ExecutorController (private val userDao: UserDao,
-                          private val authTokenService: AuthTokenService,
-                          private val userController: UserController) : BaseController(){
+@RequestMapping(value = ["partner"])
+class PartnerController (private val userDao: UserDao,
+                         private val authTokenService: AuthTokenService,
+                         private val userController: UserController) : BaseController(){
 
     @GetMapping("/list")
-    @CanSuperAdmin_Admin_Editor_Partner
+    @CanSuperAdmin_Admin_Editor
     fun list(pageable: Pageable) : DataResponse<Page<UserEntity>> {
         val myUser = userController.get()
 
@@ -74,7 +73,7 @@ class ExecutorController (private val userDao: UserDao,
 
         var user = userEntity.copy(
                 phoneNumber = phoneNumber,
-                role = RoleType.EXECUTOR,
+                role = RoleType.PARTNER,
                 isPhoneActive = true
         )
 
@@ -88,35 +87,13 @@ class ExecutorController (private val userDao: UserDao,
     }
 
     @DeleteMapping("/{id}")
-    @CanSuperAdmin_Admin_Editor_Partner
+    @CanSuperAdmin_Admin_Editor
     fun delete(@PathVariable("id") id: Long): DataResponse<Nothing?> {
-        val myUser = userController.get().data
-
         val user = userDao.findById(id).orElseGet { throw NotFound() }
-        if (user.role != RoleType.EXECUTOR) throw NotFound()
-        if (myUser.role == RoleType.PARTNER && user.masterID != myUser.masterID) throw NoPermittedMethod()
+        if (user.role != RoleType.PARTNER) throw NotFound()
 
         userDao.delete(user)
 
         return DataResponse.ok(null)
-    }
-
-    @PostMapping("/add")
-    @CanSuperAdmin_Admin_Editor_Partner
-    fun add(@RequestBody userEntity: UserEntity): DataResponse<UserEntity> {
-        val myUser = userController.get().data
-
-        if (userDao.findAll().any { it.phoneNumber == userEntity.phoneNumber || it.email == userEntity.email }) {
-            throw AlreadyTaken()
-        }
-
-        return DataResponse.ok(
-                userDao.save(
-                        userEntity.copy(
-                                role = RoleType.EXECUTOR,
-                                masterID = if (myUser.role == RoleType.PARTNER) myUser.id else null
-                        )
-                )
-        )
     }
 }
