@@ -10,12 +10,15 @@ import org.springframework.data.repository.query.Param
 
 interface UserDao : PagingAndSortingRepository<UserEntity, Long> {
 
-    @Query(value = "select u from user where u.role = :role", nativeQuery = true)
-    fun findByRole(@Param("role") roleType: RoleType, pageable: Pageable) : Page<UserEntity>
+    @Query(value = "select * from user where role = :role", nativeQuery = true)
+    fun findByRole(@Param("role") roleType: Int, pageable: Pageable) : Page<UserEntity>
 
-    @Query(value = "select u from user where u.role = :role and u.masterID = :masterID", nativeQuery = true)
-    fun findByRoleMasterID(@Param("role") roleType: RoleType,
+    @Query(value = "select * from user where role = :role and masterID = :masterID", nativeQuery = true)
+    fun findByRoleMasterID(@Param("role") roleType: Int,
                            @Param("masterID") masterID: Long,
                            pageable: Pageable) : Page<UserEntity>
+
+    @Query(value = "select * from user", nativeQuery = true)
+    fun findByRole(pageable: Pageable) : Page<UserEntity>
 
 }

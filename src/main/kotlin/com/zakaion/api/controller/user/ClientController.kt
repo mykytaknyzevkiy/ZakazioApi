@@ -28,12 +28,8 @@ class ClientController (private val userDao: UserDao,
     @GetMapping("/list")
     @CanSuperAdmin_Admin_Editor_Partner
     fun list(pageable: Pageable) : DataResponse<Page<UserEntity>> {
-        val myUser = userController.get()
 
-        val data = if (myUser.data.role == RoleType.PARTNER)
-            userDao.findByRole(RoleType.CLIENT, pageable)
-        else
-            userDao.findByRoleMasterID(RoleType.CLIENT, myUser.data.id, pageable)
+        val data = userDao.findByRole(RoleType.CLIENT.ordinal, pageable)
 
         return DataResponse.ok(
                 data

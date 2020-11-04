@@ -26,7 +26,9 @@ class SecurityConfig(private val authTokenService: AuthTokenService) : WebSecuri
                         "/executor/register",
                         "/executor/register/phone",
                         "/partner/register",
-                        "/partner/register/phone"
+                        "/partner/register/phone",
+                        "/client/register",
+                        "/client/register/phone"
                 ).permitAll()
                 .anyRequest().authenticated()
                 .and()

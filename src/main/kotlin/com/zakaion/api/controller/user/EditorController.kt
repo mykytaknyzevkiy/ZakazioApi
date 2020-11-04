@@ -20,7 +20,7 @@ class EditorController(private val userDao: UserDao) : BaseController() {
     @CanSuperAdmin_Admin
     fun list(pageable: Pageable) : DataResponse<Page<UserEntity>> {
         return DataResponse.ok(
-                userDao.findByRole(RoleType.EDITOR, pageable)
+                userDao.findByRole(RoleType.EDITOR.ordinal, pageable)
         )
     }
 

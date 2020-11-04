@@ -30,9 +30,9 @@ class ExecutorController (private val userDao: UserDao,
         val myUser = userController.get()
 
         val data = if (myUser.data.role == RoleType.PARTNER)
-            userDao.findByRole(RoleType.EXECUTOR, pageable)
+            userDao.findByRoleMasterID(RoleType.EXECUTOR.ordinal, myUser.data.id, pageable)
         else
-            userDao.findByRoleMasterID(RoleType.EXECUTOR, myUser.data.id, pageable)
+            userDao.findByRole(RoleType.EXECUTOR.ordinal, pageable)
 
         return DataResponse.ok(
                 data

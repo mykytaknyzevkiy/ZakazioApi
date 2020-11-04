@@ -20,7 +20,7 @@ class AdminController (private val userDao: UserDao) : BaseController() {
     @GetMapping("/list")
     @CanSuperAdmin_Admin
     fun list(pageable: Pageable) : DataResponse<Page<UserEntity>> {
-        val data = userDao.findByRole(RoleType.ADMIN, pageable)
+        val data = userDao.findByRole(RoleType.ADMIN.ordinal, pageable)
         return DataResponse.ok(
                 data
         )
