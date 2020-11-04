@@ -17,7 +17,7 @@ class AdminController (private val userDao: UserDao) : BaseController() {
 
     @GetMapping("/list")
     @CanViewAdmins
-    suspend fun list() : DataResponse<List<UserEntity>> {
+    fun list() : DataResponse<List<UserEntity>> {
         return DataResponse.ok(
                 userDao.findAll().filter { it.role == RoleType.ADMIN }
         )
@@ -25,7 +25,7 @@ class AdminController (private val userDao: UserDao) : BaseController() {
 
     @PostMapping("/add")
     @CanAddAdmins
-    suspend fun add(@RequestBody userEntity: UserEntity) : DataResponse<UserEntity> {
+    fun add(@RequestBody userEntity: UserEntity) : DataResponse<UserEntity> {
         val copy = userEntity.copy(role = RoleType.ADMIN)
 
         return DataResponse.ok(
@@ -35,7 +35,7 @@ class AdminController (private val userDao: UserDao) : BaseController() {
 
     @DeleteMapping("/{id}")
     @CanAddAdmins
-    suspend fun delete(@PathVariable("id") id: Long) : DataResponse<Nothing?> {
+    fun delete(@PathVariable("id") id: Long) : DataResponse<Nothing?> {
         val user = userDao.findById(id).orElseGet { throw NotFound() }
 
         userDao.delete(user)

@@ -17,7 +17,7 @@ class UserController(private val userDao: UserDao,
                      private val authTokenService: AuthTokenService) : BaseController() {
 
     @PostMapping("/login")
-    suspend fun login(@RequestBody loginModel: LoginModel): DataResponse<TokenModel> {
+    fun login(@RequestBody loginModel: LoginModel): DataResponse<TokenModel> {
         val user = userDao.findAll().find { it.email == loginModel.email && it.password == loginModel.password }?:
                 throw WrongPassword()
 

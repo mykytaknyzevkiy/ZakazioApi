@@ -11,12 +11,8 @@ plugins {
 }
 
 springBoot {
-	buildInfo {
-		properties {
-			artifact = "app.jar"
-			version = version
-			name = "app"
-		}
+	springBoot {
+		buildInfo()
 	}
 }
 
@@ -46,7 +42,7 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
-	providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
+	providedRuntime("org.springframework.boot:spring-boot-starter-tomcat:2.3.3.RELEASE")
 
 	implementation("org.springframework.boot:spring-boot-starter-security")
 
