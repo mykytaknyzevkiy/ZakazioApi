@@ -7,8 +7,8 @@ import javax.persistence.Id
 data class CategoryEntity(
         @Id
         @GeneratedValue(strategy= GenerationType.AUTO)
-        val id: Long,
-        val name: String,
-        val imageUrl: String? = null,
-        val isActive: Boolean = false
+        val id: Long = 0L,
+        var name: String,
+        var imageUrl: String? = null,
+        var isActive: Boolean = false
 )
