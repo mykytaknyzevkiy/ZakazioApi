@@ -29,9 +29,9 @@ class PartnerController (private val userDao: UserDao,
         val myUser = userController.get()
 
         val data = if (myUser.data.role == RoleType.PARTNER)
-            userDao.findByRole(RoleType.EXECUTOR, pageable)
+            userDao.findByRole(RoleType.PARTNER, pageable)
         else
-            userDao.findByRoleMasterID(RoleType.EXECUTOR, myUser.data.id, pageable)
+            userDao.findByRoleMasterID(RoleType.PARTNER, myUser.data.id, pageable)
 
         return DataResponse.ok(
                 data
