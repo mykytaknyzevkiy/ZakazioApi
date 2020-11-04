@@ -66,6 +66,10 @@ class ExecutorController (private val userDao: UserDao,
 
         val phoneNumber = authTokenService.parsePhoneToken(token)?.first ?: throw WrongPassword()
 
+        if (userDao.findAll().any { it.phoneNumber == phoneNumber || it.email == userEntity.email }) {
+            throw AlreadyTaken()
+        }
+
         var user = userEntity.copy(
                 phoneNumber = phoneNumber,
                 role = RoleType.EXECUTOR,

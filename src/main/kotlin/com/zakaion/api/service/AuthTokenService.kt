@@ -12,13 +12,13 @@ import java.time.temporal.ChronoUnit
 import java.util.*
 
 
-const val JWT_SECRET = "JuliyaILoveU"
+const val JWT_SECRET = "JuliyaILoveULoveLoveLoveLoveLoveNikita"
 
 @Service
 class AuthTokenService (private val userDao: UserDao) {
 
     fun generateToken(user: UserEntity): String {
-        val expirationTime = Instant.now().plus(1, ChronoUnit.YEARS)
+        val expirationTime = Instant.now().plus(100, ChronoUnit.HOURS)
         val expirationDate: Date = Date.from(expirationTime)
 
         val key: Key = Keys.hmacShaKeyFor(JWT_SECRET.toByteArray())
