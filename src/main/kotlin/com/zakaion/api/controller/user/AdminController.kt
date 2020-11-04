@@ -38,10 +38,26 @@ class AdminController (private val userDao: UserDao) : BaseController() {
     fun delete(@PathVariable("id") id: Long) : DataResponse<Nothing?> {
         val user = userDao.findById(id).orElseGet { throw NotFound() }
 
+        if (user.role != RoleType.ADMIN)
+            throw NotFound()
+
         userDao.delete(user)
 
         return DataResponse.ok(
                 null
+        )
+    }
+
+    @CanViewAdmins
+    @GetMapping("/{id}")
+    fun get(@PathVariable("id") id: Long) : DataResponse<UserEntity> {
+        val user = userDao.findById(id).orElseGet { throw NotFound() }
+
+        if (user.role != RoleType.ADMIN)
+            throw NotFound()
+
+        return DataResponse.ok(
+                user
         )
     }
 

@@ -13,8 +13,3 @@ class ZakazioApplication
 fun main(args: Array<String>) {
 	runApplication<ZakazioApplication>(*args)
 }
-
-@Bean
-fun reinstall(buildProperties: BuildProperties) {
-	appVersion = buildProperties.version
-}
