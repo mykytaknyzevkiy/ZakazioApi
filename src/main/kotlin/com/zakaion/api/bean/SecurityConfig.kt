@@ -24,7 +24,9 @@ class SecurityConfig(private val authTokenService: AuthTokenService) : WebSecuri
                 .mvcMatchers(
                         "/user/login",
                         "/executor/register",
-                        "/executor/register/phone"
+                        "/executor/register/phone",
+                        "/partner/register",
+                        "/partner/register/phone"
                 ).permitAll()
                 .anyRequest().authenticated()
                 .and()

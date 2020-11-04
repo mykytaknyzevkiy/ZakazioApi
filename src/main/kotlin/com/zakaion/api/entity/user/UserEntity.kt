@@ -1,12 +1,12 @@
 package com.zakaion.api.entity.user
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import javax.persistence.Entity
-import javax.persistence.Enumerated
-import javax.persistence.Id
+import javax.persistence.*
 
 @Entity(name = "user")
-data class UserEntity(@Id override val id: Long,
+data class UserEntity(@Id
+                      @GeneratedValue(strategy= GenerationType.AUTO)
+                      override val id: Long,
                       override val firstName: String,
                       override val lastName: String,
                       override val middleName: String,
