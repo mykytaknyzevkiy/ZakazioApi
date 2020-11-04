@@ -5,6 +5,8 @@ import com.zakaion.api.dao.UserDao
 import com.zakaion.api.entity.user.RoleType
 import com.zakaion.api.entity.user.UserEntity
 import com.zakaion.api.exception.AlreadyTaken
+import com.zakaion.api.exception.NoPermittedMethod
+import com.zakaion.api.exception.NotFound
 import com.zakaion.api.exception.WrongPassword
 import com.zakaion.api.model.DataResponse
 import com.zakaion.api.model.PhoneRegister
@@ -85,4 +87,17 @@ class ExecutorController (private val userDao: UserDao,
         )
     }
 
+    @DeleteMapping("/{id}")
+    @CanSuperAdmin_Admin_Editor_Partner
+    fun delete(@PathVariable("id") id: Long): DataResponse<Nothing?> {
+        val myUser = userController.get().data
+
+        val user = userDao.findById(id).orElseGet { throw NotFound() }
+        if (user.role != RoleType.EXECUTOR) throw NotFound()
+        if (myUser.role == RoleType.PARTNER && user.masterID != myUser.masterID) throw NoPermittedMethod()
+
+        userDao.delete(user)
+
+        return DataResponse.ok(null)
+    }
 }
