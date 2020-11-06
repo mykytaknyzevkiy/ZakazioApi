@@ -8,10 +8,7 @@ import com.zakaion.api.exception.BadParams
 import com.zakaion.api.exception.NoPermittedMethod
 import com.zakaion.api.exception.NotFound
 import com.zakaion.api.exception.WrongPassword
-import com.zakaion.api.model.DataResponse
-import com.zakaion.api.model.LoginModel
-import com.zakaion.api.model.TokenModel
-import com.zakaion.api.model.UserUpdateModel
+import com.zakaion.api.model.*
 import com.zakaion.api.service.AuthTokenService
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
@@ -94,6 +91,31 @@ class UserController(private val userDao: UserDao,
         val myUser = get().data
 
         return update(update, myUser.id)
+    }
+
+    @PutMapping("/active/phone")
+    fun activePhone(@RequestBody phoneRegister: PhoneRegister) : DataResponse<TokenModel?> {
+        val myUser = get().data
+
+        if (myUser.phoneNumber.isEmpty) throw BadParams()
+
+        if (phoneRegister.smsCode == null || phoneRegister.token == null) {
+            //TODO(Send sms with code)
+            val token = authTokenService.generatePhoneToken(myUser.phoneNumber, "1234")
+
+            return DataResponse.ok(
+                    TokenModel((token))
+            )
+        }
+
+        val decodeTokenData = authTokenService.parsePhoneToken(phoneRegister.token) ?: throw BadParams()
+
+        if (decodeTokenData.first == myUser.phoneNumber && decodeTokenData.second == phoneRegister.smsCode) {
+            myUser.isPhoneActive = true
+            return DataResponse.ok(null)
+        }
+
+        throw WrongPassword()
     }
 
 }
