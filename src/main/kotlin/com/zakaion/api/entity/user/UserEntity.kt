@@ -10,6 +10,7 @@ data class UserEntity(@Id
                       override var firstName: String,
                       override var lastName: String,
                       override var middleName: String,
+                      override var avatar: String? = null,
                       override var email: String,
                       override var phoneNumber: String,
                       @JsonProperty( value = "password", access = JsonProperty.Access.WRITE_ONLY)

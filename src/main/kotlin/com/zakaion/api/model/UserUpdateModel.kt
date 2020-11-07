@@ -1,9 +1,10 @@
 package com.zakaion.api.model
 
 data class UserUpdateModel(
-        var firstName: String? = null,
-        var lastName: String? = null,
-        var middleName: String? = null,
-        var email: String? = null,
-        var phoneNumber: String? = null
+        val firstName: String? = null,
+        val lastName: String? = null,
+        val middleName: String? = null,
+        val email: String? = null,
+        val phoneNumber: String? = null,
+        val avatar: String? = null
 )
