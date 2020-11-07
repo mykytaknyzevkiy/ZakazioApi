@@ -14,7 +14,7 @@ data class UserEntity(@Id
                       override var email: String,
                       override var phoneNumber: String,
                       @JsonProperty( value = "password", access = JsonProperty.Access.WRITE_ONLY)
-                      override val password: String = "",
+                      override var password: String = "",
                       @Enumerated override val role: RoleType = RoleType.CLIENT,
                       override var isEmailActive: Boolean,
                       override var isPhoneActive: Boolean,

@@ -122,6 +122,7 @@ class UserController(private val userDao: UserDao,
 
         if (decodeTokenData.first == myUser.phoneNumber && decodeTokenData.second == phoneRegister.smsCode) {
             myUser.isPhoneActive = true
+            userDao.save(myUser)
             return DataResponse.ok(null)
         }
 
@@ -129,12 +130,12 @@ class UserController(private val userDao: UserDao,
     }
 
     @PutMapping("/active/email")
-    fun activeEmail(@RequestBody phoneRegister: PhoneRegister) : DataResponse<TokenModel?> {
+    fun activeEmail(@RequestBody phoneRegister: EmailRegister) : DataResponse<TokenModel?> {
         val myUser = get().data
 
         if (myUser.email.isEmpty) throw BadParams()
 
-        if (phoneRegister.smsCode == null || phoneRegister.token == null) {
+        if (phoneRegister.code == null || phoneRegister.token == null) {
             //TODO(Send mail with code)
             val token = authTokenService.generatePhoneToken(myUser.email, "1234")
 
@@ -145,12 +146,54 @@ class UserController(private val userDao: UserDao,
 
         val decodeTokenData = authTokenService.parsePhoneToken(phoneRegister.token) ?: throw BadParams()
 
-        if (decodeTokenData.first == myUser.email && decodeTokenData.second == phoneRegister.smsCode) {
+        if (decodeTokenData.first == myUser.email && decodeTokenData.second == phoneRegister.code) {
             myUser.isEmailActive = true
+            userDao.save(myUser)
             return DataResponse.ok(null)
         }
 
         throw WrongPassword()
+    }
+
+    @PostMapping("/reset/password")
+    fun resetPassword(@RequestBody emailRegister: EmailRegister) : DataResponse<TokenModel?> {
+        val user = {userDao.findAll().find { it.email == emailRegister.email } ?: throw NotFound()}.invoke()
+
+        if (emailRegister.code == null || emailRegister.token == null) {
+            //TODO(Send mail with code)
+            val token = authTokenService.generatePhoneToken(user.email, "1234")
+
+            return DataResponse.ok(
+                    TokenModel((token))
+            )
+        }
+
+        val decodeTokenData = authTokenService.parsePhoneToken(emailRegister.token) ?: throw BadParams()
+
+        if (decodeTokenData.first == user.email && decodeTokenData.second == emailRegister.code) {
+            user.isEmailActive = true
+            userDao.save(user)
+
+            //TODO(Send mail with user password)
+
+            return DataResponse.ok(null)
+        }
+
+        throw WrongPassword()
+
+    }
+
+    @PutMapping("/change/password")
+    fun changePassword(@RequestBody changePasswordModel: ChangePasswordModel) : DataResponse<Nothing?> {
+        val myUser = get().data
+
+        if (myUser.password != changePasswordModel.oldPassword) throw WrongPassword()
+
+        myUser.password = changePasswordModel.newPassword
+
+        userDao.save(myUser)
+
+        return DataResponse.ok(null)
     }
 
 }
