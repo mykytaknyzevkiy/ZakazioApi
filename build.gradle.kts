@@ -50,6 +50,10 @@ dependencies {
 	providedRuntime("io.jsonwebtoken:jjwt-impl:0.11.1")
 	providedRuntime("io.jsonwebtoken:jjwt-jackson:0.11.1")
 
+	implementation("com.google.firebase:firebase-server-sdk:3.0.1")
+
+	implementation("eu.bitwalker:UserAgentUtils:1.21")
+
 }
 
 tasks.withType<Test> {

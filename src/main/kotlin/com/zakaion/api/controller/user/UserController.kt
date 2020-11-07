@@ -2,6 +2,8 @@ package com.zakaion.api.controller.user
 
 import com.zakaion.api.controller.BaseController
 import com.zakaion.api.dao.UserDao
+import com.zakaion.api.dao.UserDeviceDao
+import com.zakaion.api.entity.UserDeviceEntity
 import com.zakaion.api.entity.user.RoleType
 import com.zakaion.api.entity.user.UserEntity
 import com.zakaion.api.exception.BadParams
@@ -20,7 +22,8 @@ import java.util.*
 @RequestMapping(value = ["user"])
 class UserController(private val userDao: UserDao,
                      private val authTokenService: AuthTokenService,
-                     private val storageService: StorageService) : BaseController() {
+                     private val storageService: StorageService,
+                     private val userDeviceDao: UserDeviceDao) : BaseController() {
 
     @PostMapping("/login")
     fun login(@RequestBody loginModel: LoginModel): DataResponse<TokenModel> {
@@ -192,6 +195,23 @@ class UserController(private val userDao: UserDao,
         myUser.password = changePasswordModel.newPassword
 
         userDao.save(myUser)
+
+        return DataResponse.ok(null)
+    }
+
+    @PutMapping("/add/device")
+    fun addDevice(@RequestBody deviceRegister: DeviceRegister) : DataResponse<Nothing?> {
+        if (deviceRegister.fcmToken.isEmpty || deviceRegister.name.isEmpty) throw BadParams()
+
+        val myUser = get().data
+
+        userDeviceDao.save(
+                UserDeviceEntity(
+                        name = deviceRegister.name,
+                        user = myUser,
+                        fmcToken = deviceRegister.fcmToken
+                )
+        )
 
         return DataResponse.ok(null)
     }
