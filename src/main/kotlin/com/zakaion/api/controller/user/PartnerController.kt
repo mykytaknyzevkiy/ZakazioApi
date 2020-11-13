@@ -45,14 +45,14 @@ class PartnerController (private val userDao: UserDao,
 
             return DataResponse.ok(
                     TokenModel(
-                            authTokenService.generatePhoneToken(phoneRegister.phoneNumber, "null")
+                            authTokenService.generatePhoneToken(phoneRegister.phoneNumber!!, "null")
                     )
             )
         }
 
         return DataResponse.ok(
                 TokenModel(
-                        authTokenService.generatePhoneToken(phoneRegister.phoneNumber, "1234")
+                        authTokenService.generatePhoneToken(phoneRegister.phoneNumber!!, "1234")
                 )
         )
     }

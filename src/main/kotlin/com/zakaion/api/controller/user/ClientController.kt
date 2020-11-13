@@ -38,7 +38,7 @@ class ClientController (private val userDao: UserDao,
 
     @PostMapping("/register/phone")
     fun registerPhone(@RequestBody phoneRegister: PhoneRegister) : DataResponse<TokenModel> {
-        if (userDao.findAll().any { it.phoneNumber == phoneRegister.phoneNumber })
+        if (userDao.findAll().any { it.phoneNumber == phoneRegister.phoneNumber && it.password.isNotEmpty() })
             throw AlreadyTaken()
 
         if (phoneRegister.token != null && phoneRegister.smsCode != null) {
@@ -47,14 +47,14 @@ class ClientController (private val userDao: UserDao,
 
             return DataResponse.ok(
                     TokenModel(
-                            authTokenService.generatePhoneToken(phoneRegister.phoneNumber, "null")
+                            authTokenService.generatePhoneToken(phoneRegister.phoneNumber!!, "null")
                     )
             )
         }
 
         return DataResponse.ok(
                 TokenModel(
-                        authTokenService.generatePhoneToken(phoneRegister.phoneNumber, "1234")
+                        authTokenService.generatePhoneToken(phoneRegister.phoneNumber!!, "1234")
                 )
         )
     }
@@ -65,7 +65,7 @@ class ClientController (private val userDao: UserDao,
 
         val phoneNumber = authTokenService.parsePhoneToken(token)?.first ?: throw WrongPassword()
 
-        if (userDao.findAll().any { it.phoneNumber == phoneNumber || it.email == userEntity.email }) {
+        if (userDao.findAll().any { (it.phoneNumber == phoneNumber || it.email == userEntity.email) && it.password.isNotEmpty()}) {
             throw AlreadyTaken()
         }
 

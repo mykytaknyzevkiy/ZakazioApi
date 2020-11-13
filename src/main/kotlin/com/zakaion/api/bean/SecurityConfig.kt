@@ -23,6 +23,7 @@ class SecurityConfig(private val authTokenService: AuthTokenService) : WebSecuri
                 .authorizeRequests()
                 .mvcMatchers(
                         "/user/login",
+                        "/user/reset/password",
                         "/executor/register",
                         "/executor/register/phone",
                         "/partner/register",

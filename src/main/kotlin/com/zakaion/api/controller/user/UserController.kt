@@ -59,19 +59,19 @@ class UserController(private val userDao: UserDao,
             val user = userDao.findById(id).orElseGet { throw NotFound() }
 
             if (update.firstName != null)
-                user.firstName = update.firstName!!
+                user.firstName = update.firstName
 
             if (update.lastName != null)
-                user.lastName = update.lastName!!
+                user.lastName = update.lastName
 
             if (update.middleName != null)
-                user.middleName = update.middleName!!
+                user.middleName = update.middleName
 
             if (update.phoneNumber != null) {
                 if (userDao.findAll().any { it.id != user.id && it.phoneNumber == update.phoneNumber })
                     throw BadParams()
 
-                user.phoneNumber = update.phoneNumber!!
+                user.phoneNumber = update.phoneNumber
                 user.isPhoneActive = false
             }
 
