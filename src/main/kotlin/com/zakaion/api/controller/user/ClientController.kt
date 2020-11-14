@@ -14,6 +14,7 @@ import com.zakaion.api.model.TokenModel
 import com.zakaion.api.roleControllers.CanSuperAdmin_Admin_Editor
 import com.zakaion.api.roleControllers.CanSuperAdmin_Admin_Editor_Partner
 import com.zakaion.api.service.AuthTokenService
+import com.zakaion.api.service.SmsService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.web.bind.annotation.*
@@ -23,7 +24,8 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping(value = ["client"])
 class ClientController (private val userDao: UserDao,
                         private val authTokenService: AuthTokenService,
-                        private val userController: UserController) : BaseController(){
+                        private val userController: UserController,
+                        private val smsService: SmsService) : BaseController(){
 
     @GetMapping("/list")
     @CanSuperAdmin_Admin_Editor_Partner
@@ -52,9 +54,13 @@ class ClientController (private val userDao: UserDao,
             )
         }
 
+        val code = "1234"
+
+        smsService.sendCode(phoneNumber = phoneRegister.phoneNumber!!, code = code)
+
         return DataResponse.ok(
                 TokenModel(
-                        authTokenService.generatePhoneToken(phoneRegister.phoneNumber!!, "1234")
+                        authTokenService.generatePhoneToken(phoneRegister.phoneNumber, code)
                 )
         )
     }

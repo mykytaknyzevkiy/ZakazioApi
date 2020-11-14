@@ -1,18 +1,16 @@
 package com.zakaion.api.entity.user
 
-import com.fasterxml.jackson.annotation.JsonProperty
-
 interface UserImp {
     val id: Long
     val firstName: String
     val lastName: String
     val middleName: String
     val avatar: String?
-    val email: String
-    val phoneNumber: String
-    val password: String
+    var email: String?
+    var phoneNumber: String?
     val role: RoleType
     val isEmailActive: Boolean
-    val isPhoneActive: Boolean
+    var isPhoneActive: Boolean
     val isPassportActive: Boolean
+    val masterID: Long?
 }

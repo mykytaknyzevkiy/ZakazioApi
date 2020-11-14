@@ -1,17 +1,21 @@
 package com.zakaion.api.controller.user
 
 import com.zakaion.api.controller.BaseController
+import com.zakaion.api.dao.FeedbackDao
+import com.zakaion.api.dao.OrderDao
 import com.zakaion.api.dao.UserDao
 import com.zakaion.api.dao.UserDeviceDao
 import com.zakaion.api.entity.UserDeviceEntity
 import com.zakaion.api.entity.user.RoleType
 import com.zakaion.api.entity.user.UserEntity
+import com.zakaion.api.entity.user.UserImp
 import com.zakaion.api.exception.BadParams
 import com.zakaion.api.exception.NoPermittedMethod
 import com.zakaion.api.exception.NotFound
 import com.zakaion.api.exception.WrongPassword
 import com.zakaion.api.model.*
 import com.zakaion.api.service.AuthTokenService
+import com.zakaion.api.service.SmsService
 import com.zakaion.api.service.StorageService
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
@@ -23,7 +27,10 @@ import java.util.*
 class UserController(private val userDao: UserDao,
                      private val authTokenService: AuthTokenService,
                      private val storageService: StorageService,
-                     private val userDeviceDao: UserDeviceDao) : BaseController() {
+                     private val userDeviceDao: UserDeviceDao,
+                     private val orderDao: OrderDao,
+                     private val feedbackDao: FeedbackDao,
+                     private val smsService: SmsService) : BaseController() {
 
     @PostMapping("/login")
     fun login(@RequestBody loginModel: LoginModel): DataResponse<TokenModel> {
@@ -37,7 +44,6 @@ class UserController(private val userDao: UserDao,
         )
     }
 
-    @GetMapping("/")
     fun get(): DataResponse<UserEntity> {
         val user = SecurityContextHolder
                 .getContext()
@@ -46,6 +52,27 @@ class UserController(private val userDao: UserDao,
 
         return DataResponse.ok(
                 user
+        )
+    }
+
+    @GetMapping("/")
+    fun getReal(): DataResponse<UserImp> {
+        val user = SecurityContextHolder
+                .getContext()
+                .authentication
+                .principal as UserEntity
+
+        val feedbacks = feedbackDao.findAll().toList()
+        val orders = orderDao.findAll().toList()
+
+        val fullUser =
+                if (user.role == RoleType.EXECUTOR)
+                    user.toExecutor(user, feedbacks, orders)
+                else
+                    user
+
+        return DataResponse.ok(
+                fullUser
         )
     }
 
@@ -110,11 +137,13 @@ class UserController(private val userDao: UserDao,
     fun activePhone(@RequestBody phoneRegister: PhoneRegister) : DataResponse<TokenModel?> {
         val myUser = get().data
 
-        if (myUser.phoneNumber.isEmpty) throw BadParams()
+        if (myUser.phoneNumber.isNullOrEmpty()) throw BadParams()
 
         if (phoneRegister.smsCode == null || phoneRegister.token == null) {
-            //TODO(Send sms with code)
-            val token = authTokenService.generatePhoneToken(myUser.phoneNumber, "1234")
+            val code = "1234"
+            val token = authTokenService.generatePhoneToken(myUser.phoneNumber!!, code)
+
+            smsService.sendCode(myUser.phoneNumber!!, code)
 
             return DataResponse.ok(
                     TokenModel((token))
@@ -136,11 +165,11 @@ class UserController(private val userDao: UserDao,
     fun activeEmail(@RequestBody phoneRegister: EmailRegister) : DataResponse<TokenModel?> {
         val myUser = get().data
 
-        if (myUser.email.isEmpty) throw BadParams()
+        if (myUser.email.isNullOrEmpty()) throw BadParams()
 
         if (phoneRegister.code == null || phoneRegister.token == null) {
             //TODO(Send mail with code)
-            val token = authTokenService.generatePhoneToken(myUser.email, "1234")
+            val token = authTokenService.generatePhoneToken(myUser.email!!, "1234")
 
             return DataResponse.ok(
                     TokenModel((token))
@@ -163,8 +192,10 @@ class UserController(private val userDao: UserDao,
         val user = {userDao.findAll().find { it.email == emailRegister.email } ?: throw NotFound()}.invoke()
 
         if (emailRegister.code == null || emailRegister.token == null) {
+            val code = "1234"
+            val token = authTokenService.generatePhoneToken(user.email!!, code)
+
             //TODO(Send mail with code)
-            val token = authTokenService.generatePhoneToken(user.email, "1234")
 
             return DataResponse.ok(
                     TokenModel((token))

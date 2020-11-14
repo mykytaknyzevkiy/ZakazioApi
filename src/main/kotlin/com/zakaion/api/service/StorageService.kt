@@ -12,7 +12,6 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.streams.toList
 
-
 @Service
 class StorageService {
 
