@@ -1,7 +1,7 @@
 package com.zakaion.api.model
 
-import com.zakaion.api.entity.OrderEntity
-import com.zakaion.api.entity.OrderStatus
+import com.zakaion.api.entity.order.OrderEntity
+import com.zakaion.api.entity.order.OrderStatus
 import com.zakaion.api.service.Preference
 
 data class OrderCount(

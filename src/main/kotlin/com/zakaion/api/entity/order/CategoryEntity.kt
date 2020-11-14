@@ -1,4 +1,4 @@
-package com.zakaion.api.entity
+package com.zakaion.api.entity.order
 
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue

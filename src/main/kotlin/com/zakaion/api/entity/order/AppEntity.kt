@@ -1,4 +1,4 @@
-package com.zakaion.api.entity
+package com.zakaion.api.entity.order
 
 import com.zakaion.api.entity.user.UserEntity
 import javax.persistence.*

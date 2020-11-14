@@ -4,5 +4,6 @@ data class PassportModel(
         val serial: String,
         val number: String,
         val date_begin: String,
-        val files: List<String>
+        val files: List<String>,
+        val taxID: String
 )

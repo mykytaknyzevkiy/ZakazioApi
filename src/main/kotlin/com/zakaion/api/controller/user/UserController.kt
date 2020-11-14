@@ -5,7 +5,7 @@ import com.zakaion.api.dao.FeedbackDao
 import com.zakaion.api.dao.OrderDao
 import com.zakaion.api.dao.UserDao
 import com.zakaion.api.dao.UserDeviceDao
-import com.zakaion.api.entity.UserDeviceEntity
+import com.zakaion.api.entity.user.UserDeviceEntity
 import com.zakaion.api.entity.user.RoleType
 import com.zakaion.api.entity.user.UserEntity
 import com.zakaion.api.entity.user.UserImp

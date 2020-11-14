@@ -1,6 +1,6 @@
 package com.zakaion.api.model
 
-import com.zakaion.api.entity.OrderEntity
+import com.zakaion.api.entity.order.OrderEntity
 
 data class UserOrder(
         val count: OrderCount,

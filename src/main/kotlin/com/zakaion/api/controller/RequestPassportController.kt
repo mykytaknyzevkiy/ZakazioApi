@@ -4,8 +4,8 @@ import com.zakaion.api.controller.user.UserController
 import com.zakaion.api.dao.PassportDao
 import com.zakaion.api.dao.RequestPassportDao
 import com.zakaion.api.dao.UserDao
-import com.zakaion.api.entity.PassportEntity
-import com.zakaion.api.entity.RequestPassportEntity
+import com.zakaion.api.entity.executor.PassportEntity
+import com.zakaion.api.entity.executor.RequestPassportEntity
 import com.zakaion.api.exception.BadParams
 import com.zakaion.api.exception.NotFound
 import com.zakaion.api.model.DataResponse
@@ -50,7 +50,8 @@ class RequestPassportController(
         if (passportModel.date_begin.isEmpty ||
                 passportModel.files.isEmpty() ||
                 passportModel.number.isEmpty ||
-                passportModel.serial.isEmpty)
+                passportModel.serial.isEmpty ||
+                passportModel.taxID.isEmpty)
             throw BadParams()
 
         requestPassportDao
@@ -60,7 +61,8 @@ class RequestPassportController(
                                 number = passportModel.number,
                                 serial = passportModel.serial,
                                 files = passportModel.files,
-                                date_begin = passportModel.date_begin
+                                date_begin = passportModel.date_begin,
+                                taxID = passportModel.taxID
                         )
                 )
 
@@ -80,7 +82,8 @@ class RequestPassportController(
                         serial = requestPassport.serial,
                         number = requestPassport.number,
                         date_begin = requestPassport.date_begin,
-                        files = requestPassport.files
+                        files = requestPassport.files,
+                        taxID = requestPassport.taxID
                 )
         )
 

@@ -1,7 +1,7 @@
 package com.zakaion.api.controller
 
 import com.zakaion.api.dao.CategoryDao
-import com.zakaion.api.entity.CategoryEntity
+import com.zakaion.api.entity.order.CategoryEntity
 import com.zakaion.api.exception.BadParams
 import com.zakaion.api.exception.NotFound
 import com.zakaion.api.model.DataResponse

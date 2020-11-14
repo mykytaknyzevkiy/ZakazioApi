@@ -4,9 +4,9 @@ import com.zakaion.api.controller.BaseController
 import com.zakaion.api.dao.FeedbackDao
 import com.zakaion.api.dao.OrderDao
 import com.zakaion.api.dao.UserDao
-import com.zakaion.api.entity.FeedbackEntity
-import com.zakaion.api.entity.OrderEntity
-import com.zakaion.api.entity.OrderStatus
+import com.zakaion.api.entity.order.FeedbackEntity
+import com.zakaion.api.entity.order.OrderEntity
+import com.zakaion.api.entity.order.OrderStatus
 import com.zakaion.api.entity.user.RoleType
 import com.zakaion.api.entity.user.UserEntity
 import com.zakaion.api.entity.user.UserImp
