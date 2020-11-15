@@ -85,16 +85,39 @@ class ExecutorController (private val userDao: UserDao,
     }
 
     @GetMapping("/list")
-    fun list(pageable: Pageable) : DataResponse<Page<ExecutorInfo>> {
+    fun list(pageable: Pageable, @RequestParam("search", required = false, defaultValue = "null") search: String? = null) : DataResponse<Page<ExecutorInfo>> {
         val myUser = userController.get().data
 
         val orders = orderDao.findAll().toList()
 
         val feedbacks = feedbackDao.findAll().toList()
 
-        val data = userDao.findByRole(RoleType.EXECUTOR.ordinal, pageable).map {user->
-            user.toExecutor(myUser, feedbacks, orders)
-        }
+        val data = (
+                if (search.isNullOrEmpty()) userDao.findByRole(RoleType.EXECUTOR.ordinal, pageable)
+                else userDao.findByRole(RoleType.EXECUTOR.ordinal, search, pageable)
+                ).map {user->
+                    user.toExecutor(myUser, feedbacks, orders)
+                }
+
+        return DataResponse.ok(
+                data
+        )
+    }
+
+    @GetMapping("/list/my")
+    fun listMy(pageable: Pageable, @RequestParam("search", required = false, defaultValue = "null") search: String? = null) : DataResponse<Page<ExecutorInfo>> {
+        val myUser = userController.get().data
+
+        val orders = orderDao.findAll().toList()
+
+        val feedbacks = feedbackDao.findAll().toList()
+
+        val data = (
+                if (search.isNullOrEmpty()) userDao.findByRole(RoleType.EXECUTOR.ordinal, myUser.id, pageable)
+                else userDao.findByRole(RoleType.EXECUTOR.ordinal, myUser.id, search, pageable)
+                ).map {user->
+                    user.toExecutor(myUser, feedbacks, orders)
+                }
 
         return DataResponse.ok(
                 data
