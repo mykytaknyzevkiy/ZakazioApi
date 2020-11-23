@@ -10,7 +10,7 @@ class SmsService {
     }
 
     fun sendCode(phoneNumber: String, code: String) {
-        val msg = Templates.smsCode
+        val msg = Templates.smsAuth
                 .replace(TemplatesValueKey.smsCode, code)
 
         sendMsg(phoneNumber, msg)

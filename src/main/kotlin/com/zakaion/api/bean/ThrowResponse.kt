@@ -33,7 +33,7 @@ class ThrowResponse : ResponseEntityExceptionHandler() {
                         error = "Not found",
                         data = null
                 ),
-                HttpStatus.METHOD_NOT_ALLOWED
+                HttpStatus.NOT_FOUND
         )
         return responseEntity
     }

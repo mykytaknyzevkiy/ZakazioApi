@@ -1,61 +1,46 @@
 package com.zakaion.api.service
 
+import com.zakaion.api.service.Preference.properties
 import java.io.File
 import java.util.*
+import java.util.prefs.Preferences
 
-private val preferenceStoreFile = File("/tmp/preference")
+
+
+
+val preferenceStoreFile = File("nikita.k")
 private val preferenceComment = "Nikita"
 
 object Preference {
+
+    val properties: Preferences = Preferences.userRoot().node(javaClass.name)
 
     var executorMaxOrder: Int
         get() {
             val key = "executorMaxOrder"
 
-            val properties = Properties()
-            properties.load(preferenceStoreFile.inputStream())
-
-            return if (properties.containsKey(key)) {
-                properties[key] as Int
-            } else
-                4
+            return properties.getInt(key, 4)
         }
         set(value) {
             val key = "executorMaxOrder"
 
-            val properties = Properties()
-            properties.load(preferenceStoreFile.inputStream())
-
-            properties[key] = value
-
-            properties.store(preferenceStoreFile.outputStream(), preferenceComment)
+            properties.putInt(key, value)
         }
 
 }
 
 object Templates {
 
-    var smsCode: String
+    var smsAuth: String
         get() {
             val key = "template_sms_code"
 
-            val properties = Properties()
-            properties.load(preferenceStoreFile.inputStream())
-
-            return if (properties.containsKey(key)) {
-                properties[key] as String
-            } else
-                "Ваш код: $smsCode"
+            return properties.get(key, "Ваш код: ${TemplatesValueKey.smsCode}")
         }
         set(value) {
             val key = "template_sms_code"
 
-            val properties = Properties()
-            properties.load(preferenceStoreFile.inputStream())
-
-            properties[key] = value
-
-            properties.store(preferenceStoreFile.outputStream(), preferenceComment)
+            properties.put(key, value)
         }
 
 }
@@ -65,3 +50,5 @@ object TemplatesValueKey {
     val smsCode = "{{sms_code}}"
 
 }
+
+fun Preferences.containsKey(key: String) : Boolean = this.keys().contains(key)

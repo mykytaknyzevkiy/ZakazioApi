@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*
 import java.util.*
 
 @RestController
-@CrossOrigin
+@CrossOrigin()
 @RequestMapping(value = ["user"])
 class UserController(private val userDao: UserDao,
                      private val authTokenService: AuthTokenService,
@@ -189,9 +189,10 @@ class UserController(private val userDao: UserDao,
 
     @PostMapping("/reset/password")
     fun resetPassword(@RequestBody emailRegister: EmailRegister) : DataResponse<TokenModel?> {
-        val user = {userDao.findAll().find { it.email == emailRegister.email } ?: throw NotFound()}.invoke()
 
         if (emailRegister.code == null || emailRegister.token == null) {
+            val user = {userDao.findAll().find { it.email == emailRegister.email } ?: throw NotFound()}.invoke()
+
             val code = "1234"
             val token = authTokenService.generatePhoneToken(user.email!!, code)
 
@@ -203,6 +204,8 @@ class UserController(private val userDao: UserDao,
         }
 
         val decodeTokenData = authTokenService.parsePhoneToken(emailRegister.token) ?: throw BadParams()
+
+        val user = {userDao.findAll().find { it.email == decodeTokenData.first } ?: throw NotFound()}.invoke()
 
         if (decodeTokenData.first == user.email && decodeTokenData.second == emailRegister.code) {
             user.isEmailActive = true

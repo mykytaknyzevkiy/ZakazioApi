@@ -11,16 +11,11 @@ data class OrderEntity(
         @Id
         @GeneratedValue(strategy= GenerationType.AUTO)
         val id: Long = 0L,
-        @Enumerated
-        val status: OrderStatus,
-        @OneToOne
-        val client: UserEntity,
-        @OneToOne
-        val app: AppEntity? = null,
-        @OneToOne
-        val partner: UserEntity? = null,
-        @OneToOne
-        val executor: UserEntity? = null,
+        @Enumerated val status: OrderStatus = OrderStatus.PROCESS,
+        @OneToOne val client: UserEntity,
+        @OneToOne val app: AppEntity? = null,
+        @OneToOne val partner: UserEntity? = null,
+        @OneToOne val executor: UserEntity? = null,
         val content: String,
         val price: Float,
         val dateLine: String,

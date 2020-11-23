@@ -18,9 +18,3 @@ services:
     depends_on:
       - mysql-development
 
-  crm:
-    image: zakazio/crm:latest
-    ports:
-      - 80:80
-    depends_on:
-      - api

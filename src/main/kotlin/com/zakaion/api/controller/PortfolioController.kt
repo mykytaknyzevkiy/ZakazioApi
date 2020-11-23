@@ -27,7 +27,7 @@ class PortfolioController(private val portfolioDao: PortfolioDao,
         val myUser = userController.get().data
 
         return DataResponse.ok(
-                portfolioDao.user(myUser.id)
+                portfolioDao.user(myUser.id, pageable)
         )
     }
 
