@@ -1,5 +1,6 @@
-package com.zakaion.api.controller
+package com.zakaion.api.controller.app
 
+import com.zakaion.api.controller.BaseController
 import com.zakaion.api.controller.user.UserController
 import com.zakaion.api.dao.AppDao
 import com.zakaion.api.dao.UserDao

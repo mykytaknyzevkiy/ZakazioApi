@@ -1,5 +1,6 @@
-package com.zakaion.api.controller
+package com.zakaion.api.controller.category
 
+import com.zakaion.api.controller.BaseController
 import com.zakaion.api.dao.CategoryDao
 import com.zakaion.api.entity.order.CategoryEntity
 import com.zakaion.api.exception.BadParams
