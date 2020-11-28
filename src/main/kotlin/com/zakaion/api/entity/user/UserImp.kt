@@ -5,7 +5,7 @@ interface UserImp {
     val firstName: String
     val lastName: String
     val middleName: String
-    val avatar: String?
+    var avatar: String?
     var email: String?
     var phoneNumber: String?
     val role: RoleType

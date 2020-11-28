@@ -1,6 +1,5 @@
 package com.zakaion.api.dao
 
-import com.zakaion.api.entity.user.RoleType
 import com.zakaion.api.entity.user.UserEntity
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable

@@ -77,4 +77,17 @@ class ThrowResponse : ResponseEntityExceptionHandler() {
         return responseEntity
     }
 
+    @ExceptionHandler(AccessDeniedException::class)
+    fun handlerNoPermittedSecurity(ex: Exception, request: WebRequest): ResponseEntity<DataResponse<Nothing?>> {
+        val responseEntity = ResponseEntity(
+                DataResponse(
+                        success = false,
+                        error = "You don`t have permission for this method",
+                        data = null
+                ),
+                HttpStatus.METHOD_NOT_ALLOWED
+        )
+        return responseEntity
+    }
+
 }

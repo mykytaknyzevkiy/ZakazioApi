@@ -17,18 +17,16 @@ import org.springframework.web.bind.annotation.*
 import java.util.*
 
 @RestController
-@CrossOrigin
+@CrossOrigin(origins = ["*"], maxAge = 3600)
 @RequestMapping(value = ["portfolio"])
 class PortfolioController(private val portfolioDao: PortfolioDao,
                           private val userController: UserController,
                           private val storageService: StorageService) : BaseController() {
 
-    @GetMapping("/list/my")
-    fun list(pageable: Pageable) : DataResponse<Page<PortfolioEntity>> {
-        val myUser = userController.get().data
-
+    @GetMapping("/list/user/{userID}")
+    fun list(pageable: Pageable, @PathVariable("userID") userID: Long) : DataResponse<Page<PortfolioEntity>> {
         return DataResponse.ok(
-                portfolioDao.user(myUser.id, pageable)
+                portfolioDao.user(userID, pageable)
         )
     }
 
@@ -43,7 +41,10 @@ class PortfolioController(private val portfolioDao: PortfolioDao,
                 user = myUser,
                 wallpaper = storageService.store(Base64.getDecoder().decode(addPortfolioModel.wallpaper), "jpg"),
                 label = addPortfolioModel.label,
-                description = addPortfolioModel.description
+                description = addPortfolioModel.description,
+                imageSlides = addPortfolioModel.imageSlides.map {
+                    storageService.store(Base64.getDecoder().decode(it), "jpg")
+                }
         )
 
         return DataResponse.ok(

@@ -7,14 +7,18 @@ import com.zakaion.api.dao.RequestPassportDao
 import com.zakaion.api.dao.UserDao
 import com.zakaion.api.entity.executor.PassportEntity
 import com.zakaion.api.entity.executor.RequestPassportEntity
+import com.zakaion.api.entity.user._Can_SuperAdmin_Admin_Editor
 import com.zakaion.api.exception.BadParams
 import com.zakaion.api.exception.NotFound
 import com.zakaion.api.model.DataResponse
 import com.zakaion.api.model.PassportModel
 import com.zakaion.api.roleControllers.CanSuperAdmin_Admin_Editor
+import com.zakaion.api.service.StorageService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
+import java.util.*
 
 @RestController
 @CrossOrigin
@@ -23,11 +27,12 @@ class RequestPassportController(
         private val userController: UserController,
         private val userDao: UserDao,
         private val requestPassportDao: RequestPassportDao,
-        private val passportDao: PassportDao
+        private val passportDao: PassportDao,
+        private val storageService: StorageService
 ) : BaseController() {
 
     @GetMapping("/list")
-    @CanSuperAdmin_Admin_Editor
+    @PreAuthorize(_Can_SuperAdmin_Admin_Editor)
     fun list(pageable: Pageable) : DataResponse<Page<RequestPassportEntity>> {
         return DataResponse.ok(
                 requestPassportDao.findAll(pageable)
@@ -44,7 +49,7 @@ class RequestPassportController(
         )
     }
 
-    @PostMapping("/")
+    @PostMapping("/add")
     fun add(@RequestBody passportModel: PassportModel) : DataResponse<Nothing?> {
         val myUser = userController.get().data
 
@@ -61,7 +66,9 @@ class RequestPassportController(
                                 user = myUser,
                                 number = passportModel.number,
                                 serial = passportModel.serial,
-                                files = passportModel.files,
+                                files = passportModel.files.map {
+                                    storageService.store(Base64.getDecoder().decode(it), "jpg")
+                                },
                                 date_begin = passportModel.date_begin,
                                 taxID = passportModel.taxID
                         )
@@ -71,7 +78,7 @@ class RequestPassportController(
     }
 
     @PutMapping("/{id}/accept")
-    @CanSuperAdmin_Admin_Editor
+    @PreAuthorize(_Can_SuperAdmin_Admin_Editor)
     fun accept(@PathVariable("id") id: Long) : DataResponse<Nothing?> {
         val requestPassport = requestPassportDao.findById(id).orElseGet {
             throw NotFound()
@@ -102,7 +109,7 @@ class RequestPassportController(
     }
 
     @PutMapping("/{id}/refuse")
-    @CanSuperAdmin_Admin_Editor
+    @PreAuthorize(_Can_SuperAdmin_Admin_Editor)
     fun refuse(@PathVariable("id") id: Long) : DataResponse<Nothing?> {
         val requestPassport = requestPassportDao.findById(id).orElseGet {
             throw NotFound()

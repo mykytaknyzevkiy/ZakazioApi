@@ -23,3 +23,5 @@ const val _PARTNER = "PARTNER"
 const val _AGENT = "AGENT"
 
 const val _CLIENT = "CLIENT"
+
+const val _Can_SuperAdmin_Admin_Editor = "hasRole('$_SUPER_ADMIN') || hasRole('$_ADMIN') || hasRole('$_EDITOR')"

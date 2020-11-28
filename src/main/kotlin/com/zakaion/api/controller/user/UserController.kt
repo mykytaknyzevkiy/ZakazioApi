@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*
 import java.util.*
 
 @RestController
-@CrossOrigin()
+@CrossOrigin(origins = ["*"], maxAge = 3600)
 @RequestMapping(value = ["user"])
 class UserController(private val userDao: UserDao,
                      private val authTokenService: AuthTokenService,
@@ -62,12 +62,9 @@ class UserController(private val userDao: UserDao,
                 .authentication
                 .principal as UserEntity
 
-        val feedbacks = feedbackDao.findAll().toList()
-        val orders = orderDao.findAll().toList()
-
         val fullUser =
                 if (user.role == RoleType.EXECUTOR)
-                    user.toExecutor(user, feedbacks, orders)
+                    user.toExecutor(user, feedbackDao.findAll().toList(), orderDao.findAll().toList())
                 else
                     user
 
@@ -79,7 +76,10 @@ class UserController(private val userDao: UserDao,
     @PutMapping("/{id}/update")
     fun update(@RequestBody update: UserUpdateModel,
                @PathVariable("id") id: Long) : DataResponse<UserEntity> {
-        val myUser = get().data
+        val myUser = SecurityContextHolder
+                .getContext()
+                .authentication
+                .principal as UserEntity
 
         if (myUser.role in arrayOf(RoleType.SUPER_ADMIN, RoleType.ADMIN, RoleType.EDITOR) || myUser.id == id) {
 
@@ -128,7 +128,10 @@ class UserController(private val userDao: UserDao,
 
     @PutMapping("/update")
     fun update(@RequestBody update: UserUpdateModel) : DataResponse<UserEntity> {
-        val myUser = get().data
+        val myUser = SecurityContextHolder
+                .getContext()
+                .authentication
+                .principal as UserEntity
 
         return update(update, myUser.id)
     }

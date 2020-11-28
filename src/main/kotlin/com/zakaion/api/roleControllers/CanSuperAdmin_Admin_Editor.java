@@ -8,7 +8,6 @@ import java.lang.annotation.RetentionPolicy;
 import static com.zakaion.api.entity.user.RoleTypeKt.*;
 import static com.zakaion.api.entity.user.RoleTypeKt._PARTNER;
 
-@Retention(RetentionPolicy.RUNTIME)
 @PreAuthorize("hasRole('"+ _SUPER_ADMIN +"')"
         + " || "
         + "hasRole('"+ _ADMIN +"')"

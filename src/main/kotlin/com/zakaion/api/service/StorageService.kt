@@ -4,6 +4,7 @@ import org.springframework.core.io.Resource
 import org.springframework.core.io.UrlResource
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
+import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.net.MalformedURLException
@@ -40,10 +41,15 @@ class StorageService {
     }
 
     fun store(bytes: ByteArray, format: String): String {
-        val path = System.currentTimeMillis().toString() + "." + format
-        FileOutputStream(path).use { stream -> stream.write(bytes) }
+        val fileName = System.currentTimeMillis().toString() + "." + format
 
-        return path
+        FileOutputStream(fileName).use { stream -> stream.write(bytes) }
+
+        Files.copy(File(fileName).inputStream(), this.root.resolve(fileName))
+
+        File(fileName).delete()
+
+        return fileName
     }
 
     fun delete(filename: String): Boolean {
@@ -64,6 +70,15 @@ class StorageService {
             } else {
                 throw RuntimeException("Could not read the file!")
             }
+        } catch (e: MalformedURLException) {
+            throw RuntimeException("Error: " + e.message)
+        }
+    }
+
+    fun loadAsFile(filename: String): File {
+        return try {
+            val file = root.resolve(filename)
+            file.toFile()
         } catch (e: MalformedURLException) {
             throw RuntimeException("Error: " + e.message)
         }
