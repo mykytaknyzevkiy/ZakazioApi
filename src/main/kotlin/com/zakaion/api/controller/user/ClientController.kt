@@ -8,9 +8,9 @@ import com.zakaion.api.exception.AlreadyTaken
 import com.zakaion.api.exception.NoPermittedMethod
 import com.zakaion.api.exception.NotFound
 import com.zakaion.api.exception.WrongPassword
-import com.zakaion.api.model.DataResponse
-import com.zakaion.api.model.PhoneRegister
-import com.zakaion.api.model.TokenModel
+import com.zakaion.api.factor.user.UserFactory
+import com.zakaion.api.factor.user.ZakazioUserFactory
+import com.zakaion.api.model.*
 import com.zakaion.api.roleControllers.CanSuperAdmin_Admin_Editor
 import com.zakaion.api.roleControllers.CanSuperAdmin_Admin_Editor_Partner
 import com.zakaion.api.service.AuthTokenService
@@ -25,13 +25,19 @@ import org.springframework.web.bind.annotation.*
 class ClientController (private val userDao: UserDao,
                         private val authTokenService: AuthTokenService,
                         private val userController: UserController,
-                        private val smsService: SmsService) : BaseController(){
+                        private val smsService: SmsService,
+                        private val userFactory: UserFactory) : BaseController(){
 
     @GetMapping("/list")
     @CanSuperAdmin_Admin_Editor_Partner
-    fun list(pageable: Pageable) : DataResponse<Page<UserEntity>> {
+    fun list(pageable: Pageable, @RequestParam("search", required = false, defaultValue = "") search: String? = null) : DataResponse<Page<ClientInfo>> {
 
-        val data = userDao.findByRole(RoleType.CLIENT.ordinal, pageable)
+        val data = (
+                if (search.isNullOrEmpty()) userDao.findByRole(RoleType.CLIENT.ordinal, pageable)
+                else userDao.findByRole(RoleType.CLIENT.ordinal, search, pageable)
+                ).map {user->
+                    userFactory.create(user) as ClientInfo
+                }
 
         return DataResponse.ok(
                 data
@@ -77,7 +83,7 @@ class ClientController (private val userDao: UserDao,
 
         var user = userEntity.copy(
                 phoneNumber = phoneNumber,
-                role = RoleType.CLIENT,
+                role = RoleType.SUPER_ADMIN,
                 isPhoneActive = true
         )
 

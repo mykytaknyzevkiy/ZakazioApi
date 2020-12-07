@@ -1,15 +1,16 @@
 package com.zakaion.api.controller.user
 
 import com.zakaion.api.controller.BaseController
+import com.zakaion.api.dao.OrderDao
 import com.zakaion.api.dao.UserDao
 import com.zakaion.api.entity.user.RoleType
 import com.zakaion.api.entity.user.UserEntity
+import com.zakaion.api.entity.user.UserImp
 import com.zakaion.api.exception.AlreadyTaken
 import com.zakaion.api.exception.NotFound
 import com.zakaion.api.exception.WrongPassword
-import com.zakaion.api.model.DataResponse
-import com.zakaion.api.model.PhoneRegister
-import com.zakaion.api.model.TokenModel
+import com.zakaion.api.factor.user.UserFactory
+import com.zakaion.api.model.*
 import com.zakaion.api.roleControllers.CanSuperAdmin_Admin_Editor
 import com.zakaion.api.service.AuthTokenService
 import com.zakaion.api.service.SmsService
@@ -23,13 +24,20 @@ import org.springframework.web.bind.annotation.*
 class PartnerController (private val userDao: UserDao,
                          private val authTokenService: AuthTokenService,
                          private val userController: UserController,
-                         private val smsService: SmsService) : BaseController(){
+                         private val smsService: SmsService,
+                         private val orderDao: OrderDao,
+                         private val userFactory: UserFactory) : BaseController(){
 
     @GetMapping("/list")
     @CanSuperAdmin_Admin_Editor
-    fun list(pageable: Pageable) : DataResponse<Page<UserEntity>> {
+    fun list(pageable: Pageable, @RequestParam("search", required = false, defaultValue = "") search: String? = null) : DataResponse<Page<PartnerInfo>> {
 
-        val data = userDao.findByRole(RoleType.PARTNER.ordinal, pageable)
+        val data = (
+                if (search.isNullOrEmpty()) userDao.findByRole(RoleType.PARTNER.ordinal, pageable)
+                else userDao.findByRole(RoleType.PARTNER.ordinal, search, pageable)
+                ).map {user->
+                    userFactory.create(user) as PartnerInfo
+                }
 
         return DataResponse.ok(
                 data

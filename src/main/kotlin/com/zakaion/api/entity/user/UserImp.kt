@@ -1,5 +1,7 @@
 package com.zakaion.api.entity.user
 
+import com.zakaion.api.entity.region.CityEntity
+
 interface UserImp {
     val id: Long
     val firstName: String
@@ -13,4 +15,5 @@ interface UserImp {
     var isPhoneActive: Boolean
     val isPassportActive: Boolean
     val masterID: Long?
+    var city: CityEntity?
 }

@@ -6,5 +6,6 @@ data class UserUpdateModel(
         val middleName: String? = null,
         val email: String? = null,
         val phoneNumber: String? = null,
-        val avatar: String? = null
+        val avatar: String? = null,
+        val cityID: Long? = null
 )

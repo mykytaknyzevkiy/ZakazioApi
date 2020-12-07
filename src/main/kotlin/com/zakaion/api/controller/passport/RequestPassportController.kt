@@ -40,7 +40,7 @@ class RequestPassportController(
     }
 
     @GetMapping("/{id}")
-    @CanSuperAdmin_Admin_Editor
+    @PreAuthorize(_Can_SuperAdmin_Admin_Editor)
     fun get(@PathVariable("id") id: Long) : DataResponse<RequestPassportEntity> {
         return DataResponse.ok(
                 requestPassportDao.findById(id).orElseGet {
@@ -90,7 +90,9 @@ class RequestPassportController(
                         serial = requestPassport.serial,
                         number = requestPassport.number,
                         date_begin = requestPassport.date_begin,
-                        files = requestPassport.files,
+                        files = requestPassport.files.map {
+                            it
+                        },
                         taxID = requestPassport.taxID
                 )
         )

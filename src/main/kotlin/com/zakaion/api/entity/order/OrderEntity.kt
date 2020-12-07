@@ -1,5 +1,6 @@
 package com.zakaion.api.entity.order
 
+import com.zakaion.api.entity.region.CityEntity
 import com.zakaion.api.entity.user.UserEntity
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
@@ -12,13 +13,19 @@ data class OrderEntity(
         @GeneratedValue(strategy= GenerationType.AUTO)
         val id: Long = 0L,
         @Enumerated val status: OrderStatus = OrderStatus.PROCESS,
+
         @OneToOne val client: UserEntity,
         @OneToOne val app: AppEntity? = null,
         @OneToOne val partner: UserEntity? = null,
         @OneToOne val executor: UserEntity? = null,
+
+        val title: String,
         val content: String,
         val price: Float,
         val dateLine: String,
+
+        @OneToOne val city: CityEntity,
+
         @CreationTimestamp
         @Column(name = "creation_date_time", columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
         val creationDateTime: Date = Date(),

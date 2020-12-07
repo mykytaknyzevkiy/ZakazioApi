@@ -64,7 +64,7 @@ class PortfolioController(private val portfolioDao: PortfolioDao,
             throw NotFound()
         }
 
-        if (myUser.id != portfolioEntity.id
+        if (myUser.id != portfolioEntity.user.id
                 && myUser.role !in arrayOf(RoleType.SUPER_ADMIN, RoleType.ADMIN, RoleType.EDITOR))
             throw NoPermittedMethod()
 
@@ -89,7 +89,7 @@ class PortfolioController(private val portfolioDao: PortfolioDao,
             throw NotFound()
         }
 
-        if (myUser.id != portfolioEntity.id
+        if (myUser.id != portfolioEntity.user.id
                 && myUser.role !in arrayOf(RoleType.SUPER_ADMIN, RoleType.ADMIN, RoleType.EDITOR))
             throw NoPermittedMethod()
 

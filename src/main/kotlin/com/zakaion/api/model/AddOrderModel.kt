@@ -3,9 +3,11 @@ package com.zakaion.api.model
 import com.fasterxml.jackson.annotation.JsonProperty
 
 data class AddOrderModel(
+        val title: String,
         val content: String,
         val price: Float,
         val dateLine: String,
+        val cityID: Long,
 
         val executorID: Long? = null,
 

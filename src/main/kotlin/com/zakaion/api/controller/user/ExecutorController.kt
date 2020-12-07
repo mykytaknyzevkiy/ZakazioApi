@@ -7,19 +7,19 @@ import com.zakaion.api.dao.UserDao
 import com.zakaion.api.entity.order.FeedbackEntity
 import com.zakaion.api.entity.order.OrderEntity
 import com.zakaion.api.entity.order.OrderStatus
-import com.zakaion.api.entity.user.RoleType
-import com.zakaion.api.entity.user.UserEntity
-import com.zakaion.api.entity.user.UserImp
+import com.zakaion.api.entity.user.*
 import com.zakaion.api.exception.AlreadyTaken
 import com.zakaion.api.exception.NoPermittedMethod
 import com.zakaion.api.exception.NotFound
 import com.zakaion.api.exception.WrongPassword
+import com.zakaion.api.factor.user.UserFactory
 import com.zakaion.api.model.*
 import com.zakaion.api.roleControllers.CanSuperAdmin_Admin_Editor_Partner
 import com.zakaion.api.service.AuthTokenService
 import com.zakaion.api.service.SmsService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -30,7 +30,8 @@ class ExecutorController (private val userDao: UserDao,
                           private val userController: UserController,
                           private val feedbackDao: FeedbackDao,
                           private val orderDao: OrderDao,
-                          private val smsService: SmsService) : BaseController(){
+                          private val smsService: SmsService,
+                          private val userFactory: UserFactory) : BaseController(){
 
     @PostMapping("/register/phone")
     fun registerPhone(@RequestBody phoneRegister: PhoneRegister) : DataResponse<TokenModel> {
@@ -85,18 +86,12 @@ class ExecutorController (private val userDao: UserDao,
     }
 
     @GetMapping("/list")
-    fun list(pageable: Pageable, @RequestParam("search", required = false, defaultValue = "null") search: String? = null) : DataResponse<Page<ExecutorInfo>> {
-        val myUser = userController.get().data
-
-        val orders = orderDao.findAll().toList()
-
-        val feedbacks = feedbackDao.findAll().toList()
-
+    fun list(pageable: Pageable, @RequestParam("search", required = false, defaultValue = "") search: String? = null) : DataResponse<Page<ExecutorInfo>> {
         val data = (
                 if (search.isNullOrEmpty()) userDao.findByRole(RoleType.EXECUTOR.ordinal, pageable)
                 else userDao.findByRole(RoleType.EXECUTOR.ordinal, search, pageable)
                 ).map {user->
-                    user.toExecutor(myUser, feedbacks, orders)
+                    userFactory.create(user) as ExecutorInfo
                 }
 
         return DataResponse.ok(
@@ -108,15 +103,11 @@ class ExecutorController (private val userDao: UserDao,
     fun listMy(pageable: Pageable, @RequestParam("search", required = false, defaultValue = "null") search: String? = null) : DataResponse<Page<ExecutorInfo>> {
         val myUser = userController.get().data
 
-        val orders = orderDao.findAll().toList()
-
-        val feedbacks = feedbackDao.findAll().toList()
-
         val data = (
                 if (search.isNullOrEmpty()) userDao.findByRole(RoleType.EXECUTOR.ordinal, myUser.id, pageable)
                 else userDao.findByRole(RoleType.EXECUTOR.ordinal, myUser.id, search, pageable)
                 ).map {user->
-                    user.toExecutor(myUser, feedbacks, orders)
+                    userFactory.create(user) as ExecutorInfo
                 }
 
         return DataResponse.ok(
@@ -126,23 +117,17 @@ class ExecutorController (private val userDao: UserDao,
 
     @GetMapping("/{id}")
     fun executor(@PathVariable("id") id: Long) : DataResponse<ExecutorInfo> {
-        val myUser = userController.get().data
-
-        val orders = orderDao.findAll().toList()
-
-        val feedbacks = feedbackDao.findAll().toList()
-
         val user = userDao.findById(id).orElseGet {
             throw NotFound()
         }
 
         return DataResponse.ok(
-                user.toExecutor(myUser, feedbacks, orders)
+                userFactory.create(user) as ExecutorInfo
         )
     }
 
     @DeleteMapping("/{id}")
-    @CanSuperAdmin_Admin_Editor_Partner
+    @PreAuthorize(_Can_SuperAdmin_Admin_Editor_Partner)
     fun delete(@PathVariable("id") id: Long): DataResponse<Nothing?> {
         val myUser = userController.get().data
 
@@ -156,90 +141,23 @@ class ExecutorController (private val userDao: UserDao,
     }
 
     @PostMapping("/add")
-    @CanSuperAdmin_Admin_Editor_Partner
-    fun add(@RequestBody userEntity: UserEntity): DataResponse<UserEntity> {
+    @PreAuthorize(_Can_SuperAdmin_Admin_Editor_Partner)
+    fun add(@RequestBody userEntity: UserEntity): DataResponse<Nothing?> {
         val myUser = userController.get().data
 
         if (userDao.findAll().any { it.phoneNumber == userEntity.phoneNumber || it.email == userEntity.email }) {
             throw AlreadyTaken()
         }
 
-        return DataResponse.ok(
-                userDao.save(
-                        userEntity.copy(
-                                role = RoleType.EXECUTOR,
-                                masterID = if (myUser.role == RoleType.PARTNER) myUser.id else null
-                        )
+        userDao.save(
+                userEntity.copy(
+                        role = RoleType.EXECUTOR,
+                        masterID = if (myUser.role == RoleType.PARTNER) myUser.id else null
                 )
         )
-    }
-}
 
-fun UserImp.viewHideContacts(myUser: UserEntity?,
-                             allOrders: List<OrderEntity>) {
-    val user = this
-
-    if (myUser?.role in arrayOf(RoleType.SUPER_ADMIN, RoleType.ADMIN, RoleType.EDITOR) ||
-            user.id == myUser?.id ||
-            user.masterID == myUser?.id)
-        return
-
-    val orders = allOrders
-            .filter {
-                user.id in arrayOf(
-                        it.executor?.id,
-                        it.app?.masterID,
-                        it.client.id,
-                        it.partner?.id
-    ) &&
-                        it.status !in arrayOf(
-                        OrderStatus.DONE,
-                        OrderStatus.CANCEL
-                )
-            }
-
-    if (orders.any {(myUser?.id?:-1000) in arrayOf(
-                    it.executor?.id,
-                    it.app?.masterID,
-                    it.client.id,
-                    it.partner?.id) })
-        return
-
-
-    this.apply {
-        phoneNumber = null
-        email = null
-    }
-
-}
-
-fun UserEntity.toExecutor(myUser: UserEntity?,
-                          allFeedbacks: List<FeedbackEntity>,
-                          allOrders: List<OrderEntity>) : ExecutorInfo {
-
-    if (this.role != RoleType.EXECUTOR)
-        throw NotFound()
-
-    return ExecutorInfo(
-            user = this,
-            rate = {
-                val myFeedbacks = allFeedbacks.filter { it.user.id == this.id }
-                if (myFeedbacks.isEmpty()) 0f
-                else {
-                    val stars = {
-                        var num = 0
-                        myFeedbacks.forEach { num += it.stars }
-                        num
-                    }.invoke()
-                    (stars / allFeedbacks.size).toFloat()
-                }
-            }.invoke(),
-            order = UserOrder.create(allOrders.filter { it.executor?.id == this.id }).apply {
-                if (this.enable) {
-                    this.enable = this@toExecutor.isPassportActive && this@toExecutor.isEmailActive && this@toExecutor.isPassportActive
-                }
-            }
-    ).apply {
-        viewHideContacts(myUser, allOrders)
+        return DataResponse.ok(
+                null
+        )
     }
 }

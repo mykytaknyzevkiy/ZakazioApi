@@ -1,10 +1,7 @@
 package com.zakaion.api.controller.user
 
 import com.zakaion.api.controller.BaseController
-import com.zakaion.api.dao.FeedbackDao
-import com.zakaion.api.dao.OrderDao
-import com.zakaion.api.dao.UserDao
-import com.zakaion.api.dao.UserDeviceDao
+import com.zakaion.api.dao.*
 import com.zakaion.api.entity.user.UserDeviceEntity
 import com.zakaion.api.entity.user.RoleType
 import com.zakaion.api.entity.user.UserEntity
@@ -13,6 +10,7 @@ import com.zakaion.api.exception.BadParams
 import com.zakaion.api.exception.NoPermittedMethod
 import com.zakaion.api.exception.NotFound
 import com.zakaion.api.exception.WrongPassword
+import com.zakaion.api.factor.user.UserFactory
 import com.zakaion.api.model.*
 import com.zakaion.api.service.AuthTokenService
 import com.zakaion.api.service.SmsService
@@ -30,7 +28,9 @@ class UserController(private val userDao: UserDao,
                      private val userDeviceDao: UserDeviceDao,
                      private val orderDao: OrderDao,
                      private val feedbackDao: FeedbackDao,
-                     private val smsService: SmsService) : BaseController() {
+                     private val smsService: SmsService,
+                     private val cityDao: CityDao,
+                     private val userFactory: UserFactory) : BaseController() {
 
     @PostMapping("/login")
     fun login(@RequestBody loginModel: LoginModel): DataResponse<TokenModel> {
@@ -55,6 +55,20 @@ class UserController(private val userDao: UserDao,
         )
     }
 
+    @GetMapping("/{userID}")
+    fun user(@PathVariable userID: Long): DataResponse<UserImp> {
+
+        val user = userDao.findById(userID).orElseGet {
+            throw NotFound()
+        }
+
+        val fullUser = userFactory.create(user)
+
+        return DataResponse.ok(
+                fullUser!!
+        )
+    }
+
     @GetMapping("/")
     fun getReal(): DataResponse<UserImp> {
         val user = SecurityContextHolder
@@ -62,14 +76,10 @@ class UserController(private val userDao: UserDao,
                 .authentication
                 .principal as UserEntity
 
-        val fullUser =
-                if (user.role == RoleType.EXECUTOR)
-                    user.toExecutor(user, feedbackDao.findAll().toList(), orderDao.findAll().toList())
-                else
-                    user
+        val fullUser = userFactory.create(user)
 
         return DataResponse.ok(
-                fullUser
+                fullUser!!
         )
     }
 
@@ -117,10 +127,16 @@ class UserController(private val userDao: UserDao,
                 user.avatar = storageService.store(Base64.getDecoder().decode(update.avatar), "jpg")
             }
 
+            if (update.cityID != null) {
+                val city = cityDao.findById(update.cityID).orElseGet {
+                    throw NotFound()
+                }
+                user.city = city
+            }
+
             return DataResponse.ok(
                     userDao.save(user)
             )
-
         }
 
         throw NoPermittedMethod()

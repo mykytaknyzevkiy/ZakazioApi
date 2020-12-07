@@ -1,5 +1,6 @@
 package com.zakaion.api.entity.executor
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.zakaion.api.entity.user.UserEntity
 import javax.persistence.*
 
@@ -9,6 +10,7 @@ data class PassportEntity(
         @GeneratedValue(strategy= GenerationType.AUTO)
         val id: Long = 0L,
         @OneToOne
+        @JsonProperty( value = "user", access = JsonProperty.Access.WRITE_ONLY)
         val user: UserEntity,
         val serial: String,
         val number: String,
