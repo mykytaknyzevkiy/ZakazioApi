@@ -3,9 +3,7 @@ package com.zakaion.api.controller.user
 import com.zakaion.api.controller.BaseController
 import com.zakaion.api.dao.OrderDao
 import com.zakaion.api.dao.UserDao
-import com.zakaion.api.entity.user.RoleType
-import com.zakaion.api.entity.user.UserEntity
-import com.zakaion.api.entity.user.UserImp
+import com.zakaion.api.entity.user.*
 import com.zakaion.api.exception.AlreadyTaken
 import com.zakaion.api.exception.NotFound
 import com.zakaion.api.exception.WrongPassword
@@ -16,6 +14,7 @@ import com.zakaion.api.service.AuthTokenService
 import com.zakaion.api.service.SmsService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -29,7 +28,7 @@ class PartnerController (private val userDao: UserDao,
                          private val userFactory: UserFactory) : BaseController(){
 
     @GetMapping("/list")
-    @CanSuperAdmin_Admin_Editor
+    @PreAuthorize(_Can_SuperAdmin_Admin_Editor)
     fun list(pageable: Pageable, @RequestParam("search", required = false, defaultValue = "") search: String? = null) : DataResponse<Page<PartnerInfo>> {
 
         val data = (
@@ -97,7 +96,7 @@ class PartnerController (private val userDao: UserDao,
     }
 
     @DeleteMapping("/{id}")
-    @CanSuperAdmin_Admin_Editor
+    @PreAuthorize(_Can_SuperAdmin_Admin_Editor)
     fun delete(@PathVariable("id") id: Long): DataResponse<Nothing?> {
         val user = userDao.findById(id).orElseGet { throw NotFound() }
         if (user.role != RoleType.PARTNER) throw NotFound()

@@ -4,6 +4,7 @@ import com.zakaion.api.controller.BaseController
 import com.zakaion.api.dao.UserDao
 import com.zakaion.api.entity.user.RoleType
 import com.zakaion.api.entity.user.UserEntity
+import com.zakaion.api.exception.AlreadyTaken
 import com.zakaion.api.exception.NotFound
 import com.zakaion.api.model.DataResponse
 import com.zakaion.api.roleControllers.CanSuperAdmin_Admin
@@ -28,6 +29,9 @@ class EditorController(private val userDao: UserDao) : BaseController() {
     @CanSuperAdmin_Admin
     fun add(@RequestBody userEntity: UserEntity) : DataResponse<UserEntity> {
         val copy = userEntity.copy(role = RoleType.EDITOR)
+
+        if (userDao.findAll().any { it.phoneNumber == copy.phoneNumber || it.email == copy.email })
+            throw AlreadyTaken()
 
         return DataResponse.ok(
                 userDao.save(copy)

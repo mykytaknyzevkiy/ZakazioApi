@@ -29,7 +29,7 @@ class RegionController(
         )
     }
 
-    @GetMapping("/city/{regionID}/list")
+    @GetMapping("/{regionID}/city/list")
     fun list(pageable: Pageable, @PathVariable("regionID") regionID: Long) : DataResponse<Page<CityEntity>> {
         return DataResponse.ok(
                 cityDao.findAll(regionID, pageable)
@@ -43,7 +43,7 @@ class RegionController(
         )
     }
 
-    @GetMapping("/city/{regionID}/search")
+    @GetMapping("/{regionID}/city/search")
     fun searchRegions(pageable: Pageable,
                       @PathVariable("regionID") regionID: Long,
                       @RequestParam("query") query: String) : DataResponse<Page<CityEntity>> {
@@ -67,7 +67,7 @@ class RegionController(
         return DataResponse.ok(null)
     }
 
-    @PostMapping("/city/{regionID}/add")
+    @PostMapping("/{regionID}/city/add")
     fun addCity(@RequestBody cityModel: CityModel,
                 @PathVariable("regionID") regionID: Long) : DataResponse<Nothing?> {
         if (cityModel.name.isEmpty() || cityModel.postCode <= 0)
@@ -79,6 +79,53 @@ class RegionController(
 
         cityDao.save(
                 CityEntity(
+                        name = cityModel.name,
+                        code = cityModel.postCode,
+                        region = region
+                )
+        )
+
+        return DataResponse.ok(null)
+    }
+
+    @PutMapping("/{regionID}")
+    fun editRegion(@RequestBody cityModel: CityModel,
+                   @PathVariable("regionID") regionID: Long) : DataResponse<Nothing?> {
+
+        if (cityModel.name.isEmpty() || cityModel.postCode <= 0)
+            throw BadParams()
+
+        val region = regionDao.findById(regionID).orElseGet {
+            throw NotFound()
+        }
+
+        regionDao.save(
+                region.copy(
+                        name = cityModel.name,
+                        code = cityModel.postCode
+                )
+        )
+
+        return DataResponse.ok(null)
+    }
+
+    @PutMapping("/{regionID}/city/{cityID}")
+    fun editCity(@RequestBody cityModel: CityModel,
+                 @PathVariable("regionID") regionID: Long,
+                 @PathVariable("cityID") cityID: Long) : DataResponse<Nothing?> {
+        if (cityModel.name.isEmpty() || cityModel.postCode <= 0)
+            throw BadParams()
+
+        val region = regionDao.findById(regionID).orElseGet {
+            throw NotFound()
+        }
+
+        val city = cityDao.findById(cityID).orElseGet {
+            throw NotFound()
+        }
+
+        cityDao.save(
+                city.copy(
                         name = cityModel.name,
                         code = cityModel.postCode,
                         region = region

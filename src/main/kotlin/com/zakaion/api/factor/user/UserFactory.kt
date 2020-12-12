@@ -1,6 +1,6 @@
 package com.zakaion.api.factor.user
 
-import com.zakaion.api.controller.user.UserFullImp
+import com.zakaion.api.factor.UserFullImp
 import com.zakaion.api.dao.FeedbackDao
 import com.zakaion.api.dao.OrderDao
 import com.zakaion.api.dao.PassportDao
@@ -9,21 +9,14 @@ import com.zakaion.api.entity.order.OrderStatus
 import com.zakaion.api.entity.user.RoleType
 import com.zakaion.api.entity.user.UserEntity
 import com.zakaion.api.entity.user.UserImp
+import com.zakaion.api.factor.MFactor
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 
 @Service
 class UserFactory(private val orderDao: OrderDao,
                   private val feedbackDao: FeedbackDao,
-                  private val passportDao: PassportDao) {
-
-    private val myUser: UserEntity
-        get() {
-            return SecurityContextHolder
-                    .getContext()
-                    .authentication
-                    .principal as UserEntity
-        }
+                  private val passportDao: PassportDao) : MFactor() {
 
     fun create(user: UserEntity?): UserImp? {
         if (user == null)
@@ -44,7 +37,7 @@ class UserFactory(private val orderDao: OrderDao,
     }
 
     private fun UserFullImp.viewHideContacts(myUser: UserEntity?,
-                                             allOrders: List<OrderEntity>) {
+                                                                                       allOrders: List<OrderEntity>) {
         val user = this
 
         if (myUser?.role in arrayOf(RoleType.SUPER_ADMIN, RoleType.ADMIN, RoleType.EDITOR) ||

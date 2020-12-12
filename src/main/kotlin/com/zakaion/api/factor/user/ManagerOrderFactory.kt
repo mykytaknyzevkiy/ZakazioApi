@@ -1,6 +1,6 @@
 package com.zakaion.api.factor.user
 
-import com.zakaion.api.controller.user.ManagerUserImp
+import com.zakaion.api.factor.ManagerUserImp
 import com.zakaion.api.dao.OrderDao
 import com.zakaion.api.dao.PassportDao
 import com.zakaion.api.entity.order.OrderEntity

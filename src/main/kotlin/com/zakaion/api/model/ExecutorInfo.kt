@@ -1,7 +1,7 @@
 package com.zakaion.api.model
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.zakaion.api.controller.user.FullOrderClientImp
+import com.zakaion.api.factor.FullOrderClientImp
 import com.zakaion.api.entity.executor.PassportEntity
 import com.zakaion.api.entity.user.UserEntity
 

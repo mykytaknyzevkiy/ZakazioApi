@@ -1,4 +1,4 @@
-package com.zakaion.api.controller.user
+package com.zakaion.api.factor
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.zakaion.api.entity.executor.PassportEntity
