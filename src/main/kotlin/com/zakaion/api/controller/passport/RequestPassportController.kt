@@ -97,10 +97,12 @@ class RequestPassportController(
                 )
         )
 
+        val user = requestPassport.user
+
         requestPassportDao.delete(requestPassport)
 
         userDao.save(
-                requestPassport.user.apply {
+                user.apply {
                     isPassportActive = true
                 }
         )

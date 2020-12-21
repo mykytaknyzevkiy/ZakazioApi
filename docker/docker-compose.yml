@@ -11,26 +11,9 @@ services:
     ports:
       - "3306:3306"
 
-  mysql-development_sms:
-    image: mysql:8.0.17
-    container_name: sms_db
-    environment:
-      MYSQL_ROOT_PASSWORD: k6G1tgJLM9hMXvwR
-      MYSQL_DATABASE: hit_send
-    ports:
-      - "3306:3306"
-
   api:
     image: zakazio/zakazio:latest
     ports:
-    - 8080:8080
+      - 8080:8080
     depends_on:
       - mysql-development
-
-  sms:
-    image: zakazio/hit_send:latest
-    ports:
-      - 8181:8181
-    depends_on:
-      - mysql-development_sms
-

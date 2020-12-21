@@ -21,6 +21,18 @@ object Preference {
             properties.putInt(key, value)
         }
 
+    var feedBackUrl: String
+        get() {
+            val key = "feedBackUrl"
+
+            return properties.get(key, "http://localhost:8282/feedback/${TemplatesValueKey.token}/add")
+        }
+        set(value) {
+            val key = "feedBackUrl"
+
+            properties.put(key, value)
+        }
+
 }
 
 object EmailNotificationPermitted : NotificationPermittedImp() {
@@ -71,6 +83,70 @@ object Templates {
             properties.put(key, value)
         }
 
+    var youExecutorOrder: String
+        get() {
+            val key = "template_you_executor_order"
+
+            return properties.get(key, "Вы стали исполнителем заказа с номером ${TemplatesValueKey.orderID}")
+        }
+        set(value) {
+            val key = "template_you_executor_order"
+
+            properties.put(key, value)
+        }
+
+    var clientHasExecutorOrder: String
+        get() {
+            val key = "template_client_has_executor"
+
+            return properties.get(key, "На ваш заказа с номером ${TemplatesValueKey.orderID} назначен исполнитель ${TemplatesValueKey.user}")
+        }
+        set(value) {
+            val key = "template_client_has_executor"
+
+            properties.put(key, value)
+        }
+
+    var clientOrderInWork: String
+        get() {
+            val key = "template_client_order_in_work"
+
+            return properties.get(key, "Исполнитель вашего заказа с номером ${TemplatesValueKey.orderID} начал работу")
+        }
+        set(value) {
+            val key = "template_client_order_in_work"
+
+            properties.put(key, value)
+        }
+
+    var addExecutorFeedback: String
+        get() {
+            val key = "template_add_executor_feedback"
+
+            return properties.get(key, "Оставьте пожалуйста отзыв про вашего исполнителя " +
+                    "${TemplatesValueKey.user} за проект с номером ${TemplatesValueKey.orderID}" + "\n" +
+                    TemplatesValueKey.url)
+        }
+        set(value) {
+            val key = "template_add_executor_feedback"
+
+            properties.put(key, value)
+        }
+
+    var addClientFeedback: String
+        get() {
+            val key = "template_add_client_feedback"
+
+            return properties.get(key, "Оставьте пожалуйста отзыв про вашего клиента " +
+                    "${TemplatesValueKey.user} за проект с номером ${TemplatesValueKey.orderID}" + "\n" +
+                    TemplatesValueKey.url)
+        }
+        set(value) {
+            val key = "template_add_client_feedback"
+
+            properties.put(key, value)
+        }
+
 }
 
 object TemplatesValueKey {
@@ -83,17 +159,15 @@ object TemplatesValueKey {
 
     val app = "{{app}}"
 
+    val url = "{{url}}"
+
+    val token = "{{toke}}"
 }
 
-
-interface NotificationPermitted {
-    var createOrder: Boolean
-}
-
-abstract class NotificationPermittedImp : NotificationPermitted {
+abstract class NotificationPermittedImp {
     abstract val type : String
 
-    override var createOrder: Boolean
+    var createOrder: Boolean
         get() {
             val key = "${type}_create_order"
 
@@ -101,6 +175,42 @@ abstract class NotificationPermittedImp : NotificationPermitted {
         }
         set(value) {
             val key = "${type}_create_order"
+
+            properties.putBoolean(key, value)
+        }
+
+    var youExecutorOrder: Boolean
+        get() {
+            val key = "${type}_you_executor"
+
+            return properties.getBoolean(key, true)
+        }
+        set(value) {
+            val key = "${type}_you_executor"
+
+            properties.putBoolean(key, value)
+        }
+
+    var clientHasExecutor: Boolean
+        get() {
+            val key = "${type}_client_has_executor"
+
+            return properties.getBoolean(key, true)
+        }
+        set(value) {
+            val key = "${type}_client_has_executor"
+
+            properties.putBoolean(key, value)
+        }
+
+    var clientOrderInWork: Boolean
+        get() {
+            val key = "${type}_client_order_in_work"
+
+            return properties.getBoolean(key, true)
+        }
+        set(value) {
+            val key = "${type}_client_order_in_work"
 
             properties.putBoolean(key, value)
         }

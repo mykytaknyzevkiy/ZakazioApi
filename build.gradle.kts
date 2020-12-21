@@ -23,7 +23,7 @@ allOpen {
 }
 
 group = "com.zakaion"
-version = "1.0.10"
+version = "1.0.15"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {

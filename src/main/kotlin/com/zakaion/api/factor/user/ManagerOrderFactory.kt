@@ -19,19 +19,20 @@ class ManagerOrderFactory(
 
     override fun create(): ManagerUserImp {
         return when (user.role) {
-            RoleType.PARTNER -> user.toPartner(orderDao.findAll().toList())
+            RoleType.PARTNER -> user.toPartner()
             else -> throw BadParams()
         }
     }
 
-    private fun UserEntity.toPartner(allOrders: List<OrderEntity>) : PartnerInfo {
+    private fun UserEntity.toPartner() : PartnerInfo {
+        val orders = orderDao.findUserOrders(this.id).toList()
 
-        if (this.role != RoleType.EXECUTOR)
+        if (this.role != RoleType.PARTNER)
             throw NotFound()
 
         return PartnerInfo(
                 user = this,
-                order = UserOrder.create(allOrders.filter { it.partner?.id == this.id }).apply {
+                order = UserOrder.create(orders).apply {
                     this.enable = this@toPartner.isPassportActive && this@toPartner.isEmailActive && this@toPartner.isPassportActive
                 },
                 passport = passportDao.findAll().find { it.user.id == this.id }

@@ -10,8 +10,12 @@ import com.zakaion.api.entity.user.UserEntity
 import com.zakaion.api.exception.BadParams
 import com.zakaion.api.exception.NoPermittedMethod
 import com.zakaion.api.exception.NotFound
+import com.zakaion.api.factor.user.UserFactory
 import com.zakaion.api.model.AppModel
 import com.zakaion.api.model.DataResponse
+import com.zakaion.api.roleControllers.CanSuperAdmin_Admin_Editor
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.web.bind.annotation.*
 import java.util.*
 
@@ -20,7 +24,8 @@ import java.util.*
 @RequestMapping(value = ["app"])
 class AppController(private val userController: UserController,
                     private val appDao: AppDao,
-                    private val userDao: UserDao) : BaseController() {
+                    private val userDao: UserDao,
+                    private val userFactory: UserFactory) : BaseController() {
 
     @PostMapping("/add")
     fun add(@RequestBody appModel: AppModel) : DataResponse<Nothing?> {
@@ -38,6 +43,26 @@ class AppController(private val userController: UserController,
         )
 
         return DataResponse.ok(null)
+    }
+
+    @GetMapping("/list")
+    @CanSuperAdmin_Admin_Editor
+    fun list(pageable: Pageable) : DataResponse<Page<AppModel>> {
+
+        return DataResponse.ok(
+                appDao.findAll(pageable).map {
+                    it.toResponse(userDao, userFactory.myUser)
+                }
+        )
+    }
+
+    @GetMapping("/list/my")
+    fun listMy(pageable: Pageable) : DataResponse<Page<AppModel>> {
+        return DataResponse.ok(
+                appDao.find(userFactory.myUser.id, pageable).map {
+                    it.toResponse(userDao, userFactory.myUser)
+                }
+        )
     }
 
     @PutMapping("/{id}/update")

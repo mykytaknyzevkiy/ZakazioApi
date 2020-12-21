@@ -21,17 +21,14 @@ class FullOrderClientFactor(user: UserEntity,
 
     override fun create(): FullOrderClientImp {
         return when (user.role) {
-            RoleType.EXECUTOR -> user.toExecutor(feedbackDao.findAll().toList(), orderDao.findAll().toList())
-            RoleType.CLIENT -> user.toClient(feedbackDao.findAll().toList(), orderDao.findAll().toList())
+            RoleType.EXECUTOR -> user.toExecutor(feedbackDao.findAll().toList())
+            RoleType.CLIENT -> user.toClient(feedbackDao.findAll().toList())
             else -> throw BadParams()
         }
     }
 
-    private fun UserEntity.toExecutor(allFeedbacks: List<FeedbackEntity>,
-                                      allOrders: List<OrderEntity>) : ExecutorInfo {
-
-        if (this.role != RoleType.EXECUTOR)
-            throw NotFound()
+    private fun UserEntity.toExecutor(allFeedbacks: List<FeedbackEntity>) : ExecutorInfo {
+        val orders = orderDao.findUserOrders(this.id).toList()
 
         return ExecutorInfo(
                 user = this,
@@ -47,20 +44,16 @@ class FullOrderClientFactor(user: UserEntity,
                         (stars / allFeedbacks.size).toFloat()
                     }
                 }.invoke(),
-                order = UserOrder.create(allOrders.filter { it.executor?.id == this.id }).apply {
-                    if (this.enable) {
-                        this.enable = this@toExecutor.isPassportActive && this@toExecutor.isEmailActive && this@toExecutor.isPassportActive
-                    }
-                },
+                order = UserOrder.create(orders = orders),
                 passport = passportDao.findAll().find { it.user.id == this.id }
-        )
+        ).apply {
+            if (order.enable)
+                order.enable = this.isEmailActive && this.isPassportActive && this.isPhoneActive
+        }
     }
 
-    private fun UserEntity.toClient(allFeedbacks: List<FeedbackEntity>,
-                                    allOrders: List<OrderEntity>) : ClientInfo {
-
-        if (this.role != RoleType.EXECUTOR)
-            throw NotFound()
+    private fun UserEntity.toClient(allFeedbacks: List<FeedbackEntity>) : ClientInfo {
+        val orders = orderDao.findUserOrders(this.id).toList()
 
         return ClientInfo(
                 user = this,
@@ -76,13 +69,11 @@ class FullOrderClientFactor(user: UserEntity,
                         (stars / allFeedbacks.size).toFloat()
                     }
                 }.invoke(),
-                order = UserOrder.create(allOrders.filter { it.executor?.id == this.id }).apply {
-                    if (this.enable) {
-                        this.enable = this@toClient.isPassportActive && this@toClient.isEmailActive && this@toClient.isPassportActive
-                    }
-                },
+                order = UserOrder.create(orders),
                 passport = passportDao.findAll().find { it.user.id == this.id }
-        )
+        ).apply {
+            order.enable = true
+        }
     }
 
 }

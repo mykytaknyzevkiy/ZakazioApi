@@ -45,7 +45,11 @@ class SecurityConfig(private val authTokenService: AuthTokenService) : WebSecuri
                         "/client/register/phone",
 
                         "/file/*",
-                        "/file"
+                        "/file",
+
+                        "/order/list/user/*",
+                        "/executor/list",
+                        "/executor/*"
                 ).permitAll()
                 .anyRequest()
                 .authenticated()

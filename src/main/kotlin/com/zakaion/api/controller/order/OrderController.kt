@@ -9,6 +9,7 @@ import com.zakaion.api.dao.FeedbackDao
 import com.zakaion.api.dao.OrderDao
 import com.zakaion.api.dao.UserDao
 import com.zakaion.api.entity.order.OrderEntity
+import com.zakaion.api.entity.order.OrderStatus
 import com.zakaion.api.entity.user.RoleType
 import com.zakaion.api.entity.user.UserEntity
 import com.zakaion.api.exception.BadParams
@@ -17,14 +18,15 @@ import com.zakaion.api.exception.NotFound
 import com.zakaion.api.factor.OrderFactor
 import com.zakaion.api.factor.user.UserFactory
 import com.zakaion.api.model.*
+import com.zakaion.api.service.AuthTokenService
 import com.zakaion.api.service.NotificationService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import javax.websocket.server.PathParam
+import org.springframework.web.bind.annotation.*
 
+@RestController
+@CrossOrigin
+@RequestMapping(value = ["order"])
 class OrderController(private val orderDao: OrderDao,
                       private val userController: UserController,
                       private val feedbackDao: FeedbackDao,
@@ -34,7 +36,8 @@ class OrderController(private val orderDao: OrderDao,
                       private val cityDao: CityDao,
                       private val userFactory: UserFactory,
                       private val orderFactor: OrderFactor,
-                      private val notificationService: NotificationService) : BaseController() {
+                      private val notificationService: NotificationService,
+                      private val tokenService: AuthTokenService) : BaseController() {
 
     @PostMapping("/add")
     fun add(@RequestBody addOrderModel: AddOrderModel) : DataResponse<Nothing?> {
@@ -124,8 +127,8 @@ class OrderController(private val orderDao: OrderDao,
         return DataResponse.ok(null)
     }
 
-    @GetMapping("/{id}")
-    fun order(@PathParam("id") id: Long) : DataResponse<OrderNModel> {
+    @GetMapping("/{id}/info")
+    fun order(@PathVariable("id") id: Long) : DataResponse<OrderNModel> {
         val order = orderDao.findById(id).orElseGet {
             throw NotFound()
         }
@@ -141,6 +144,167 @@ class OrderController(private val orderDao: OrderDao,
                             orderFactor.create(it)
                         }
         )
+    }
+
+    @GetMapping("/list/user/{userID}")
+    fun list(pageable: Pageable, @PathVariable("userID") userID: Long) : DataResponse<Page<OrderNModel>> {
+        return DataResponse.ok(
+                orderDao.findUserOrders(pageable, userID)
+                        .map {
+                            orderFactor.create(it)
+                        }
+        )
+    }
+
+    @PutMapping("/{id}/be/executor")
+    fun beExecutor(@PathVariable("id") id: Long) : DataResponse<Nothing?> {
+        val order = orderDao.findById(id).orElseGet {
+            throw NotFound()
+        }
+
+        val mOrder = orderFactor.create(order)
+
+        if (!mOrder.beExecutorEnable)
+            throw BadParams()
+
+        val myUser = userFactory.myUser
+
+        val nOrder = orderDao.save(
+                order.copy(
+                        executor = myUser
+                )
+        )
+
+        notificationService.onYouOrderExecutor(nOrder)
+
+        notificationService.onClientHasExecutorOrder(nOrder)
+
+        return DataResponse.ok(null)
+    }
+
+    @PutMapping("/{id}/set/executor/{executorID}")
+    fun setExecutor(@PathVariable("id") id: Long,
+                    @PathVariable("executorID") executorID: Long) : DataResponse<Nothing?> {
+        val order = orderDao.findById(id).orElseGet {
+            throw NotFound()
+        }
+
+        val mOrder = orderFactor.create(order)
+
+        if (!mOrder.setExecutorEnable)
+            throw BadParams()
+
+        if (!mOrder.cancelExecutorEnable && mOrder.executor != null)
+            throw BadParams()
+
+        if (order.executor != null)
+            cancelExecutor(id)
+
+        val executor = userFactory.create(
+                userDao.findById(executorID).orElseGet {
+                    throw NotFound()
+                }
+        ) as ExecutorInfo
+
+        if (!executor.order.enable)
+            throw NoPermittedMethod()
+
+        val nOrder = orderDao.save(
+                order.copy(
+                        executor = executor.user
+                )
+        )
+
+        notificationService.onYouOrderExecutor(nOrder)
+
+        notificationService.onClientHasExecutorOrder(nOrder)
+
+        return DataResponse.ok(null)
+    }
+
+    @PutMapping("/{id}/cancel/executor")
+    fun cancelExecutor(@PathVariable("id") id: Long) : DataResponse<Nothing?> {
+        val order = orderDao.findById(id).orElseGet {
+            throw NotFound()
+        }
+
+        val mOrder = orderFactor.create(order)
+
+        if (!mOrder.cancelExecutorEnable)
+            throw NoPermittedMethod()
+
+        val myUser = userFactory.myUser
+
+        val nOrder = orderDao.save(
+                order.copy(
+                        status = OrderStatus.PROCESS,
+                        executor = null
+                )
+        )
+
+        return DataResponse.ok(null)
+    }
+
+    @PutMapping("/{id}/set/status/work")
+    fun setInWork(@PathVariable("id") id: Long) : DataResponse<Nothing?> {
+        val order = orderDao.findById(id).orElseGet {
+            throw NotFound()
+        }
+
+        val mOrder = orderFactor.create(order)
+
+        if (!mOrder.inWorkEnable)
+            throw BadParams()
+
+        orderDao
+                .save(
+                        order.copy(status = OrderStatus.IN_WORK)
+                )
+
+        notificationService.onClientOrderInWork(order)
+
+        return DataResponse.ok(null)
+    }
+
+    @PutMapping("/{id}/set/status/done")
+    fun setDone(@PathVariable("id") id: Long) : DataResponse<Nothing?> {
+        val order = orderDao.findById(id).orElseGet {
+            throw NotFound()
+        }
+
+        val mOrder = orderFactor.create(order)
+
+        if (!mOrder.doneEnable)
+            throw BadParams()
+
+        orderDao
+                .save(
+                        order.copy(status = OrderStatus.DONE)
+                )
+
+        notificationService.addClientFeedback(order)
+        notificationService.addExecutorFeedback(order)
+
+        return DataResponse.ok(null)
+    }
+
+    @PutMapping("/{id}/set/status/cancel")
+    fun setCancel(@PathVariable("id") id: Long) : DataResponse<Nothing?> {
+        val order = orderDao.findById(id).orElseGet {
+            throw NotFound()
+        }
+
+        val mOrder = orderFactor.create(order)
+
+        if (!mOrder.cancelEnable)
+            throw BadParams()
+
+        orderDao
+                .save(
+                        order.copy(status = OrderStatus.CANCEL)
+                )
+
+        return DataResponse.ok(null)
     }
 
 }

@@ -43,6 +43,13 @@ class RegionController(
         )
     }
 
+    @GetMapping("/city/search")
+    fun searchGlobalSearch(pageable: Pageable, @RequestParam("query") query: String) : DataResponse<Page<CityEntity>> {
+        return DataResponse.ok(
+                cityDao.search(query, pageable)
+        )
+    }
+
     @GetMapping("/{regionID}/city/search")
     fun searchRegions(pageable: Pageable,
                       @PathVariable("regionID") regionID: Long,

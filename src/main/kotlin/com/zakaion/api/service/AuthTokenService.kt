@@ -1,6 +1,7 @@
 package com.zakaion.api.service
 
 import com.zakaion.api.dao.UserDao
+import com.zakaion.api.entity.order.OrderEntity
 import com.zakaion.api.entity.user.UserEntity
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
@@ -84,6 +85,32 @@ class AuthTokenService (private val userDao: UserDao) {
         } catch (e: Exception) {
             return null
         }
+    }
+
+    fun generateFeedbackToken(orderID: Long, userID: Long) : String {
+        val key: Key = Keys.hmacShaKeyFor(JWT_SECRET.toByteArray())
+
+        return Jwts.builder()
+                .claim("orderID", orderID)
+                .claim("userID", userID)
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact()
+    }
+
+    fun parseFeedbackToken(token: String) : Pair<Long, Long> {
+        val secretBytes = JWT_SECRET.toByteArray()
+
+        val jwsClaims = Jwts.parserBuilder()
+                .setSigningKey(secretBytes)
+                .build()
+                .parseClaimsJws(token)
+
+        return Pair(
+                jwsClaims.body
+                        .get("orderID", Long::class.java),
+                jwsClaims.body
+                        .get("userID", Long::class.java)
+        )
     }
 
 }

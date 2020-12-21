@@ -3,6 +3,7 @@ package com.zakaion.api.model
 import com.zakaion.api.entity.order.AppEntity
 import com.zakaion.api.entity.order.OrderStatus
 import com.zakaion.api.entity.region.CityEntity
+import java.util.*
 
 data class OrderNModel(
         val id: Long,
@@ -20,6 +21,8 @@ data class OrderNModel(
         val executor: ExecutorInfo?,
         val partner: PartnerInfo?,
         val app: AppEntity?,
+
+        val creationDate: Date,
 
         var editEnable: Boolean = false,
         var beExecutorEnable: Boolean = false,
