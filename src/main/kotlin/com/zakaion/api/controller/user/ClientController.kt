@@ -7,14 +7,10 @@ import com.zakaion.api.entity.user.UserEntity
 import com.zakaion.api.entity.user._Can_SuperAdmin_Admin_Editor
 import com.zakaion.api.entity.user._Can_SuperAdmin_Admin_Editor_Partner
 import com.zakaion.api.exception.AlreadyTaken
-import com.zakaion.api.exception.NoPermittedMethod
 import com.zakaion.api.exception.NotFound
 import com.zakaion.api.exception.WrongPassword
 import com.zakaion.api.factor.user.UserFactory
-import com.zakaion.api.factor.user.ZakazioUserFactory
 import com.zakaion.api.model.*
-import com.zakaion.api.roleControllers.CanSuperAdmin_Admin_Editor
-import com.zakaion.api.roleControllers.CanSuperAdmin_Admin_Editor_Partner
 import com.zakaion.api.service.AuthTokenService
 import com.zakaion.api.service.SmsService
 import org.springframework.data.domain.Page

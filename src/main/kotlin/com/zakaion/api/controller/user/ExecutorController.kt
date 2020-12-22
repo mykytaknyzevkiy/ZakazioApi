@@ -4,9 +4,6 @@ import com.zakaion.api.controller.BaseController
 import com.zakaion.api.dao.FeedbackDao
 import com.zakaion.api.dao.OrderDao
 import com.zakaion.api.dao.UserDao
-import com.zakaion.api.entity.order.FeedbackEntity
-import com.zakaion.api.entity.order.OrderEntity
-import com.zakaion.api.entity.order.OrderStatus
 import com.zakaion.api.entity.user.*
 import com.zakaion.api.exception.AlreadyTaken
 import com.zakaion.api.exception.NoPermittedMethod
@@ -14,7 +11,6 @@ import com.zakaion.api.exception.NotFound
 import com.zakaion.api.exception.WrongPassword
 import com.zakaion.api.factor.user.UserFactory
 import com.zakaion.api.model.*
-import com.zakaion.api.roleControllers.CanSuperAdmin_Admin_Editor_Partner
 import com.zakaion.api.service.AuthTokenService
 import com.zakaion.api.service.SmsService
 import org.springframework.data.domain.Page

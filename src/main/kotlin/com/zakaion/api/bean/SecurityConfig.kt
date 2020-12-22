@@ -28,6 +28,10 @@ class SecurityConfig(private val authTokenService: AuthTokenService) : WebSecuri
 
     override fun configure(http: HttpSecurity) {
         http
+                .requiresChannel()
+                .anyRequest()
+                .requiresSecure()
+                .and()
                 .cors()
                 .and()
                 .csrf().disable()

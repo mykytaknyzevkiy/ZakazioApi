@@ -1,7 +1,6 @@
 package com.zakaion.api.service
 
 import com.zakaion.api.dao.UserDao
-import com.zakaion.api.entity.order.OrderEntity
 import com.zakaion.api.entity.user.UserEntity
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
@@ -11,7 +10,6 @@ import java.security.Key
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.*
-
 
 const val JWT_SECRET = "JuliyaILoveULoveLoveLoveLoveLoveNikita"
 

@@ -33,6 +33,42 @@ object Preference {
             properties.put(key, value)
         }
 
+    var orderSumOutPercent: Int
+        get() {
+            val key = "orderSumOutPercent"
+
+            return properties.getInt(key, 30)
+        }
+        set(value) {
+            val key = "orderSumOutPercent"
+
+            properties.putInt(key, value)
+        }
+
+    var orderPartnerPercent: Int
+        get() {
+            val key = "orderPartnerPercent"
+
+            return properties.getInt(key, 10)
+        }
+        set(value) {
+            val key = "orderSumOutPercent"
+
+            properties.putInt(key, value)
+        }
+
+    var executorPartnerPercent: Int
+        get() {
+            val key = "executorPartnerPercent"
+
+            return properties.getInt(key, 5)
+        }
+        set(value) {
+            val key = "orderSumOutPercent"
+
+            properties.putInt(key, value)
+        }
+
 }
 
 object EmailNotificationPermitted : NotificationPermittedImp() {

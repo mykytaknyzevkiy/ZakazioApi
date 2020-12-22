@@ -22,8 +22,8 @@ allOpen {
 	annotation("javax.persistence.MappedSuperclass")
 }
 
-group = "com.zakaion"
-version = "1.0.15"
+group = "com.zakazio.api"
+version = "1.0.17"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {

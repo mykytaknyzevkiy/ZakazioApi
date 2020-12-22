@@ -2,6 +2,7 @@ package com.zakaion.api.model
 
 import com.zakaion.api.appVersion
 
+
 data class DataResponse<T>(
         val success: Boolean,
         val error: String?,

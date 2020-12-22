@@ -20,6 +20,7 @@ import com.zakaion.api.factor.user.UserFactory
 import com.zakaion.api.model.*
 import com.zakaion.api.service.AuthTokenService
 import com.zakaion.api.service.NotificationService
+import com.zakaion.api.service.TransactionService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.web.bind.annotation.*
@@ -37,7 +38,8 @@ class OrderController(private val orderDao: OrderDao,
                       private val userFactory: UserFactory,
                       private val orderFactor: OrderFactor,
                       private val notificationService: NotificationService,
-                      private val tokenService: AuthTokenService) : BaseController() {
+                      private val tokenService: AuthTokenService,
+                      private val transactionService: TransactionService) : BaseController() {
 
     @PostMapping("/add")
     fun add(@RequestBody addOrderModel: AddOrderModel) : DataResponse<Nothing?> {
@@ -303,6 +305,21 @@ class OrderController(private val orderDao: OrderDao,
                 .save(
                         order.copy(status = OrderStatus.CANCEL)
                 )
+
+        return DataResponse.ok(null)
+    }
+
+    @PutMapping("/{id}/share/sum/{amount}")
+    fun shareSum(@PathVariable("id") id: Long,
+                 @PathVariable("amount") amount: Float) : DataResponse<Nothing?> {
+        val order = orderDao.findById(id).orElseGet {
+            throw NotFound()
+        }
+
+        if (userFactory.myUser.id != order.executor?.id)
+            throw NoPermittedMethod()
+
+        transactionService.processOrder(order, amount)
 
         return DataResponse.ok(null)
     }

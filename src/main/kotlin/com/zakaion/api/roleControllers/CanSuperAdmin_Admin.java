@@ -1,6 +1,5 @@
 package com.zakaion.api.roleControllers;
 
-import com.zakaion.api.entity.user.RoleType;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.lang.annotation.Retention;

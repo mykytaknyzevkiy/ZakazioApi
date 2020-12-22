@@ -3,7 +3,6 @@ package com.zakaion.api.factor.user
 import com.zakaion.api.factor.ManagerUserImp
 import com.zakaion.api.dao.OrderDao
 import com.zakaion.api.dao.PassportDao
-import com.zakaion.api.entity.order.OrderEntity
 import com.zakaion.api.entity.user.RoleType
 import com.zakaion.api.entity.user.UserEntity
 import com.zakaion.api.exception.BadParams

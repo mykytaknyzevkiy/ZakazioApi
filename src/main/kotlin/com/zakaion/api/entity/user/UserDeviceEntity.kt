@@ -1,6 +1,5 @@
 package com.zakaion.api.entity.user
 
-import com.zakaion.api.entity.user.UserEntity
 import javax.persistence.*
 
 @Entity(name = "user_device")

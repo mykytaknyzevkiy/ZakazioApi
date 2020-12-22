@@ -3,16 +3,18 @@ package com.zakaion.api.factor
 import com.zakaion.api.entity.order.OrderEntity
 import com.zakaion.api.entity.order.OrderStatus
 import com.zakaion.api.entity.user.RoleType
-import com.zakaion.api.exception.NoPermittedMethod
 import com.zakaion.api.factor.user.UserFactory
 import com.zakaion.api.model.ClientInfo
 import com.zakaion.api.model.ExecutorInfo
 import com.zakaion.api.model.OrderNModel
 import com.zakaion.api.model.PartnerInfo
+import com.zakaion.api.service.Preference
+import com.zakaion.api.service.TransactionService
 import org.springframework.stereotype.Service
 
 @Service
-class OrderFactor(private val userFactory: UserFactory) : MFactor(){
+class OrderFactor(private val userFactory: UserFactory,
+                  private val transactionService: TransactionService) : MFactor(){
 
     fun create(order: OrderEntity) : OrderNModel {
         val mOrder = OrderNModel(
@@ -56,7 +58,11 @@ class OrderFactor(private val userFactory: UserFactory) : MFactor(){
 
         mOrder.inWorkEnable = order.status == OrderStatus.PROCESS && myUser.id == order.executor?.id
 
-        //TODO(Set doneEnable)
+        if (myUser.id == mOrder.executor?.id) {
+            val orderSum = transactionService.orderBalance(mOrder.id)
+
+            mOrder.doneEnable = orderSum >= (mOrder.price * Preference.orderSumOutPercent / 100)
+        }
 
         return mOrder
     }

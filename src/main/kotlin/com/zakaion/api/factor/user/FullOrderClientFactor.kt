@@ -5,11 +5,9 @@ import com.zakaion.api.dao.FeedbackDao
 import com.zakaion.api.dao.OrderDao
 import com.zakaion.api.dao.PassportDao
 import com.zakaion.api.entity.order.FeedbackEntity
-import com.zakaion.api.entity.order.OrderEntity
 import com.zakaion.api.entity.user.RoleType
 import com.zakaion.api.entity.user.UserEntity
 import com.zakaion.api.exception.BadParams
-import com.zakaion.api.exception.NotFound
 import com.zakaion.api.model.ClientInfo
 import com.zakaion.api.model.ExecutorInfo
 import com.zakaion.api.model.UserOrder

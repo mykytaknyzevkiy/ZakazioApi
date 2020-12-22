@@ -12,7 +12,6 @@ import com.zakaion.api.exception.BadParams
 import com.zakaion.api.exception.NotFound
 import com.zakaion.api.model.DataResponse
 import com.zakaion.api.model.PassportModel
-import com.zakaion.api.roleControllers.CanSuperAdmin_Admin_Editor
 import com.zakaion.api.service.StorageService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -21,7 +20,7 @@ import org.springframework.web.bind.annotation.*
 import java.util.*
 
 @RestController
-@CrossOrigin
+@CrossOrigin("*")
 @RequestMapping(value = ["passport/request"])
 class RequestPassportController(
         private val userController: UserController,

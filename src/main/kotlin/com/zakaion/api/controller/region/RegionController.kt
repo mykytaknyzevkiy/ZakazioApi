@@ -3,7 +3,6 @@ package com.zakaion.api.controller.region
 import com.zakaion.api.controller.BaseController
 import com.zakaion.api.dao.CityDao
 import com.zakaion.api.dao.RegionDao
-import com.zakaion.api.entity.executor.PortfolioEntity
 import com.zakaion.api.entity.region.CityEntity
 import com.zakaion.api.entity.region.RegionEntity
 import com.zakaion.api.exception.BadParams
