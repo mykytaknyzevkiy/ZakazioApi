@@ -7,6 +7,10 @@ import com.zakaion.api.entity.user.UserEntity
 import org.springframework.boot.info.BuildProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.web.filter.CommonsRequestLoggingFilter
+
+
+
 
 @Configuration
 class DoStart(private val buildProperties: BuildProperties,
@@ -30,5 +34,15 @@ class DoStart(private val buildProperties: BuildProperties,
             )
         }
     }
+
+    /*@Bean
+    fun requestLoggingFilter(): CommonsRequestLoggingFilter? {
+        val loggingFilter = CommonsRequestLoggingFilter()
+        loggingFilter.setIncludeClientInfo(true)
+        loggingFilter.setIncludeQueryString(true)
+        loggingFilter.setIncludePayload(true)
+        loggingFilter.setMaxPayloadLength(6400000)
+        return loggingFilter
+    }*/
 
 }

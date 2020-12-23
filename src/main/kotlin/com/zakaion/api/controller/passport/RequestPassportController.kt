@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*
 import java.util.*
 
 @RestController
-@CrossOrigin("*")
+@CrossOrigin(origins = ["*"], maxAge = 3600)
 @RequestMapping(value = ["passport/request"])
 class RequestPassportController(
         private val userController: UserController,

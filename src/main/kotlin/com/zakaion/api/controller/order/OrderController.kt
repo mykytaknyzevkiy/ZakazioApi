@@ -16,6 +16,7 @@ import com.zakaion.api.exception.BadParams
 import com.zakaion.api.exception.NoPermittedMethod
 import com.zakaion.api.exception.NotFound
 import com.zakaion.api.factor.OrderFactor
+import com.zakaion.api.factor.UserFull
 import com.zakaion.api.factor.user.UserFactory
 import com.zakaion.api.model.*
 import com.zakaion.api.service.AuthTokenService
@@ -61,7 +62,7 @@ class OrderController(private val orderDao: OrderDao,
 
                     return@let partnerInfo.user
                 }
-                else -> return@let (it as UserEntity)
+                else -> return@let (it as UserFull).user
             }
         }
 
