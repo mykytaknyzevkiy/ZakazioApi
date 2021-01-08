@@ -34,17 +34,15 @@ class PortfolioController(private val portfolioDao: PortfolioDao,
     fun add(@RequestBody addPortfolioModel: AddPortfolioModel) : DataResponse<PortfolioEntity> {
         val myUser = userController.get().data
 
-        if (addPortfolioModel.wallpaper.isEmpty || addPortfolioModel.label.isEmpty || addPortfolioModel.description.isEmpty)
+        if (addPortfolioModel.wallpaper.isNullOrEmpty() || addPortfolioModel.label.isNullOrEmpty() || addPortfolioModel.description.isNullOrEmpty())
             throw BadParams()
 
         val portfolioEntity = PortfolioEntity(
                 user = myUser,
-                wallpaper = storageService.store(Base64.getDecoder().decode(addPortfolioModel.wallpaper), "jpg"),
+                wallpaper = addPortfolioModel.wallpaper,
                 label = addPortfolioModel.label,
                 description = addPortfolioModel.description,
-                imageSlides = addPortfolioModel.imageSlides.map {
-                    storageService.store(Base64.getDecoder().decode(it), "jpg")
-                }
+                imageSlides = (addPortfolioModel.imageSlides ?: emptyList())
         )
 
         return DataResponse.ok(
@@ -57,9 +55,6 @@ class PortfolioController(private val portfolioDao: PortfolioDao,
                @PathVariable("id") id: Long) : DataResponse<PortfolioEntity> {
         val myUser = userController.get().data
 
-        if (addPortfolioModel.wallpaper.isEmpty || addPortfolioModel.label.isEmpty || addPortfolioModel.description.isEmpty)
-            throw BadParams()
-
         val portfolioEntity = portfolioDao.findById(id).orElseGet {
             throw NotFound()
         }
@@ -68,12 +63,29 @@ class PortfolioController(private val portfolioDao: PortfolioDao,
                 && myUser.role !in arrayOf(RoleType.SUPER_ADMIN, RoleType.ADMIN, RoleType.EDITOR))
             throw NoPermittedMethod()
 
-        storageService.delete(portfolioEntity.wallpaper)
-
         portfolioEntity.apply {
-            wallpaper = storageService.store(Base64.getDecoder().decode(addPortfolioModel.wallpaper), "jpg")
-            label = addPortfolioModel.label
-            description = addPortfolioModel.description
+            if (!addPortfolioModel.wallpaper.isNullOrEmpty()) {
+                if (this.wallpaper != addPortfolioModel.wallpaper)
+                    storageService.delete(this.wallpaper)
+
+                wallpaper = addPortfolioModel.wallpaper
+            }
+
+            if (!addPortfolioModel.label.isNullOrEmpty())
+                label = addPortfolioModel.label
+
+            if (!addPortfolioModel.description.isNullOrEmpty())
+                description = addPortfolioModel.description
+
+            if (addPortfolioModel.imageSlides != null) {
+
+                imageSlides.forEach {
+                    if (!addPortfolioModel.imageSlides.contains(it))
+                        storageService.delete(it)
+                }
+
+                imageSlides = addPortfolioModel.imageSlides
+            }
         }
 
         return DataResponse.ok(

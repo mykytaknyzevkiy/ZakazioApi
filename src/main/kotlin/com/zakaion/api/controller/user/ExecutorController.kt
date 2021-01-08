@@ -5,10 +5,7 @@ import com.zakaion.api.dao.FeedbackDao
 import com.zakaion.api.dao.OrderDao
 import com.zakaion.api.dao.UserDao
 import com.zakaion.api.entity.user.*
-import com.zakaion.api.exception.AlreadyTaken
-import com.zakaion.api.exception.NoPermittedMethod
-import com.zakaion.api.exception.NotFound
-import com.zakaion.api.exception.WrongPassword
+import com.zakaion.api.exception.*
 import com.zakaion.api.factor.user.UserFactory
 import com.zakaion.api.model.*
 import com.zakaion.api.service.AuthTokenService
@@ -111,6 +108,20 @@ class ExecutorController (private val userDao: UserDao,
         )
     }
 
+    @GetMapping("/list/partner/{id}")
+    fun listPartner(@PathVariable("id") id: Long, pageable: Pageable, @RequestParam("search", required = false, defaultValue = "null") search: String? = null) : DataResponse<Page<ExecutorInfo>> {
+        val data = (
+                if (search.isNullOrEmpty()) userDao.findByRole(RoleType.EXECUTOR.ordinal, id, pageable)
+                else userDao.findByRole(RoleType.EXECUTOR.ordinal, id, search, pageable)
+                ).map {user->
+                    userFactory.create(user) as ExecutorInfo
+                }
+
+        return DataResponse.ok(
+                data
+        )
+    }
+
     @GetMapping("/{id}")
     fun executor(@PathVariable("id") id: Long) : DataResponse<ExecutorInfo> {
         val user = userDao.findById(id).orElseGet {
@@ -140,6 +151,9 @@ class ExecutorController (private val userDao: UserDao,
     @PreAuthorize(_Can_SuperAdmin_Admin_Editor_Partner)
     fun add(@RequestBody userEntity: UserEntity): DataResponse<Nothing?> {
         val myUser = userController.get().data
+
+        if (userEntity.phoneNumber.isNullOrEmpty() || userEntity.email.isNullOrEmpty())
+            throw BadParams()
 
         if (userDao.findAll().any { it.phoneNumber == userEntity.phoneNumber || it.email == userEntity.email }) {
             throw AlreadyTaken()

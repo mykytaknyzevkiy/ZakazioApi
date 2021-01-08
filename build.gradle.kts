@@ -23,12 +23,13 @@ allOpen {
 }
 
 group = "com.zakazio.api"
-version = "1.0.19"
+version = "1.0.40"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {
 	mavenCentral()
 }
+
 
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
@@ -54,6 +55,7 @@ dependencies {
 
 	implementation("eu.bitwalker:UserAgentUtils:1.21")
 
+	//implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-server:1.0")
 }
 
 tasks.withType<Test> {

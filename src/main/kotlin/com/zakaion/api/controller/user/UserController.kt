@@ -124,7 +124,12 @@ class UserController(private val userDao: UserDao,
                 if (user.avatar != null)
                     storageService.delete(user.avatar!!)
 
-                user.avatar = storageService.store(Base64.getDecoder().decode(update.avatar), "jpg")
+                if (update.avatar.isNotEmpty()) {
+                    user.avatar = storageService.store(Base64.getDecoder().decode(update.avatar), "jpg")
+                }
+                else {
+                    user.avatar = null
+                }
             }
 
             if (update.cityID != null) {
@@ -250,6 +255,26 @@ class UserController(private val userDao: UserDao,
         userDao.save(myUser)
 
         return DataResponse.ok(null)
+    }
+
+    @PutMapping("/{id}/change/password")
+    fun changeUserPassword(@PathVariable("id") id: Long, @RequestBody changePasswordModel: ChangePasswordModel) : DataResponse<Nothing?> {
+        val myUser = get().data
+
+        val user = userDao.findById(id).orElseGet { throw NotFound() }
+
+        if (myUser.role == RoleType.SUPER_ADMIN ||
+                (myUser.role == RoleType.ADMIN && user.role != RoleType.SUPER_ADMIN) ||
+                (myUser.role == RoleType.EDITOR && user.role != RoleType.SUPER_ADMIN && user.role != RoleType.ADMIN)) {
+
+            user.password = changePasswordModel.newPassword
+
+            userDao.save(user)
+
+            return DataResponse.ok(null)
+        }
+        else
+            throw NoPermittedMethod()
     }
 
     @PutMapping("/add/device")

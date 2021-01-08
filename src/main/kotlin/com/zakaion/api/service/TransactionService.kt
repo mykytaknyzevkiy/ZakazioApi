@@ -37,7 +37,7 @@ class TransactionService(private val inDao: TransactionInDao,
     fun orderBalance(orderID: Long) : Float {
         return {
             var sum = 0f
-            inDao.findOrder(orderID).forEach {
+            outDao.findOrder(orderID).forEach {
                 sum += it.amount
             }
             sum

@@ -19,4 +19,6 @@ interface OrderDao : PagingAndSortingRepository<OrderEntity, Long> {
     @Query(value = "select * from order_n where (client_id = :u_id or executor_id = :u_id or partner_id = :u_id)", nativeQuery = true)
     fun findUserOrders(@Param("u_id") userID: Long): Iterable<OrderEntity>
 
+    @Query(value = "update order_n set executor_id = :executor_id where id = :order_id", nativeQuery = true)
+    fun setExecutor(@Param("order_id") orderID: Long, @Param("executor_id") executorID: Long)
 }

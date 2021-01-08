@@ -12,6 +12,7 @@ import com.zakaion.api.entity.order.OrderEntity
 import com.zakaion.api.entity.order.OrderStatus
 import com.zakaion.api.entity.user.RoleType
 import com.zakaion.api.entity.user.UserEntity
+import com.zakaion.api.entity.user.UserImp
 import com.zakaion.api.exception.BadParams
 import com.zakaion.api.exception.NoPermittedMethod
 import com.zakaion.api.exception.NotFound
@@ -21,10 +22,12 @@ import com.zakaion.api.factor.user.UserFactory
 import com.zakaion.api.model.*
 import com.zakaion.api.service.AuthTokenService
 import com.zakaion.api.service.NotificationService
+import com.zakaion.api.service.StorageService
 import com.zakaion.api.service.TransactionService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
 
 @RestController
 @CrossOrigin
@@ -40,7 +43,8 @@ class OrderController(private val orderDao: OrderDao,
                       private val orderFactor: OrderFactor,
                       private val notificationService: NotificationService,
                       private val tokenService: AuthTokenService,
-                      private val transactionService: TransactionService) : BaseController() {
+                      private val transactionService: TransactionService,
+                      private val storageService: StorageService) : BaseController() {
 
     @PostMapping("/add")
     fun add(@RequestBody addOrderModel: AddOrderModel) : DataResponse<Nothing?> {
@@ -62,6 +66,9 @@ class OrderController(private val orderDao: OrderDao,
 
                     return@let partnerInfo.user
                 }
+                RoleType.CLIENT -> {
+                    return@let (it as ClientInfo).user
+                }
                 else -> return@let (it as UserFull).user
             }
         }
@@ -77,11 +84,11 @@ class OrderController(private val orderDao: OrderDao,
         }
 
         if (myUser.role != RoleType.CLIENT &&
-                (addOrderModel.clientEmail.isEmpty ||
-                        addOrderModel.clientPhone.isEmpty ||
-                        addOrderModel.clientFirstName.isEmpty ||
-                        addOrderModel.clientLastName.isEmpty ||
-                        addOrderModel.clientMiddleName.isEmpty))
+                (addOrderModel.clientEmail.isNullOrEmpty() ||
+                        addOrderModel.clientPhone.isNullOrEmpty() ||
+                        addOrderModel.clientFirstName.isNullOrEmpty() ||
+                        addOrderModel.clientLastName.isNullOrEmpty() ||
+                        addOrderModel.clientMiddleName.isNullOrEmpty()))
             throw BadParams()
 
         val client: UserEntity = if (myUser.role == RoleType.CLIENT)
@@ -121,11 +128,91 @@ class OrderController(private val orderDao: OrderDao,
                         client = client,
                         executor = executor,
                         partner = if (myUser.role == RoleType.PARTNER) myUser else null,
-                        city = city
+                        city = city,
+                        files = addOrderModel.files
                 )
         )
 
         notificationService.onCreateOrder(orderEntity)
+
+        return DataResponse.ok(null)
+    }
+
+    @PutMapping("/{id}/edit")
+    fun edit(@PathVariable("id") id: Long, @RequestBody editOrderModel: EditOrderModel) : DataResponse<Nothing?> {
+        val order = orderDao.findById(id).orElseGet {
+            throw NotFound()
+        }
+
+        val orderInfo = orderFactor.create(order)
+
+        if (!orderInfo.editEnable)
+            throw NoPermittedMethod()
+
+        orderDao.save(
+                order.copy(
+                        title = editOrderModel.title,
+                        content = editOrderModel.content,
+                        price = editOrderModel.price
+                )
+        )
+
+        return DataResponse.ok(null)
+    }
+
+    @PutMapping("/{id}/edit/add/file")
+    fun addFile(@PathVariable("id") id: Long, @RequestParam("file") file: MultipartFile) : DataResponse<Nothing?> {
+        val order = orderDao.findById(id).orElseGet {
+            throw NotFound()
+        }
+
+        val orderInfo = orderFactor.create(order)
+
+        if (!orderInfo.editEnable)
+            throw NoPermittedMethod()
+
+        val files = arrayListOf<String>().apply {
+            addAll(order.files)
+            add(
+                    storageService.store(file)
+            )
+        }
+
+        orderDao.save(
+                order.copy(
+                        files = files
+                )
+        )
+
+        return DataResponse.ok(null)
+    }
+
+    @PutMapping("/{id}/edit/remove/file/{filename:.+}")
+    fun removeFile(@PathVariable("id") id: Long, @PathVariable filename: String) : DataResponse<Nothing?> {
+        val order = orderDao.findById(id).orElseGet {
+            throw NotFound()
+        }
+
+        val orderInfo = orderFactor.create(order)
+
+        if (!orderInfo.editEnable)
+            throw NoPermittedMethod()
+
+        if (!orderInfo.files.contains(filename))
+            throw BadParams()
+
+        storageService.delete(filename)
+
+        val files = arrayListOf<String>().apply {
+            addAll(order.files)
+            remove(filename)
+        }
+
+        orderDao.save(
+                order.copy(
+                        files = files
+                )
+        )
 
         return DataResponse.ok(null)
     }
@@ -173,9 +260,9 @@ class OrderController(private val orderDao: OrderDao,
         val myUser = userFactory.myUser
 
         val nOrder = orderDao.save(
-                order.copy(
-                        executor = myUser
-                )
+                order.apply {
+                    executor = myUser
+                }
         )
 
         notificationService.onYouOrderExecutor(nOrder)

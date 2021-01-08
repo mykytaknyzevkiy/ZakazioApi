@@ -6,4 +6,5 @@ import com.zakaion.api.entity.user.UserEntity
 interface UserResponseImp {
     val user: UserEntity
     val passport: PassportEntity?
+    var passportInProgress: Boolean
 }

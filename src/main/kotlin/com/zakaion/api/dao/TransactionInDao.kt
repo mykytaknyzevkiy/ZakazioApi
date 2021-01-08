@@ -9,13 +9,13 @@ import org.springframework.data.repository.query.Param
 
 interface TransactionInDao : PagingAndSortingRepository<TransactionInEntity, Long> {
 
-    @Query(value = "select * from transaction_in user_id = :userID", nativeQuery = true)
+    @Query(value = "select * from transaction_in where user_id = :userID", nativeQuery = true)
     fun find(@Param("userID") userID: Long, pageable: Pageable) : Page<TransactionInEntity>
 
-    @Query(value = "select * from transaction_in user_id = :userID", nativeQuery = true)
+    @Query(value = "select * from transaction_in where user_id = :userID", nativeQuery = true)
     fun find(@Param("userID") userID: Long) : Iterable<TransactionInEntity>
 
-    @Query(value = "select * from transaction_in order_id = :orderID", nativeQuery = true)
+    @Query(value = "select * from transaction_in where order_id = :orderID", nativeQuery = true)
     fun findOrder(@Param("orderID") orderID: Long) : Iterable<TransactionInEntity>
 
 }

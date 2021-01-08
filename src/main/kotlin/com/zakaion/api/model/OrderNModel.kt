@@ -30,6 +30,12 @@ data class OrderNModel(
         var cancelExecutorEnable: Boolean = false,
         var inWorkEnable: Boolean = false,
         var doneEnable: Boolean = false,
-        var cancelEnable: Boolean = false
+        var cancelEnable: Boolean = false,
+
+        var commentEnable: Boolean = false,
+
+        val files: List<String>,
+
+        val toShareSum: Float
 
 )

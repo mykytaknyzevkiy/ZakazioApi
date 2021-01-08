@@ -20,5 +20,7 @@ data class AddOrderModel(
         @JsonProperty("client_phone")
         val clientPhone: String = "",
         @JsonProperty("client_email")
-        val clientEmail: String = ""
+        val clientEmail: String = "",
+
+        val files: List<String> = emptyList()
 )

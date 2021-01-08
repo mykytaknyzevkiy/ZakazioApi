@@ -24,5 +24,6 @@ const val _AGENT = "AGENT"
 
 const val _CLIENT = "CLIENT"
 
+const val _Can_SuperAdmin = "hasAuthority('$_SUPER_ADMIN')"
 const val _Can_SuperAdmin_Admin_Editor = "hasAuthority('$_SUPER_ADMIN') || hasAuthority('$_ADMIN') || hasAuthority('$_EDITOR')"
 const val _Can_SuperAdmin_Admin_Editor_Partner = "hasAuthority('$_SUPER_ADMIN') || hasAuthority('$_ADMIN') || hasAuthority('$_EDITOR') || hasAuthority('$_PARTNER')"

@@ -10,13 +10,13 @@ import org.springframework.data.repository.query.Param
 
 interface TransactionOutDao : PagingAndSortingRepository<TransactionOutEntity, Long> {
 
-    @Query(value = "select * from transaction_out user_id = :userID", nativeQuery = true)
+    @Query(value = "select * from transaction_out where user_id = :userID", nativeQuery = true)
     fun find(@Param("userID") userID: Long, pageable: Pageable) : Page<TransactionOutEntity>
 
-    @Query(value = "select * from transaction_out user_id = :userID", nativeQuery = true)
+    @Query(value = "select * from transaction_out where user_id = :userID", nativeQuery = true)
     fun find(@Param("userID") userID: Long) : Iterable<TransactionOutEntity>
 
-    @Query(value = "select * from transaction_out order_id = :orderID", nativeQuery = true)
-    fun findOrder(@Param("orderID") orderID: Long) : Iterable<TransactionInEntity>
+    @Query(value = "select * from transaction_out where order_id = :orderID", nativeQuery = true)
+    fun findOrder(@Param("orderID") orderID: Long) : Iterable<TransactionOutEntity>
 
 }

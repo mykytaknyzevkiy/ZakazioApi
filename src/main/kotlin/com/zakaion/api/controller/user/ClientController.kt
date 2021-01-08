@@ -7,6 +7,7 @@ import com.zakaion.api.entity.user.UserEntity
 import com.zakaion.api.entity.user._Can_SuperAdmin_Admin_Editor
 import com.zakaion.api.entity.user._Can_SuperAdmin_Admin_Editor_Partner
 import com.zakaion.api.exception.AlreadyTaken
+import com.zakaion.api.exception.BadParams
 import com.zakaion.api.exception.NotFound
 import com.zakaion.api.exception.WrongPassword
 import com.zakaion.api.factor.user.UserFactory
@@ -82,7 +83,7 @@ class ClientController (private val userDao: UserDao,
 
         var user = userEntity.copy(
                 phoneNumber = phoneNumber,
-                role = RoleType.SUPER_ADMIN,
+                role = RoleType.CLIENT,
                 isPhoneActive = true
         )
 
@@ -110,6 +111,9 @@ class ClientController (private val userDao: UserDao,
     @PostMapping("/add")
     @PreAuthorize(_Can_SuperAdmin_Admin_Editor_Partner)
     fun add(@RequestBody userEntity: UserEntity): DataResponse<UserEntity> {
+
+        if (userEntity.phoneNumber.isNullOrEmpty() || userEntity.email.isNullOrEmpty())
+            throw BadParams()
 
         if (userDao.findAll().any { it.phoneNumber == userEntity.phoneNumber || it.email == userEntity.email }) {
             throw AlreadyTaken()

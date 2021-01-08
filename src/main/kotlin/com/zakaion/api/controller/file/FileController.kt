@@ -7,6 +7,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
 
 @RestController
 @CrossOrigin(origins = ["*"], maxAge = 3600)
@@ -18,6 +19,11 @@ class FileController(private val storageService: StorageService) : BaseControlle
         val file = storageService.loadAsFile(filename)
 
         return file.readBytes()
+    }
+
+    @PostMapping("/add")
+    fun add(@RequestParam("file") file: MultipartFile) : String {
+        return storageService.store(file)
     }
 
 }
