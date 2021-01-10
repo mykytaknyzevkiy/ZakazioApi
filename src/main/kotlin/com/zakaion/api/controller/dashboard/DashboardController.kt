@@ -92,6 +92,8 @@ class DashboardController(private val orderDao: OrderDao,
                     val keyName =
                             if (diffTime <= TimeUnit.DAYS.toMillis(1))
                                 order.creationDateTime.hours.toString()
+                            else if (realStartDate.year != realEndDate.year)
+                                order.creationDateTime.year.toString()
                             else if (diffTime < TimeUnit.DAYS.toMillis(7))
                                 order.creationDateTime.date.toString()
                             else if (diffTime == TimeUnit.DAYS.toMillis(7))
@@ -99,7 +101,7 @@ class DashboardController(private val orderDao: OrderDao,
                             else if (diffTime >= TimeUnit.DAYS.toMillis(28) && diffTime <= TimeUnit.DAYS.toMillis(31))
                                 order.creationDateTime.date.toString()
                             else if (diffTime >= ( TimeUnit.DAYS.toMillis(28) * 2))
-                                order.creationDateTime.month.toString()
+                                (order.creationDateTime.month + 1).toString()
                             else
                                 order.creationDateTime.time.toString()
 
