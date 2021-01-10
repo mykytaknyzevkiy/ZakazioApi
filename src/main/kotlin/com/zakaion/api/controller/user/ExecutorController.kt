@@ -93,7 +93,7 @@ class ExecutorController (private val userDao: UserDao,
     }
 
     @GetMapping("/list/my")
-    fun listMy(pageable: Pageable, @RequestParam("search", required = false, defaultValue = "null") search: String? = null) : DataResponse<Page<ExecutorInfo>> {
+    fun listMy(pageable: Pageable, @RequestParam("search", required = false, defaultValue = "") search: String? = null) : DataResponse<Page<ExecutorInfo>> {
         val myUser = userController.get().data
 
         val data = (

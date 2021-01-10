@@ -227,9 +227,19 @@ class OrderController(private val orderDao: OrderDao,
     }
 
     @GetMapping("/list")
-    fun list(pageable: Pageable) : DataResponse<Page<OrderNModel>> {
+    fun list(pageable: Pageable,
+             @RequestParam(
+                     "search",
+                     required = false,
+                     defaultValue = ""
+             ) search: String? = null) : DataResponse<Page<OrderNModel>> {
+
         return DataResponse.ok(
-                orderDao.findAll(pageable)
+                (if (search.isNullOrEmpty())
+                    orderDao.findAll(pageable)
+                            else
+                    orderDao.findAll(pageable, search)
+                        )
                         .map {
                             orderFactor.create(it)
                         }
@@ -237,9 +247,19 @@ class OrderController(private val orderDao: OrderDao,
     }
 
     @GetMapping("/list/user/{userID}")
-    fun list(pageable: Pageable, @PathVariable("userID") userID: Long) : DataResponse<Page<OrderNModel>> {
+    fun list(pageable: Pageable,
+             @PathVariable("userID") userID: Long,
+             @RequestParam(
+                     "search",
+                     required = false,
+                     defaultValue = ""
+             ) search: String? = null) : DataResponse<Page<OrderNModel>> {
         return DataResponse.ok(
-                orderDao.findUserOrders(pageable, userID)
+                (if (search.isNullOrEmpty())
+                    orderDao.findUserOrders(pageable, userID)
+                            else
+                    orderDao.findUserOrders(pageable, userID, search)
+                        )
                         .map {
                             orderFactor.create(it)
                         }

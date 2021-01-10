@@ -6,6 +6,7 @@ import com.zakaion.api.dao.UserDao
 import com.zakaion.api.entity.order.OrderEntity
 import com.zakaion.api.entity.transaction.TransactionInEntity
 import com.zakaion.api.entity.transaction.TransactionOutEntity
+import com.zakaion.api.entity.user.RoleType
 import com.zakaion.api.exception.BadParams
 import org.springframework.stereotype.Service
 
@@ -96,6 +97,17 @@ class TransactionService(private val inDao: TransactionInDao,
             )
 
             systemAmount -= sum
+        }
+
+        userDao.findAll().find { it.role == RoleType.SUPER_ADMIN }?.let { admin ->
+            inDao.save(
+                    TransactionInEntity(
+                            amount = systemAmount,
+                            card = null,
+                            user = admin,
+                            order = order
+                    )
+            )
         }
     }
 

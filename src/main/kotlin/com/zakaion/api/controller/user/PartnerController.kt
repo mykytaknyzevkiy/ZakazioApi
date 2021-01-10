@@ -5,6 +5,7 @@ import com.zakaion.api.dao.OrderDao
 import com.zakaion.api.dao.UserDao
 import com.zakaion.api.entity.user.*
 import com.zakaion.api.exception.AlreadyTaken
+import com.zakaion.api.exception.BadParams
 import com.zakaion.api.exception.NotFound
 import com.zakaion.api.exception.WrongPassword
 import com.zakaion.api.factor.user.UserFactory
@@ -24,7 +25,7 @@ class PartnerController (private val userDao: UserDao,
                          private val userController: UserController,
                          private val smsService: SmsService,
                          private val orderDao: OrderDao,
-                         private val userFactory: UserFactory) : BaseController(){
+                         private val userFactory: UserFactory) : BaseController() {
 
     @GetMapping("/list")
     @PreAuthorize(_Can_SuperAdmin_Admin_Editor)
@@ -103,5 +104,28 @@ class PartnerController (private val userDao: UserDao,
         userDao.delete(user)
 
         return DataResponse.ok(null)
+    }
+
+    @PostMapping("/add")
+    @PreAuthorize(_Can_SuperAdmin_Admin_Editor)
+    fun add(@RequestBody userEntity: UserEntity): DataResponse<Nothing?> {
+        val myUser = userController.get().data
+
+        if (userEntity.phoneNumber.isNullOrEmpty() || userEntity.email.isNullOrEmpty())
+            throw BadParams()
+
+        if (userDao.findAll().any { it.phoneNumber == userEntity.phoneNumber || it.email == userEntity.email }) {
+            throw AlreadyTaken()
+        }
+
+        userDao.save(
+                userEntity.copy(
+                        role = RoleType.PARTNER
+                )
+        )
+
+        return DataResponse.ok(
+                null
+        )
     }
 }

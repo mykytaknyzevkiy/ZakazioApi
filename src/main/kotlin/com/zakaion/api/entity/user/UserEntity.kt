@@ -2,6 +2,8 @@ package com.zakaion.api.entity.user
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.zakaion.api.entity.region.CityEntity
+import org.hibernate.annotations.CreationTimestamp
+import java.util.*
 import javax.persistence.*
 
 @Entity(name = "user")
@@ -23,4 +25,7 @@ data class UserEntity(@Id
                       @JsonProperty( value = "masterID", access = JsonProperty.Access.WRITE_ONLY)
                       override val masterID: Long? = null,
                       @OneToOne
-                      override var city: CityEntity? = null) : UserImp
+                      override var city: CityEntity? = null,
+                      @CreationTimestamp
+                      @Column(name = "creation_date_time", columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
+                      val creationDateTime: Date = Date()) : UserImp

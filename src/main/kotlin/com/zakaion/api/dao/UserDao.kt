@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.PagingAndSortingRepository
 import org.springframework.data.repository.query.Param
+import java.util.*
 
 interface UserDao : PagingAndSortingRepository<UserEntity, Long> {
 
@@ -27,5 +28,8 @@ interface UserDao : PagingAndSortingRepository<UserEntity, Long> {
                    @Param("masterID") masterID: Long,
                    @Param("search") search: String,
                    pageable: Pageable) : Page<UserEntity>
+
+    @Query(value = "select * from user where creation_date_time BETWEEN :startDate and :endDate", nativeQuery = true)
+    fun findAll(@Param("startDate") startDate: Date, @Param("endDate") endDate: Date) : Iterable<UserEntity>
 
 }

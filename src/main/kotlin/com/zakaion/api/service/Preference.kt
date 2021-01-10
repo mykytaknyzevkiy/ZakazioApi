@@ -52,7 +52,7 @@ object Preference {
             return properties.getInt(key, 10)
         }
         set(value) {
-            val key = "orderSumOutPercent"
+            val key = "orderPartnerPercent"
 
             properties.putInt(key, value)
         }
@@ -64,7 +64,7 @@ object Preference {
             return properties.getInt(key, 5)
         }
         set(value) {
-            val key = "orderSumOutPercent"
+            val key = "executorPartnerPercent"
 
             properties.putInt(key, value)
         }
@@ -198,6 +198,8 @@ object TemplatesValueKey {
     val url = "{{url}}"
 
     val token = "{{toke}}"
+
+    val feedBackUrl = "{{feedBackUrl}}"
 }
 
 abstract class NotificationPermittedImp {
