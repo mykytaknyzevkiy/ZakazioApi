@@ -52,7 +52,9 @@ class OrderFactor(private val userFactory: UserFactory,
 
                 files = order.files,
 
-                toShareSum = ((order.price * Preference.orderSumOutPercent / 100)) - orderSum
+                toShareSum = ((order.price * Preference.orderSumOutPercent / 100)) - orderSum,
+
+                category = order.category
         )
 
         val adminsRole = arrayOf(RoleType.SUPER_ADMIN, RoleType.ADMIN, RoleType.EDITOR)

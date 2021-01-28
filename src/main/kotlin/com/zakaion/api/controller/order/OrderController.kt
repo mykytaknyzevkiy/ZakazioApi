@@ -4,10 +4,7 @@ import com.zakaion.api.controller.BaseController
 import com.zakaion.api.controller.user.ExecutorController
 import com.zakaion.api.controller.user.PartnerController
 import com.zakaion.api.controller.user.UserController
-import com.zakaion.api.dao.CityDao
-import com.zakaion.api.dao.FeedbackDao
-import com.zakaion.api.dao.OrderDao
-import com.zakaion.api.dao.UserDao
+import com.zakaion.api.dao.*
 import com.zakaion.api.entity.order.OrderEntity
 import com.zakaion.api.entity.order.OrderStatus
 import com.zakaion.api.entity.user.RoleType
@@ -44,7 +41,8 @@ class OrderController(private val orderDao: OrderDao,
                       private val notificationService: NotificationService,
                       private val tokenService: AuthTokenService,
                       private val transactionService: TransactionService,
-                      private val storageService: StorageService) : BaseController() {
+                      private val storageService: StorageService,
+                      private val categoryDao: CategoryDao) : BaseController() {
 
     @PostMapping("/add")
     fun add(@RequestBody addOrderModel: AddOrderModel) : DataResponse<Nothing?> {
@@ -119,6 +117,13 @@ class OrderController(private val orderDao: OrderDao,
             else -> null
         }
 
+        val category = categoryDao.findById(addOrderModel.categoryID).orElseGet {
+            throw NotFound()
+        }
+
+        if (!category.isActive)
+            throw BadParams()
+
         val orderEntity = orderDao.save(
                 OrderEntity(
                         title = addOrderModel.title,
@@ -129,7 +134,8 @@ class OrderController(private val orderDao: OrderDao,
                         executor = executor,
                         partner = if (myUser.role == RoleType.PARTNER) myUser else null,
                         city = city,
-                        files = addOrderModel.files
+                        files = addOrderModel.files,
+                        category = category
                 )
         )
 

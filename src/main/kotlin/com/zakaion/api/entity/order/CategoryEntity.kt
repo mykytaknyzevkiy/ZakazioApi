@@ -12,5 +12,5 @@ data class CategoryEntity(
         val id: Long = 0L,
         var name: String,
         var imageUrl: String? = null,
-        var isActive: Boolean = false
+        var isActive: Boolean = true
 )

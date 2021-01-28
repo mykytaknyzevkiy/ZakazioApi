@@ -4,9 +4,11 @@ import com.zakaion.api.factor.FullOrderClientImp
 import com.zakaion.api.dao.FeedbackDao
 import com.zakaion.api.dao.OrderDao
 import com.zakaion.api.dao.PassportDao
+import com.zakaion.api.dao.PortfolioDao
 import com.zakaion.api.entity.order.FeedbackEntity
 import com.zakaion.api.entity.user.RoleType
 import com.zakaion.api.entity.user.UserEntity
+import com.zakaion.api.entity.user.UserStatus
 import com.zakaion.api.exception.BadParams
 import com.zakaion.api.model.ClientInfo
 import com.zakaion.api.model.ExecutorInfo
@@ -15,7 +17,8 @@ import com.zakaion.api.model.UserOrder
 class FullOrderClientFactor(user: UserEntity,
                             private val orderDao: OrderDao,
                             private val feedbackDao: FeedbackDao,
-                            private val passportDao: PassportDao) : UserImpFactor(user) {
+                            private val passportDao: PassportDao,
+                            private val portfolioDao: PortfolioDao) : UserImpFactor(user) {
 
     override fun create(): FullOrderClientImp {
         return when (user.role) {
@@ -45,8 +48,12 @@ class FullOrderClientFactor(user: UserEntity,
                 order = UserOrder.create(orders = orders),
                 passport = passportDao.findAll().find { it.user.id == this.id }
         ).apply {
-            if (order.enable)
-                order.enable = this.isEmailActive && this.isPassportActive && this.isPhoneActive
+            if (order.enable) {
+                val portfolio = portfolioDao.findAll().filter { user.id == this.id }
+                order.enable = this.isEmailActive && this.isPassportActive && this.isPhoneActive && portfolio.isNotEmpty() && this@toExecutor.status == UserStatus.ACTIVE
+            }
+            if (!order.enable && this.status == UserStatus.ACTIVE)
+                this.status == UserStatus.PROCESS
         }
     }
 

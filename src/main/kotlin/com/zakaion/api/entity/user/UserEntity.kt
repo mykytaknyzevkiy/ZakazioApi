@@ -28,4 +28,6 @@ data class UserEntity(@Id
                       override var city: CityEntity? = null,
                       @CreationTimestamp
                       @Column(name = "creation_date_time", columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
-                      val creationDateTime: Date = Date()) : UserImp
+                      val creationDateTime: Date? = Date(),
+                      @Enumerated
+                      override var status: UserStatus? = UserStatus.ACTIVE) : UserImp

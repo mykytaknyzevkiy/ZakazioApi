@@ -110,6 +110,7 @@ class DashboardController(private val orderDao: OrderDao,
             }
 
             OrderAnalytic(
+                    total = orders.count(),
                     statuses = statuesOrder.toNikitaModelList(),
                     partners = partnersOrder.toNikitaModelList(),
                     executors = executorsOrder.toNikitaModelList(),

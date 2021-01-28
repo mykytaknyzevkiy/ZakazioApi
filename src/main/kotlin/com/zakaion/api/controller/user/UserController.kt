@@ -2,16 +2,14 @@ package com.zakaion.api.controller.user
 
 import com.zakaion.api.controller.BaseController
 import com.zakaion.api.dao.*
-import com.zakaion.api.entity.user.UserDeviceEntity
-import com.zakaion.api.entity.user.RoleType
-import com.zakaion.api.entity.user.UserEntity
-import com.zakaion.api.entity.user.UserImp
+import com.zakaion.api.entity.user.*
 import com.zakaion.api.exception.BadParams
 import com.zakaion.api.exception.NoPermittedMethod
 import com.zakaion.api.exception.NotFound
 import com.zakaion.api.exception.WrongPassword
 import com.zakaion.api.factor.user.UserFactory
 import com.zakaion.api.model.*
+import com.zakaion.api.roleControllers.CanSuperAdmin_Admin_Editor
 import com.zakaion.api.service.AuthTokenService
 import com.zakaion.api.service.SmsService
 import com.zakaion.api.service.StorageService
@@ -292,6 +290,27 @@ class UserController(private val userDao: UserDao,
         )
 
         return DataResponse.ok(null)
+    }
+
+    @CanSuperAdmin_Admin_Editor
+    @PutMapping("/{id}/block")
+    fun blockUser(@PathVariable("id") id: Long) : DataResponse<Nothing?> {
+        val myUser = get().data
+
+        val user = userDao.findById(id).orElseGet { throw NotFound() }
+
+        if (myUser.role == RoleType.SUPER_ADMIN ||
+                (myUser.role == RoleType.ADMIN && user.role != RoleType.SUPER_ADMIN) ||
+                (myUser.role == RoleType.EDITOR && user.role != RoleType.SUPER_ADMIN && user.role != RoleType.ADMIN)) {
+
+            user.status = UserStatus.BLOCKED
+
+            userDao.save(user)
+
+            return DataResponse.ok(null)
+        }
+        else
+            throw NoPermittedMethod()
     }
 
 }

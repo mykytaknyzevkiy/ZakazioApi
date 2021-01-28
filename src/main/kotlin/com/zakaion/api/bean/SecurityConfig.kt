@@ -48,6 +48,8 @@ class SecurityConfig(private val authTokenService: AuthTokenService) : WebSecuri
                         "/file",
 
                         "/order/list/user/*",
+                        "/order/list",
+
                         "/executor/list",
                         "/executor/*"
                 ).permitAll()

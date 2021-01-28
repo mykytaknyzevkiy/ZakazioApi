@@ -2,6 +2,7 @@ package com.zakaion.api.service
 
 import com.zakaion.api.dao.UserDao
 import com.zakaion.api.entity.user.UserEntity
+import com.zakaion.api.entity.user.UserStatus
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import io.jsonwebtoken.security.Keys
@@ -44,7 +45,12 @@ class AuthTokenService (private val userDao: UserDao) {
             val userId = jwsClaims.body
                     .get("id", java.lang.Integer::class.java)
 
-            userDao.findById(userId.toLong()).orElseGet { null }
+            val user = userDao.findById(userId.toLong()).orElseGet { null } ?: return null
+
+            if (user.status == UserStatus.BLOCKED)
+                return null
+
+            user
         } catch (e: Exception) {
             null
         }

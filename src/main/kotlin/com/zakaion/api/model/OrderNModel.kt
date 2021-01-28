@@ -1,6 +1,7 @@
 package com.zakaion.api.model
 
 import com.zakaion.api.entity.order.AppEntity
+import com.zakaion.api.entity.order.CategoryEntity
 import com.zakaion.api.entity.order.OrderStatus
 import com.zakaion.api.entity.region.CityEntity
 import java.util.*
@@ -36,6 +37,8 @@ data class OrderNModel(
 
         val files: List<String>,
 
-        val toShareSum: Float
+        val toShareSum: Float,
+
+        val category: CategoryEntity
 
 )

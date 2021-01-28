@@ -14,6 +14,7 @@ data class DashboardModel(
 )
 
 data class OrderAnalytic(
+        val total: Int,
         val statuses: List<NikitaModel<String, Int>>,
         val partners: List<NikitaModel<PartnerInfo, Int>>,
         val executors: List<NikitaModel<ExecutorInfo, Int>>,

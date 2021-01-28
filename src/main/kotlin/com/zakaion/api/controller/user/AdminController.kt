@@ -44,6 +44,8 @@ class AdminController (private val userDao: UserDao,
     fun add(@RequestBody userEntity: UserEntity) : DataResponse<Nothing?> {
         val copy = userEntity.copy(role = RoleType.ADMIN)
 
+        userDao.save(copy)
+
         return DataResponse.ok(
                 null
         )

@@ -1,9 +1,6 @@
 package com.zakaion.api.factor.user
 
-import com.zakaion.api.dao.FeedbackDao
-import com.zakaion.api.dao.OrderDao
-import com.zakaion.api.dao.PassportDao
-import com.zakaion.api.dao.RequestPassportDao
+import com.zakaion.api.dao.*
 import com.zakaion.api.entity.user.RoleType
 import com.zakaion.api.entity.user.UserEntity
 import com.zakaion.api.entity.user.UserImp
@@ -15,7 +12,8 @@ import org.springframework.stereotype.Service
 class UserFactory(private val orderDao: OrderDao,
                   private val feedbackDao: FeedbackDao,
                   private val passportDao: PassportDao,
-                  private val requestPassportDao: RequestPassportDao) : MFactor() {
+                  private val requestPassportDao: RequestPassportDao,
+                  private val portfolioDao: PortfolioDao) : MFactor() {
 
     fun create(user: UserEntity?): UserImp? {
         if (user == null)
@@ -30,7 +28,7 @@ class UserFactory(private val orderDao: OrderDao,
 
     private fun buildFactor(user: UserEntity) : UserImpFactor {
         return if (user.role == RoleType.CLIENT || user.role == RoleType.EXECUTOR)
-            FullOrderClientFactor(user, orderDao, feedbackDao, passportDao)
+            FullOrderClientFactor(user, orderDao, feedbackDao, passportDao, portfolioDao)
         else if (user.role == RoleType.PARTNER)
             ManagerOrderFactory(user, orderDao, passportDao)
         else

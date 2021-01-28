@@ -52,7 +52,10 @@ data class OrderEntity(
         val modifiedDateTime: Date = Date(),
 
         @ElementCollection
-        val files: List<String>
+        val files: List<String>,
+
+        @OneToOne
+        val category: CategoryEntity
 )
 
 enum class OrderStatus(val data: String) {
