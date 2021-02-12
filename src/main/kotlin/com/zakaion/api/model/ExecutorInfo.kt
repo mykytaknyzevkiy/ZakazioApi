@@ -10,5 +10,6 @@ data class ExecutorInfo(
         override val user: UserEntity,
         override val rate: Float,
         override val order: UserOrder,
-        override var passport: PassportEntity?
+        override var passport: PassportEntity?,
+        val portfolioCount: Int = 0
 ): FullOrderClientImp(user, passport)

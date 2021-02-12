@@ -8,13 +8,13 @@ import org.springframework.boot.info.BuildProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.filter.CommonsRequestLoggingFilter
-
-
+import com.zakaion.api.service.StorageService
 
 
 @Configuration
 class DoStart(private val buildProperties: BuildProperties,
-              private val userDao: UserDao) {
+              private val userDao: UserDao, 
+              private val storageService: StorageService) {
 
     @Bean
     fun start() {
@@ -33,6 +33,7 @@ class DoStart(private val buildProperties: BuildProperties,
                     )
             )
         }
+        storageService.init()
     }
 
     /*@Bean

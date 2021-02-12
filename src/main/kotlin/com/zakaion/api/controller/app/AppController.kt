@@ -31,7 +31,7 @@ class AppController(private val userController: UserController,
     fun add(@RequestBody appModel: AppModel) : DataResponse<Nothing?> {
         val myUser = userController.get().data
 
-        if (appModel.name.isEmpty)
+        if (appModel.name.isEmpty())
             throw BadParams()
 
         appDao.save(
@@ -78,7 +78,7 @@ class AppController(private val userController: UserController,
                 myUser.role !in arrayOf(RoleType.SUPER_ADMIN, RoleType.ADMIN, RoleType.EDITOR))
             throw NoPermittedMethod()
 
-        if (appModel.name.isEmpty)
+        if (appModel.name.isEmpty())
             throw BadParams()
 
         appEntity.name = appModel.name

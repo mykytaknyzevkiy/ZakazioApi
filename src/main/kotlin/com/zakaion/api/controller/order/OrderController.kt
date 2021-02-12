@@ -71,9 +71,10 @@ class OrderController(private val orderDao: OrderDao,
             }
         }
 
-        if (addOrderModel.content.isEmpty ||
-                addOrderModel.dateLine.isEmpty ||
-                addOrderModel.title.isEmpty ||
+        if (addOrderModel.content.isEmpty() ||
+                addOrderModel.dateLine.isEmpty() ||
+                addOrderModel.title.isEmpty()
+            ||
                 addOrderModel.price <= 0)
             throw BadParams()
 
@@ -159,7 +160,8 @@ class OrderController(private val orderDao: OrderDao,
                 order.copy(
                         title = editOrderModel.title,
                         content = editOrderModel.content,
-                        price = editOrderModel.price
+                        price = editOrderModel.price,
+                        files = editOrderModel.files
                 )
         )
 

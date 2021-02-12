@@ -16,14 +16,16 @@ import kotlin.streams.toList
 @Service
 class StorageService {
 
+    //private val root: Path = Paths.get("/Users/mykyta/Documents/ZakazioApi/test")
+
     private val root: Path = Paths.get("/tmp")
 
     fun init() {
-        try {
-            Files.createDirectory(root)
-        } catch (e: IOException) {
-            throw RuntimeException("Could not initialize folder for upload!")
-        }
+         try {
+             Files.createDirectory(root)
+         } catch (e: IOException) {
+             println(e)
+         }
     }
 
     fun list(): List<String> {

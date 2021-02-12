@@ -51,7 +51,10 @@ class SecurityConfig(private val authTokenService: AuthTokenService) : WebSecuri
                         "/order/list",
 
                         "/executor/list",
-                        "/executor/*"
+                        "/executor/*",
+
+                        "/category/list/active",
+                        "/category/list"
                 ).permitAll()
                 .anyRequest()
                 .authenticated()

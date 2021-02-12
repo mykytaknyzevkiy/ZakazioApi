@@ -52,11 +52,11 @@ class RequestPassportController(
     fun add(@RequestBody passportModel: PassportModel) : DataResponse<Nothing?> {
         val myUser = userController.get().data
 
-        if (passportModel.date_begin.isEmpty ||
+        if (passportModel.date_begin.isEmpty() ||
                 passportModel.files.isEmpty() ||
-                passportModel.number.isEmpty ||
-                passportModel.serial.isEmpty ||
-                passportModel.taxID.isEmpty)
+                passportModel.number.isEmpty() ||
+                passportModel.serial.isEmpty() ||
+                passportModel.taxID.isEmpty())
             throw BadParams()
 
         requestPassportDao

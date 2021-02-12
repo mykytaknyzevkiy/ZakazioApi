@@ -28,10 +28,18 @@ class CategoryController(private val categoryDao: CategoryDao,
         )
     }
 
+    @GetMapping("/list/active")
+    fun listActive(pageable: Pageable) : DataResponse<Page<CategoryEntity>> {
+        val data = categoryDao.findAllActive(pageable)
+        return DataResponse.ok(
+                data
+        )
+    }
+
     @PostMapping("/add")
     @CanSuperAdmin_Admin_Editor
     fun add(@RequestBody editCategoryModel: EditCategoryModel) : DataResponse<CategoryEntity> {
-        if (editCategoryModel.image == null || editCategoryModel.name.isEmpty) throw BadParams()
+        if (editCategoryModel.image == null || editCategoryModel.name.isEmpty()) throw BadParams()
         val image = storageService.store(Base64.getDecoder().decode(editCategoryModel.image), "jpg")
 
         return DataResponse.ok(
@@ -52,7 +60,7 @@ class CategoryController(private val categoryDao: CategoryDao,
 
         val category = categoryDao.findById(id).orElseGet { throw NotFound() }
 
-        if (editCategoryModel.name.isEmpty) throw BadParams()
+        if (editCategoryModel.name.isEmpty()) throw BadParams()
 
         category.apply {
             this.name = editCategoryModel.name

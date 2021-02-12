@@ -277,7 +277,7 @@ class UserController(private val userDao: UserDao,
 
     @PutMapping("/add/device")
     fun addDevice(@RequestBody deviceRegister: DeviceRegister) : DataResponse<Nothing?> {
-        if (deviceRegister.fcmToken.isEmpty || deviceRegister.name.isEmpty) throw BadParams()
+        if (deviceRegister.fcmToken.isEmpty() || deviceRegister.name.isEmpty()) throw BadParams()
 
         val myUser = get().data
 

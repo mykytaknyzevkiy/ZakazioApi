@@ -4,7 +4,9 @@ import com.zakaion.api.controller.BaseController
 import com.zakaion.api.dao.UserDao
 import com.zakaion.api.entity.user.RoleType
 import com.zakaion.api.entity.user.UserEntity
+import com.zakaion.api.entity.user.UserStatus
 import com.zakaion.api.entity.user._Can_SuperAdmin
+import com.zakaion.api.exception.BadParams
 import com.zakaion.api.exception.NotFound
 import com.zakaion.api.factor.UserFull
 import com.zakaion.api.factor.user.UserFactory
@@ -42,7 +44,11 @@ class AdminController (private val userDao: UserDao,
     @PostMapping("/add")
     @PreAuthorize(_Can_SuperAdmin)
     fun add(@RequestBody userEntity: UserEntity) : DataResponse<Nothing?> {
-        val copy = userEntity.copy(role = RoleType.ADMIN)
+        val copy = userEntity.copy(role = RoleType.ADMIN, status = UserStatus.ACTIVE)
+
+        if (userDao.findAll().any { it.email == copy.email || it.phoneNumber == copy.phoneNumber }) {
+            throw BadParams()
+        }
 
         userDao.save(copy)
 
