@@ -65,15 +65,24 @@ class OrderFactor(private val userFactory: UserFactory,
 
         mOrder.beExecutorEnable = order.executor == null &&
                 myUser.role == RoleType.EXECUTOR &&
+                mOrder.status == OrderStatus.PROCESS &&
                 (userFactory.create(myUser) as ExecutorInfo).order.enable
 
-        mOrder.setExecutorEnable = order.executor == null &&
+        mOrder.setExecutorEnable = mOrder.status == OrderStatus.PROCESS &&
+                order.executor == null &&
                 (myUser.role in adminsRole ||
                         (myUser.role == RoleType.PARTNER && (userFactory.create(myUser) as PartnerInfo).order.enable) ||
                 myUser.id in arrayOf(order.client.id, order.partner?.id))
 
         mOrder.cancelExecutorEnable = order.status in arrayOf(OrderStatus.PROCESS, OrderStatus.IN_WORK) &&
-                myUser.id in arrayOf(order.client.id, order.executor?.id, order.partner?.id)
+                (myUser.id in arrayOf(order.client.id, order.partner?.id) || myUser.role in arrayOf(
+                    RoleType.SUPER_ADMIN,
+                    RoleType.ADMIN,
+                    RoleType.EDITOR
+                ))
+
+        mOrder.defuseMeExecutorEnable = order.status in arrayOf(OrderStatus.PROCESS, OrderStatus.IN_WORK) &&
+                myUser.id == order.executor?.id
 
         mOrder.inWorkEnable = order.status == OrderStatus.PROCESS && myUser.id == order.executor?.id
 
@@ -87,6 +96,8 @@ class OrderFactor(private val userFactory: UserFactory,
         else {
             mOrder.commentEnable = myUser.id in arrayOf(order.client.id, order.partner?.id, order.executor?.id)
         }
+
+        mOrder.cancelEnable = (mOrder.status == OrderStatus.PROCESS && (myUser.role in adminsRole || myUser.id in arrayOf(order.client.id, order.partner?.id)))
 
         return mOrder
     }

@@ -16,7 +16,6 @@ interface UserImp {
     val isPassportActive: Boolean
     val masterID: Long?
     var city: CityEntity?
-    var status: UserStatus?
 }
 
 enum class UserStatus {

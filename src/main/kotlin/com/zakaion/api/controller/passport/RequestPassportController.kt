@@ -59,6 +59,10 @@ class RequestPassportController(
                 passportModel.taxID.isEmpty())
             throw BadParams()
 
+
+        if (passportDao.findAll().any { it.number == passportModel.number && it.serial == passportModel.serial})
+            throw BadParams()
+
         requestPassportDao
                 .save(
                         RequestPassportEntity(

@@ -10,7 +10,10 @@ import org.springframework.data.jpa.repository.Query
 
 interface CategoryDao : PagingAndSortingRepository<CategoryEntity, Long> {
 
-    @Query(value = "select * from category where isActive = 1", nativeQuery = true)
+    @Query(value = "select * from category where is_active = 1", nativeQuery = true)
     fun findAllActive(pageable: Pageable) : Page<CategoryEntity>
+
+    @Query(value = "select * from category where is_active = 1 and name like %:query%", nativeQuery = true)
+    fun searchAllActive(pageable: Pageable, @Param("query") query: String) : Page<CategoryEntity>
 
 }

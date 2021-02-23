@@ -66,8 +66,7 @@ class ExecutorController (private val userDao: UserDao,
         var user = userEntity.copy(
                 phoneNumber = phoneNumber,
                 role = RoleType.EXECUTOR,
-                isPhoneActive = true,
-                status = UserStatus.PROCESS
+                isPhoneActive = true
         )
 
         user = userDao.save(user)
@@ -163,8 +162,7 @@ class ExecutorController (private val userDao: UserDao,
         userDao.save(
                 userEntity.copy(
                         role = RoleType.EXECUTOR,
-                        masterID = if (myUser.role == RoleType.PARTNER) myUser.id else null,
-                        status = UserStatus.PROCESS
+                        masterID = if (myUser.role == RoleType.PARTNER) myUser.id else null
                 )
         )
 

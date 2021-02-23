@@ -44,7 +44,7 @@ class AdminController (private val userDao: UserDao,
     @PostMapping("/add")
     @PreAuthorize(_Can_SuperAdmin)
     fun add(@RequestBody userEntity: UserEntity) : DataResponse<Nothing?> {
-        val copy = userEntity.copy(role = RoleType.ADMIN, status = UserStatus.ACTIVE)
+        val copy = userEntity.copy(role = RoleType.ADMIN)
 
         if (userDao.findAll().any { it.email == copy.email || it.phoneNumber == copy.phoneNumber }) {
             throw BadParams()

@@ -21,6 +21,7 @@ import com.zakaion.api.service.AuthTokenService
 import com.zakaion.api.service.NotificationService
 import com.zakaion.api.service.StorageService
 import com.zakaion.api.service.TransactionService
+import com.zakaion.api.unit.ImportOrderExcell
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.web.bind.annotation.*
@@ -42,7 +43,9 @@ class OrderController(private val orderDao: OrderDao,
                       private val tokenService: AuthTokenService,
                       private val transactionService: TransactionService,
                       private val storageService: StorageService,
-                      private val categoryDao: CategoryDao) : BaseController() {
+                      private val categoryDao: CategoryDao,
+                      private val importOrderExcell: ImportOrderExcell
+                      ) : BaseController() {
 
     @PostMapping("/add")
     fun add(@RequestBody addOrderModel: AddOrderModel) : DataResponse<Nothing?> {
@@ -95,7 +98,7 @@ class OrderController(private val orderDao: OrderDao,
         else {
             userDao.findAll()
                     .find { it.phoneNumber == addOrderModel.clientPhone ||
-                            it.email == addOrderModel.clientEmail }
+                            it.email == addOrderModel.clientEmail && it.role == RoleType.CLIENT}
                     ?: userDao.save(UserEntity(
                             email = addOrderModel.clientEmail,
                             phoneNumber = addOrderModel.clientPhone,
@@ -151,7 +154,7 @@ class OrderController(private val orderDao: OrderDao,
             throw NotFound()
         }
 
-        val orderInfo = orderFactor.create(order)
+        val orderInfo = orderFactor.create(order.copy())
 
         if (!orderInfo.editEnable)
             throw NoPermittedMethod()
@@ -174,7 +177,7 @@ class OrderController(private val orderDao: OrderDao,
             throw NotFound()
         }
 
-        val orderInfo = orderFactor.create(order)
+        val orderInfo = orderFactor.create(order.copy())
 
         if (!orderInfo.editEnable)
             throw NoPermittedMethod()
@@ -201,7 +204,7 @@ class OrderController(private val orderDao: OrderDao,
             throw NotFound()
         }
 
-        val orderInfo = orderFactor.create(order)
+        val orderInfo = orderFactor.create(order.copy())
 
         if (!orderInfo.editEnable)
             throw NoPermittedMethod()
@@ -231,7 +234,7 @@ class OrderController(private val orderDao: OrderDao,
             throw NotFound()
         }
 
-        return DataResponse.ok(orderFactor.create(order))
+        return DataResponse.ok(orderFactor.create(order.copy()))
     }
 
     @GetMapping("/list")
@@ -249,7 +252,7 @@ class OrderController(private val orderDao: OrderDao,
                     orderDao.findAll(pageable, search)
                         )
                         .map {
-                            orderFactor.create(it)
+                            orderFactor.create(it.copy())
                         }
         )
     }
@@ -269,7 +272,7 @@ class OrderController(private val orderDao: OrderDao,
                     orderDao.findUserOrders(pageable, userID, search)
                         )
                         .map {
-                            orderFactor.create(it)
+                            orderFactor.create(it.copy())
                         }
         )
     }
@@ -280,7 +283,7 @@ class OrderController(private val orderDao: OrderDao,
             throw NotFound()
         }
 
-        val mOrder = orderFactor.create(order)
+        val mOrder = orderFactor.create(order.copy())
 
         if (!mOrder.beExecutorEnable)
             throw BadParams()
@@ -307,7 +310,7 @@ class OrderController(private val orderDao: OrderDao,
             throw NotFound()
         }
 
-        val mOrder = orderFactor.create(order)
+        val mOrder = orderFactor.create(order.copy())
 
         if (!mOrder.setExecutorEnable)
             throw BadParams()
@@ -346,9 +349,9 @@ class OrderController(private val orderDao: OrderDao,
             throw NotFound()
         }
 
-        val mOrder = orderFactor.create(order)
+        val mOrder = orderFactor.create(order.copy())
 
-        if (!mOrder.cancelExecutorEnable)
+        if (!mOrder.cancelExecutorEnable && !mOrder.defuseMeExecutorEnable)
             throw NoPermittedMethod()
 
         val myUser = userFactory.myUser
@@ -369,7 +372,7 @@ class OrderController(private val orderDao: OrderDao,
             throw NotFound()
         }
 
-        val mOrder = orderFactor.create(order)
+        val mOrder = orderFactor.create(order.copy())
 
         if (!mOrder.inWorkEnable)
             throw BadParams()
@@ -390,7 +393,7 @@ class OrderController(private val orderDao: OrderDao,
             throw NotFound()
         }
 
-        val mOrder = orderFactor.create(order)
+        val mOrder = orderFactor.create(order.copy())
 
         if (!mOrder.doneEnable)
             throw BadParams()
@@ -412,7 +415,7 @@ class OrderController(private val orderDao: OrderDao,
             throw NotFound()
         }
 
-        val mOrder = orderFactor.create(order)
+        val mOrder = orderFactor.create(order.copy())
 
         if (!mOrder.cancelEnable)
             throw BadParams()
@@ -436,6 +439,15 @@ class OrderController(private val orderDao: OrderDao,
             throw NoPermittedMethod()
 
         transactionService.processOrder(order, amount)
+
+        return DataResponse.ok(null)
+    }
+
+    @PostMapping("/import")
+    fun import(@RequestParam("file") file: MultipartFile) : DataResponse<Nothing?> {
+        val inputStream = file.inputStream
+
+        importOrderExcell.build(inputStream)
 
         return DataResponse.ok(null)
     }

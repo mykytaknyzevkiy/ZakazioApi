@@ -4,10 +4,12 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.zakaion.api.entity.executor.PassportEntity
 import com.zakaion.api.entity.user.UserEntity
 import com.zakaion.api.entity.user.UserImp
+import com.zakaion.api.entity.user.UserStatus
 
 abstract class UserFullImp(user: UserEntity,
                            override var passport: PassportEntity?,
-                           override var passportInProgress: Boolean = false) : UserImp by user, UserResponseImp
+                           override var passportInProgress: Boolean = false,
+                           var status: UserStatus = UserStatus.ACTIVE) : UserImp by user, UserResponseImp
 
 data class UserFull(
                     @JsonProperty( value = "user", access = JsonProperty.Access.WRITE_ONLY)

@@ -242,7 +242,7 @@ class UserController(private val userDao: UserDao,
 
     }
 
-    @PutMapping("/change/password")
+    /*@PutMapping("/change/password")
     fun changePassword(@RequestBody changePasswordModel: ChangePasswordModel) : DataResponse<Nothing?> {
         val myUser = get().data
 
@@ -253,7 +253,7 @@ class UserController(private val userDao: UserDao,
         userDao.save(myUser)
 
         return DataResponse.ok(null)
-    }
+    }*/
 
     @PutMapping("/{id}/change/password")
     fun changeUserPassword(@PathVariable("id") id: Long, @RequestBody changePasswordModel: ChangePasswordModel) : DataResponse<Nothing?> {
@@ -261,7 +261,7 @@ class UserController(private val userDao: UserDao,
 
         val user = userDao.findById(id).orElseGet { throw NotFound() }
 
-        if (myUser.role == RoleType.SUPER_ADMIN ||
+        if (myUser.role == RoleType.SUPER_ADMIN || myUser.id == user.id ||
                 (myUser.role == RoleType.ADMIN && user.role != RoleType.SUPER_ADMIN) ||
                 (myUser.role == RoleType.EDITOR && user.role != RoleType.SUPER_ADMIN && user.role != RoleType.ADMIN)) {
 
@@ -303,7 +303,7 @@ class UserController(private val userDao: UserDao,
                 (myUser.role == RoleType.ADMIN && user.role != RoleType.SUPER_ADMIN) ||
                 (myUser.role == RoleType.EDITOR && user.role != RoleType.SUPER_ADMIN && user.role != RoleType.ADMIN)) {
 
-            user.status = UserStatus.BLOCKED
+            user.isBlocked = !user.isBlocked
 
             userDao.save(user)
 

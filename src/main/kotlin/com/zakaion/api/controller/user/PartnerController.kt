@@ -83,8 +83,7 @@ class PartnerController (private val userDao: UserDao,
         var user = userEntity.copy(
                 phoneNumber = phoneNumber,
                 role = RoleType.PARTNER,
-                isPhoneActive = true,
-                status = UserStatus.PROCESS
+                isPhoneActive = true
         )
 
         user = userDao.save(user)
@@ -121,8 +120,7 @@ class PartnerController (private val userDao: UserDao,
 
         userDao.save(
                 userEntity.copy(
-                        role = RoleType.PARTNER,
-                        status = UserStatus.PROCESS
+                        role = RoleType.PARTNER
                 )
         )
 

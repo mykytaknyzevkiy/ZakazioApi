@@ -47,9 +47,6 @@ class AuthTokenService (private val userDao: UserDao) {
 
             val user = userDao.findById(userId.toLong()).orElseGet { null } ?: return null
 
-            if (user.status == UserStatus.BLOCKED)
-                return null
-
             user
         } catch (e: Exception) {
             null

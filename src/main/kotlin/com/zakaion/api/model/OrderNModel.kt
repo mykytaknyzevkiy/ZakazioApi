@@ -39,6 +39,7 @@ data class OrderNModel(
 
         val toShareSum: Float,
 
-        val category: CategoryEntity
+        val category: CategoryEntity,
 
-)
+        var defuseMeExecutorEnable: Boolean = false
+        )

@@ -29,7 +29,7 @@ class EditorController(private val userDao: UserDao) : BaseController() {
     @PostMapping("/add")
     @CanSuperAdmin_Admin
     fun add(@RequestBody userEntity: UserEntity) : DataResponse<UserEntity> {
-        val copy = userEntity.copy(role = RoleType.EDITOR, status = UserStatus.ACTIVE)
+        val copy = userEntity.copy(role = RoleType.EDITOR)
 
         if (userDao.findAll().any { it.phoneNumber == copy.phoneNumber || it.email == copy.email })
             throw AlreadyTaken()

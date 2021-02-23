@@ -28,9 +28,9 @@ class CategoryController(private val categoryDao: CategoryDao,
         )
     }
 
-    @GetMapping("/list/active")
-    fun listActive(pageable: Pageable) : DataResponse<Page<CategoryEntity>> {
-        val data = categoryDao.findAllActive(pageable)
+    @GetMapping("/list/active/search")
+    fun listActive(pageable: Pageable, @RequestParam("query") query: String) : DataResponse<Page<CategoryEntity>> {
+        val data = categoryDao.searchAllActive(pageable, query)
         return DataResponse.ok(
                 data
         )

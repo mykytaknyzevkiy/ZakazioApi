@@ -29,5 +29,4 @@ data class UserEntity(@Id
                       @CreationTimestamp
                       @Column(name = "creation_date_time", columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
                       val creationDateTime: Date? = Date(),
-                      @Enumerated
-                      override var status: UserStatus? = UserStatus.ACTIVE) : UserImp
+                      var isBlocked: Boolean = false) : UserImp
