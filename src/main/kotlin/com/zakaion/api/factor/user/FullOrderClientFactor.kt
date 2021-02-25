@@ -47,7 +47,12 @@ class FullOrderClientFactor(user: UserEntity,
                 portfolioCount = portfolio.size
         ).apply {
             if (order.enable) {
-                order.enable = isEmailActive && isPassportActive && isPhoneActive && portfolio.isNotEmpty() && this@toExecutor.isBlocked
+                order.enable = isEmailActive &&
+                        isPassportActive &&
+                        isPhoneActive &&
+                        portfolio.isNotEmpty() &&
+                        !this@toExecutor.isBlocked &&
+                        city != null
             }
             if (!order.enable)
                 status = UserStatus.PROCESS

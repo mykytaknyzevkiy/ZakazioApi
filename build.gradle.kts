@@ -23,7 +23,7 @@ allOpen {
 }
 
 group = "com.zakazio.api"
-version = "1.0.53"
+version = "1.0.56"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {

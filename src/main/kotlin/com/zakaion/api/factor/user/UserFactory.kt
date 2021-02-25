@@ -18,7 +18,7 @@ class UserFactory(private val orderDao: OrderDao,
     fun create(user: UserEntity?): UserImp? {
         if (user == null)
             return null
-        return buildFactor(user)
+        return buildFactor(user.copy())
                 .create().apply {
                     viewHideContacts(myUser)
                     if (!this.isPassportActive)

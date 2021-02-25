@@ -105,7 +105,10 @@ class OrderController(private val orderDao: OrderDao,
                             firstName = addOrderModel.clientFirstName,
                             lastName = addOrderModel.clientLastName,
                             middleName = addOrderModel.clientMiddleName
-                    ))
+                    ).apply {
+                        if (myUser.role == RoleType.PARTNER)
+                            this.masterID = myUser.id
+                    })
         }
 
         val executor: UserEntity? = when {
@@ -290,15 +293,7 @@ class OrderController(private val orderDao: OrderDao,
 
         val myUser = userFactory.myUser
 
-        val nOrder = orderDao.save(
-                order.apply {
-                    executor = myUser
-                }
-        )
-
-        notificationService.onYouOrderExecutor(nOrder)
-
-        notificationService.onClientHasExecutorOrder(nOrder)
+        setExecutor(id, myUser.id)
 
         return DataResponse.ok(null)
     }
@@ -312,7 +307,7 @@ class OrderController(private val orderDao: OrderDao,
 
         val mOrder = orderFactor.create(order.copy())
 
-        if (!mOrder.setExecutorEnable)
+        if (!mOrder.setExecutorEnable && !mOrder.beExecutorEnable)
             throw BadParams()
 
         if (!mOrder.cancelExecutorEnable && mOrder.executor != null)
@@ -321,18 +316,18 @@ class OrderController(private val orderDao: OrderDao,
         if (order.executor != null)
             cancelExecutor(id)
 
-        val executor = userFactory.create(
-                userDao.findById(executorID).orElseGet {
-                    throw NotFound()
-                }
-        ) as ExecutorInfo
+        val executorDB = userDao.findById(executorID).orElseGet {
+            throw NotFound()
+        }
+
+        val executor = userFactory.create(executorDB.copy()) as ExecutorInfo
 
         if (!executor.order.enable)
             throw NoPermittedMethod()
 
         val nOrder = orderDao.save(
                 order.copy(
-                        executor = executor.user
+                        executor = executorDB
                 )
         )
 
@@ -353,8 +348,6 @@ class OrderController(private val orderDao: OrderDao,
 
         if (!mOrder.cancelExecutorEnable && !mOrder.defuseMeExecutorEnable)
             throw NoPermittedMethod()
-
-        val myUser = userFactory.myUser
 
         val nOrder = orderDao.save(
                 order.copy(
@@ -446,6 +439,15 @@ class OrderController(private val orderDao: OrderDao,
     @PostMapping("/import")
     fun import(@RequestParam("file") file: MultipartFile) : DataResponse<Nothing?> {
         val inputStream = file.inputStream
+
+        importOrderExcell.build(inputStream)
+
+        return DataResponse.ok(null)
+    }
+
+    @PostMapping("/import/{filename:.+}")
+    fun import(@PathVariable filename: String) : DataResponse<Nothing?> {
+        val inputStream = storageService.loadAsFile(filename).inputStream()
 
         importOrderExcell.build(inputStream)
 

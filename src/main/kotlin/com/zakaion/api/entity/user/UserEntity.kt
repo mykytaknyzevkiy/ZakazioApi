@@ -23,7 +23,7 @@ data class UserEntity(@Id
                       override var isPhoneActive: Boolean = false,
                       override var isPassportActive: Boolean = false,
                       @JsonProperty( value = "masterID", access = JsonProperty.Access.WRITE_ONLY)
-                      override val masterID: Long? = null,
+                      override var masterID: Long? = null,
                       @OneToOne
                       override var city: CityEntity? = null,
                       @CreationTimestamp

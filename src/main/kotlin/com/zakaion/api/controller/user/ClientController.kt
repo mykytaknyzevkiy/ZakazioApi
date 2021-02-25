@@ -31,11 +31,21 @@ class ClientController (private val userDao: UserDao,
     @GetMapping("/list")
     @PreAuthorize(_Can_SuperAdmin_Admin_Editor_Partner)
     fun list(pageable: Pageable, @RequestParam("search", required = false, defaultValue = "") search: String? = null) : DataResponse<Page<ClientInfo>> {
+        val myUser = userFactory.myUser
 
-        val data = (
-                if (search.isNullOrEmpty()) userDao.findByRole(RoleType.CLIENT.ordinal, pageable)
-                else userDao.findByRole(RoleType.CLIENT.ordinal, search, pageable)
-                ).map {user->
+        val data = if (myUser.role == RoleType.PARTNER) {
+            (
+                    if (search.isNullOrEmpty()) userDao.findByRole(RoleType.CLIENT.ordinal, myUser.id, pageable)
+                    else userDao.findByRole(RoleType.CLIENT.ordinal, myUser.id, search, pageable)
+                    )
+        }
+                else {
+            (
+                    if (search.isNullOrEmpty()) userDao.findByRole(RoleType.CLIENT.ordinal, pageable)
+                    else userDao.findByRole(RoleType.CLIENT.ordinal, search, pageable)
+                    )
+        }
+            .map {user->
                     userFactory.create(user) as ClientInfo
                 }
 
@@ -111,6 +121,7 @@ class ClientController (private val userDao: UserDao,
     @PostMapping("/add")
     @PreAuthorize(_Can_SuperAdmin_Admin_Editor_Partner)
     fun add(@RequestBody userEntity: UserEntity): DataResponse<UserEntity> {
+        val myUser = userFactory.myUser
 
         if (userEntity.phoneNumber.isNullOrEmpty() || userEntity.email.isNullOrEmpty())
             throw BadParams()
@@ -123,7 +134,11 @@ class ClientController (private val userDao: UserDao,
                 userDao.save(
                         userEntity.copy(
                                 role = RoleType.CLIENT
-                        )
+                        ).apply {
+                            if (myUser.role == RoleType.PARTNER) {
+                                this.masterID = myUser.id
+                            }
+                        }
                 )
         )
     }

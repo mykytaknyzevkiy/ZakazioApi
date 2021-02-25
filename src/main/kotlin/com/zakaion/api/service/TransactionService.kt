@@ -16,33 +16,27 @@ class TransactionService(private val inDao: TransactionInDao,
                          private val userDao: UserDao) {
 
     fun userBalance(userID: Long) : Float {
-        val inSum = {
-            var sum = 0f
-            inDao.find(userID).forEach {
-                sum += it.amount
-            }
-            sum
-        }.invoke()
+        var sum = 0f
+        inDao.find(userID).forEach {
+            sum += it.amount
+        }
+        val inSum = sum
 
-        val outSum = {
-            var sum = 0f
-            outDao.find(userID).forEach {
-                sum += it.amount
-            }
-            sum
-        }.invoke()
+        var sum1 = 0f
+        outDao.find(userID).forEach {
+            sum1 += it.amount
+        }
+        val outSum = sum1
 
         return inSum - outSum
     }
 
     fun orderBalance(orderID: Long) : Float {
-        return {
-            var sum = 0f
-            outDao.findOrder(orderID).forEach {
-                sum += it.amount
-            }
-            sum
-        }.invoke()
+        var sum = 0f
+        outDao.findOrder(orderID).forEach {
+            sum += it.amount
+        }
+        return sum
     }
 
     fun processOrder(order: OrderEntity, amount: Float) {

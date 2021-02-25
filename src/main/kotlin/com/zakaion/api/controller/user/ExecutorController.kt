@@ -80,28 +80,23 @@ class ExecutorController (private val userDao: UserDao,
 
     @GetMapping("/list")
     fun list(pageable: Pageable, @RequestParam("search", required = false, defaultValue = "") search: String? = null) : DataResponse<Page<ExecutorInfo>> {
-        val data = (
-                if (search.isNullOrEmpty()) userDao.findByRole(RoleType.EXECUTOR.ordinal, pageable)
-                else userDao.findByRole(RoleType.EXECUTOR.ordinal, search, pageable)
-                ).map {user->
-                    userFactory.create(user) as ExecutorInfo
-                }
-
-        return DataResponse.ok(
-                data
-        )
-    }
-
-    @GetMapping("/list/my")
-    fun listMy(pageable: Pageable, @RequestParam("search", required = false, defaultValue = "") search: String? = null) : DataResponse<Page<ExecutorInfo>> {
         val myUser = userController.get().data
 
-        val data = (
-                if (search.isNullOrEmpty()) userDao.findByRole(RoleType.EXECUTOR.ordinal, myUser.id, pageable)
-                else userDao.findByRole(RoleType.EXECUTOR.ordinal, myUser.id, search, pageable)
-                ).map {user->
-                    userFactory.create(user) as ExecutorInfo
-                }
+        val data = if (myUser.role == RoleType.PARTNER) {
+            (
+                    if (search.isNullOrEmpty()) userDao.findByRole(RoleType.EXECUTOR.ordinal, myUser.id, pageable)
+                    else userDao.findByRole(RoleType.EXECUTOR.ordinal, myUser.id, search, pageable)
+                    )
+        }
+        else {
+            (
+                    if (search.isNullOrEmpty()) userDao.findByRole(RoleType.EXECUTOR.ordinal, pageable)
+                    else userDao.findByRole(RoleType.EXECUTOR.ordinal, search, pageable)
+                    )
+        }
+            .map {user->
+                userFactory.create(user) as ExecutorInfo
+            }
 
         return DataResponse.ok(
                 data

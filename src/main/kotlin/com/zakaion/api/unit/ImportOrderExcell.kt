@@ -101,6 +101,13 @@ class ImportOrderExcell(private val orderDao: OrderDao,
             else if (row.getCell(contentRowNum).stringCellValue.isNullOrEmpty())
                 continue
 
+            if (row.getCell(phoneRowNum).stringCellValue.isEmpty())
+                continue
+            if (row.getCell(emailRowNum).stringCellValue.isEmpty())
+                continue
+            if (row.getCell(clientNameRowNum).stringCellValue.isEmpty())
+                continue
+
             val client: UserEntity = clientList.find {
                 it.phoneNumber == row.getCell(phoneRowNum).stringCellValue
                     .replace(" ", "")
