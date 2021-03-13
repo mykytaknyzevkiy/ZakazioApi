@@ -23,6 +23,13 @@ data class OrderAnalytic(
 )
 
 data class TransactionAnalytic(
-        val inComingSum: Float,
+        val systemTotalSum: Double,
+        val totalInSum: Double,
+        val totalOutCardSum: Double,
+        val totalPartnerSum: Double,
+        val totalOrderSum: Double,
+        val totalInWaitOrderSum: Double,
+        val totalLostOrderSum: Double,
+        val totalSystemReceiveSum: Double,
         val dates: List<NikitaModel<String, Float>>
 )

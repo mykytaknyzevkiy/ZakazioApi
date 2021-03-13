@@ -9,7 +9,8 @@ import com.zakaion.api.entity.user.UserStatus
 abstract class UserFullImp(user: UserEntity,
                            override var passport: PassportEntity?,
                            override var passportInProgress: Boolean = false,
-                           var status: UserStatus = UserStatus.ACTIVE) : UserImp by user, UserResponseImp
+                           var status: UserStatus = UserStatus.ACTIVE,
+                           var balance: Float = 0f) : UserImp by user, UserResponseImp
 
 data class UserFull(
                     @JsonProperty( value = "user", access = JsonProperty.Access.WRITE_ONLY)

@@ -11,13 +11,14 @@ import org.springframework.stereotype.Service
 import java.io.InputStream
 import org.apache.poi.hssf.usermodel.HeaderFooter.file
 import org.apache.poi.ss.usermodel.CellType
+import org.apache.poi.ss.usermodel.DateUtil
 import org.apache.poi.ss.usermodel.Sheet
 
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 
 import org.apache.poi.ss.usermodel.Workbook
-
-
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 @Service
@@ -34,6 +35,7 @@ class ImportOrderExcell(private val orderDao: OrderDao,
             try {
                 processSheet(sheet)
             } catch (e: Exception) {
+                println(e)
             }
         }
 
@@ -50,6 +52,7 @@ class ImportOrderExcell(private val orderDao: OrderDao,
         var emailRowNum: Int? = null
         var dateLineRowNum: Int? = null
         var categoryLineRowNum: Int? = null
+        var creationDate: Int? = null
 
         val row = sheet.getRow(0)
 
@@ -68,6 +71,8 @@ class ImportOrderExcell(private val orderDao: OrderDao,
                 "<email>" -> emailRowNum = num
                 "<time>" -> dateLineRowNum = num
                 "<category>" -> categoryLineRowNum = num
+                //"дата создания заказа" -> creationDate = num
+                "<date_create>" -> creationDate = num
             }
         }
 
@@ -80,7 +85,8 @@ class ImportOrderExcell(private val orderDao: OrderDao,
             phoneRowNum == null ||
             emailRowNum == null ||
             dateLineRowNum == null ||
-            categoryLineRowNum == null)
+            categoryLineRowNum == null ||
+            creationDate == null)
                 return
 
         for (index in 1..sheet.lastRowNum) {
@@ -99,6 +105,8 @@ class ImportOrderExcell(private val orderDao: OrderDao,
             else if (row.getCell(titleRowNum).stringCellValue.isNullOrEmpty())
                 continue
             else if (row.getCell(contentRowNum).stringCellValue.isNullOrEmpty())
+                continue
+            else if (row.getCell(creationDate).toString().isNullOrEmpty())
                 continue
 
             if (row.getCell(phoneRowNum).stringCellValue.isEmpty())
@@ -163,6 +171,12 @@ class ImportOrderExcell(private val orderDao: OrderDao,
                 )
             )
 
+            val creatingDate = try {
+                DateUtil.getJavaDate(row.getCell(creationDate).numericCellValue)
+            } catch (e: Exception) {
+                continue
+            }
+
             val order = OrderEntity(
                 client = client,
                 title = row.getCell(titleRowNum).stringCellValue,
@@ -171,7 +185,8 @@ class ImportOrderExcell(private val orderDao: OrderDao,
                 category = category,
                 city = city,
                 dateLine = row.getCell(dateLineRowNum).stringCellValue ?: "",
-                files = emptyList()
+                files = emptyList(),
+                creationDateTime = creatingDate
             )
 
             orderDao.save(order)

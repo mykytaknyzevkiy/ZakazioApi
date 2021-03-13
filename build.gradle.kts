@@ -23,7 +23,7 @@ allOpen {
 }
 
 group = "com.zakazio.api"
-version = "1.0.56"
+version = "1.0.72"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {
@@ -59,6 +59,8 @@ dependencies {
 
 	implementation("org.apache.poi:poi:3.15")
 	implementation("org.apache.poi:poi-ooxml:3.15")
+
+	implementation("org.thymeleaf:thymeleaf:3.0.11.RELEASE")
 }
 
 tasks.withType<Test> {

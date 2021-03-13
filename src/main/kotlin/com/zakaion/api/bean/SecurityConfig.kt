@@ -28,6 +28,10 @@ class SecurityConfig(private val authTokenService: AuthTokenService) : WebSecuri
 
     override fun configure(http: HttpSecurity) {
         http
+            .headers()
+            .frameOptions()
+            .disable()
+            .and()
                 .cors()
                 .and()
                 .csrf().disable()
@@ -45,6 +49,7 @@ class SecurityConfig(private val authTokenService: AuthTokenService) : WebSecuri
                         "/client/register/phone",
 
                         "/file/*",
+
                         "/file",
 
                         "/order/list/user/*",
@@ -53,8 +58,13 @@ class SecurityConfig(private val authTokenService: AuthTokenService) : WebSecuri
                         "/executor/list",
                         "/executor/*",
 
-                        "/category/list/active",
-                        "/category/list"
+                        "/category/**",
+
+                        "/app/**",
+                        "/region/*",
+                        "/region/**",
+
+                        "/payment/**"
                 ).permitAll()
                 .anyRequest()
                 .authenticated()

@@ -4,7 +4,7 @@ import com.zakaion.api.entity.user.UserEntity
 import com.fasterxml.jackson.annotation.JsonProperty
 import javax.persistence.*
 
-@Entity
+@Entity(name = "bank_card")
 data class BankCardEntity(
         @Id
         @GeneratedValue(strategy= GenerationType.AUTO)
@@ -14,7 +14,10 @@ data class BankCardEntity(
         val user: UserEntity,
 
         @JsonProperty( value = "crypto", access = JsonProperty.Access.WRITE_ONLY)
+        @Column(length = 3000)
         val crypto: String,
 
-        val endNum: String
+        val endNum: String,
+
+        val exp: String
 )

@@ -79,20 +79,15 @@ class ExecutorController (private val userDao: UserDao,
     }
 
     @GetMapping("/list")
-    fun list(pageable: Pageable, @RequestParam("search", required = false, defaultValue = "") search: String? = null) : DataResponse<Page<ExecutorInfo>> {
+    fun list(pageable: Pageable,
+             @RequestParam("search", required = false, defaultValue = "") search: String) : DataResponse<Page<ExecutorInfo>> {
         val myUser = userController.get().data
 
         val data = if (myUser.role == RoleType.PARTNER) {
-            (
-                    if (search.isNullOrEmpty()) userDao.findByRole(RoleType.EXECUTOR.ordinal, myUser.id, pageable)
-                    else userDao.findByRole(RoleType.EXECUTOR.ordinal, myUser.id, search, pageable)
-                    )
+            userDao.findByRole(RoleType.EXECUTOR.ordinal, myUser.id, search, pageable)
         }
         else {
-            (
-                    if (search.isNullOrEmpty()) userDao.findByRole(RoleType.EXECUTOR.ordinal, pageable)
-                    else userDao.findByRole(RoleType.EXECUTOR.ordinal, search, pageable)
-                    )
+            userDao.findByRole(RoleType.EXECUTOR.ordinal, search, pageable)
         }
             .map {user->
                 userFactory.create(user) as ExecutorInfo
@@ -104,11 +99,12 @@ class ExecutorController (private val userDao: UserDao,
     }
 
     @GetMapping("/list/partner/{id}")
-    fun listPartner(@PathVariable("id") id: Long, pageable: Pageable, @RequestParam("search", required = false, defaultValue = "null") search: String? = null) : DataResponse<Page<ExecutorInfo>> {
-        val data = (
-                if (search.isNullOrEmpty()) userDao.findByRole(RoleType.EXECUTOR.ordinal, id, pageable)
-                else userDao.findByRole(RoleType.EXECUTOR.ordinal, id, search, pageable)
-                ).map {user->
+    fun listPartner(
+        @PathVariable("id") id: Long,
+        pageable: Pageable,
+        @RequestParam("search", required = false, defaultValue = "null") search: String
+    ) : DataResponse<Page<ExecutorInfo>> {
+        val data = userDao.findByRole(RoleType.EXECUTOR.ordinal, id, search, pageable).map {user->
                     userFactory.create(user) as ExecutorInfo
                 }
 

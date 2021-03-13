@@ -13,3 +13,7 @@ interface TransactionImp {
     val order: OrderEntity?
     val creationDateTime: Date
 }
+
+fun TransactionImp.creationCalendar() = Calendar.getInstance().apply {
+    timeInMillis = creationDateTime.time
+}

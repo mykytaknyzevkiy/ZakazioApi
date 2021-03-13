@@ -3,11 +3,13 @@ package com.zakaion.api.entity.order
 import com.zakaion.api.entity.region.CityEntity
 import com.zakaion.api.entity.user.UserEntity
 import org.hibernate.annotations.CreationTimestamp
+import org.hibernate.annotations.DynamicInsert
 import org.hibernate.annotations.UpdateTimestamp
 import java.util.*
 import javax.persistence.*
 
 @Entity(name = "order_n")
+@DynamicInsert
 //@Table(name = "order_n")
 data class OrderEntity(
         @Id
@@ -44,19 +46,22 @@ data class OrderEntity(
        // @JoinColumn(name = "city_id")
         val city: CityEntity,
 
-        @CreationTimestamp
-        @Column(name = "creation_date_time", columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
+        @Column(name = "creation_date_time", insertable = true, updatable = true/*, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP"*/)
+        //@CreationTimestamp
         val creationDateTime: Date = Date(),
-        @UpdateTimestamp
-        @Column(name = "modified_date_time", columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
-        val modifiedDateTime: Date = Date(),
 
         @ElementCollection
         val files: List<String>,
 
         @OneToOne
         val category: CategoryEntity
-)
+) {
+
+        fun creationCalendar() = Calendar.getInstance().apply {
+                timeInMillis = creationDateTime.time
+        }
+
+}
 
 enum class OrderStatus(val data: String) {
     PROCESS("process"),

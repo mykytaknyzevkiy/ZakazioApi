@@ -3,6 +3,7 @@ package com.zakaion.api.controller.app
 import com.zakaion.api.controller.BaseController
 import com.zakaion.api.controller.user.UserController
 import com.zakaion.api.dao.AppDao
+import com.zakaion.api.dao.OrderDao
 import com.zakaion.api.dao.UserDao
 import com.zakaion.api.entity.order.AppEntity
 import com.zakaion.api.entity.user.RoleType
@@ -13,6 +14,7 @@ import com.zakaion.api.exception.NotFound
 import com.zakaion.api.factor.user.UserFactory
 import com.zakaion.api.model.AppModel
 import com.zakaion.api.model.DataResponse
+import com.zakaion.api.model.UserOrder
 import com.zakaion.api.roleControllers.CanSuperAdmin_Admin_Editor
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -25,7 +27,8 @@ import java.util.*
 class AppController(private val userController: UserController,
                     private val appDao: AppDao,
                     private val userDao: UserDao,
-                    private val userFactory: UserFactory) : BaseController() {
+                    private val userFactory: UserFactory,
+                    private val orderDao: OrderDao) : BaseController() {
 
     @PostMapping("/add")
     fun add(@RequestBody appModel: AppModel) : DataResponse<Nothing?> {
@@ -50,9 +53,16 @@ class AppController(private val userController: UserController,
     fun list(pageable: Pageable) : DataResponse<Page<AppModel>> {
 
         return DataResponse.ok(
+            if (userFactory.myUser.role == RoleType.PARTNER) {
+                appDao.find(userFactory.myUser.id, pageable).map {
+                    it.toResponse(userDao, userFactory.myUser)
+                }
+            }
+            else {
                 appDao.findAll(pageable).map {
                     it.toResponse(userDao, userFactory.myUser)
                 }
+            }
         )
     }
 
@@ -118,20 +128,21 @@ class AppController(private val userController: UserController,
         )
     }
 
-}
-
-fun AppEntity.toResponse(userDao: UserDao, myUser: UserEntity) : AppModel {
-    return AppModel(
+    fun AppEntity.toResponse(userDao: UserDao, myUser: UserEntity) : AppModel {
+        return AppModel(
             id  =  this.id,
             name = this.name,
             key = this.key,
             owner =
             if (myUser.id != this.masterID && myUser.role !in arrayOf(
-                            RoleType.SUPER_ADMIN,
-                            RoleType.ADMIN,
-                            RoleType.EDITOR))
+                    RoleType.SUPER_ADMIN,
+                    RoleType.ADMIN,
+                    RoleType.EDITOR))
                 null
             else
-                userDao.findById(this.masterID).orElseGet { null }
-    )
+                userFactory.create(userDao.findById(this.masterID).orElseGet { null }),
+            order = UserOrder.create(orderDao.findAppOrders(this.id).toList())
+        )
+    }
+
 }

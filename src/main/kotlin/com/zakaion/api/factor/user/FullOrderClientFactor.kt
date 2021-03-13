@@ -30,7 +30,7 @@ class FullOrderClientFactor(user: UserEntity,
 
     private fun UserEntity.toExecutor(allFeedbacks: List<FeedbackEntity>) : ExecutorInfo {
         val orders = orderDao.findUserOrders(this.id).toList()
-        val portfolio = portfolioDao.findAll().filter { user.id == this.id }
+        val portfolio = portfolioDao.user(this.id).toList()
 
         val myFeedbacks = allFeedbacks.filter { it.user.id == id }
         return ExecutorInfo(
@@ -46,14 +46,12 @@ class FullOrderClientFactor(user: UserEntity,
                 passport = passportDao.findAll().find { it.user.id == id },
                 portfolioCount = portfolio.size
         ).apply {
-            if (order.enable) {
-                order.enable = isEmailActive &&
-                        isPassportActive &&
-                        isPhoneActive &&
-                        portfolio.isNotEmpty() &&
-                        !this@toExecutor.isBlocked &&
-                        city != null
-            }
+            order.enable = isEmailActive &&
+                    isPassportActive &&
+                    isPhoneActive &&
+                    portfolio.isNotEmpty() &&
+                    !this@toExecutor.isBlocked &&
+                    city != null
             if (!order.enable)
                 status = UserStatus.PROCESS
         }

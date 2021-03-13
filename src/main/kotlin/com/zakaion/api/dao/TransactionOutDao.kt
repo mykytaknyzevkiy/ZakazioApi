@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.PagingAndSortingRepository
 import org.springframework.data.repository.query.Param
+import java.util.*
 
 interface TransactionOutDao : PagingAndSortingRepository<TransactionOutEntity, Long> {
 
@@ -18,5 +19,8 @@ interface TransactionOutDao : PagingAndSortingRepository<TransactionOutEntity, L
 
     @Query(value = "select * from transaction_out where order_id = :orderID", nativeQuery = true)
     fun findOrder(@Param("orderID") orderID: Long) : Iterable<TransactionOutEntity>
+
+    @Query(value = "select * from transaction_out where creation_date_time BETWEEN :startDate and :endDate", nativeQuery = true)
+    fun findAll(@Param("startDate") startDate: Date, @Param("endDate") endDate: Date) : Iterable<TransactionOutEntity>
 
 }

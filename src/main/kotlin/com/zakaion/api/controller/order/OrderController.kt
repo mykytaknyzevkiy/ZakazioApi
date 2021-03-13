@@ -1,6 +1,7 @@
 package com.zakaion.api.controller.order
 
 import com.zakaion.api.controller.BaseController
+import com.zakaion.api.controller.history.OrderHistoryController
 import com.zakaion.api.controller.user.ExecutorController
 import com.zakaion.api.controller.user.PartnerController
 import com.zakaion.api.controller.user.UserController
@@ -44,7 +45,8 @@ class OrderController(private val orderDao: OrderDao,
                       private val transactionService: TransactionService,
                       private val storageService: StorageService,
                       private val categoryDao: CategoryDao,
-                      private val importOrderExcell: ImportOrderExcell
+                      private val importOrderExcell: ImportOrderExcell,
+                      private val historyController: OrderHistoryController
                       ) : BaseController() {
 
     @PostMapping("/add")
@@ -148,6 +150,8 @@ class OrderController(private val orderDao: OrderDao,
 
         notificationService.onCreateOrder(orderEntity)
 
+        historyController.add(orderEntity, myUser, "Создал заказ")
+
         return DataResponse.ok(null)
     }
 
@@ -170,6 +174,8 @@ class OrderController(private val orderDao: OrderDao,
                         files = editOrderModel.files
                 )
         )
+
+        historyController.add(order, userFactory.myUser, "Отредактировал заказ")
 
         return DataResponse.ok(null)
     }
@@ -246,15 +252,20 @@ class OrderController(private val orderDao: OrderDao,
                      "search",
                      required = false,
                      defaultValue = ""
-             ) search: String? = null) : DataResponse<Page<OrderNModel>> {
+             ) search: String,
+             @RequestParam(
+                 "city_id",
+                 required = false,
+                 defaultValue = "-1"
+             ) cityID: Long = -1) : DataResponse<Page<OrderNModel>> {
+
 
         return DataResponse.ok(
-                (if (search.isNullOrEmpty())
-                    orderDao.findAll(pageable)
-                            else
-                    orderDao.findAll(pageable, search)
-                        )
-                        .map {
+            (if (userFactory.myUser.role == RoleType.EXECUTOR)
+                orderDao.findFreeAll(pageable, search, cityID)
+            else
+                orderDao.findAll(pageable, search, cityID))
+                .map {
                             orderFactor.create(it.copy())
                         }
         )
@@ -267,16 +278,23 @@ class OrderController(private val orderDao: OrderDao,
                      "search",
                      required = false,
                      defaultValue = ""
-             ) search: String? = null) : DataResponse<Page<OrderNModel>> {
+             ) search: String) : DataResponse<Page<OrderNModel>> {
         return DataResponse.ok(
-                (if (search.isNullOrEmpty())
-                    orderDao.findUserOrders(pageable, userID)
-                            else
-                    orderDao.findUserOrders(pageable, userID, search)
-                        )
+            orderDao.findUserOrders(pageable, userID, search)
                         .map {
                             orderFactor.create(it.copy())
                         }
+        )
+    }
+
+    @GetMapping("/list/app/{appID}")
+    fun listApp(pageable: Pageable,
+             @PathVariable("appID") appID: Long) : DataResponse<Page<OrderNModel>> {
+        return DataResponse.ok(
+            orderDao.findAppOrders(pageable, appID)
+                .map {
+                    orderFactor.create(it.copy())
+                }
         )
     }
 
@@ -294,6 +312,8 @@ class OrderController(private val orderDao: OrderDao,
         val myUser = userFactory.myUser
 
         setExecutor(id, myUser.id)
+
+        historyController.add(order, myUser, "Стал исполнителем")
 
         return DataResponse.ok(null)
     }
@@ -335,6 +355,8 @@ class OrderController(private val orderDao: OrderDao,
 
         notificationService.onClientHasExecutorOrder(nOrder)
 
+        historyController.add(order, userFactory.myUser, "Назначил исполнителя")
+
         return DataResponse.ok(null)
     }
 
@@ -356,6 +378,8 @@ class OrderController(private val orderDao: OrderDao,
                 )
         )
 
+        historyController.add(order, userFactory.myUser, "Отменил исполнителя")
+
         return DataResponse.ok(null)
     }
 
@@ -376,6 +400,8 @@ class OrderController(private val orderDao: OrderDao,
                 )
 
         notificationService.onClientOrderInWork(order)
+
+        historyController.add(order, userFactory.myUser, "Начал работу")
 
         return DataResponse.ok(null)
     }
@@ -399,6 +425,8 @@ class OrderController(private val orderDao: OrderDao,
         notificationService.addClientFeedback(order)
         notificationService.addExecutorFeedback(order)
 
+        historyController.add(order, userFactory.myUser, "Завершил работу")
+
         return DataResponse.ok(null)
     }
 
@@ -418,6 +446,8 @@ class OrderController(private val orderDao: OrderDao,
                         order.copy(status = OrderStatus.CANCEL)
                 )
 
+        historyController.add(order, userFactory.myUser, "Отменил заказ")
+
         return DataResponse.ok(null)
     }
 
@@ -432,6 +462,8 @@ class OrderController(private val orderDao: OrderDao,
             throw NoPermittedMethod()
 
         transactionService.processOrder(order, amount)
+
+        historyController.add(order, userFactory.myUser, "Перевел сумму в размере $amount")
 
         return DataResponse.ok(null)
     }
