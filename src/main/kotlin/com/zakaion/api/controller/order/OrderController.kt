@@ -46,7 +46,8 @@ class OrderController(private val orderDao: OrderDao,
                       private val storageService: StorageService,
                       private val categoryDao: CategoryDao,
                       private val importOrderExcell: ImportOrderExcell,
-                      private val historyController: OrderHistoryController
+                      private val historyController: OrderHistoryController,
+                      private val childCategoryDao: ChildCategoryDao
                       ) : BaseController() {
 
     @PostMapping("/add")
@@ -126,11 +127,11 @@ class OrderController(private val orderDao: OrderDao,
             else -> null
         }
 
-        val category = categoryDao.findById(addOrderModel.categoryID).orElseGet {
+        val childCategory = childCategoryDao.findById(addOrderModel.categoryID).orElseGet {
             throw NotFound()
         }
 
-        if (!category.isActive)
+        if (!childCategory.parent.isActive)
             throw BadParams()
 
         val orderEntity = orderDao.save(
@@ -144,7 +145,8 @@ class OrderController(private val orderDao: OrderDao,
                         partner = if (myUser.role == RoleType.PARTNER) myUser else null,
                         city = city,
                         files = addOrderModel.files,
-                        category = category
+                        category = childCategory.parent,
+                        childCategory = childCategory
                 )
         )
 
@@ -257,14 +259,24 @@ class OrderController(private val orderDao: OrderDao,
                  "city_id",
                  required = false,
                  defaultValue = "-1"
-             ) cityID: Long = -1) : DataResponse<Page<OrderNModel>> {
+             ) cityID: Long = -1,
+             @RequestParam(
+                 "category_id",
+                 required = false,
+                 defaultValue = "-1"
+             ) categoryID: Long = -1,
+             @RequestParam(
+                 "child_category_id",
+                 required = false,
+                 defaultValue = "-1"
+             ) childCategoryID: Long = -1) : DataResponse<Page<OrderNModel>> {
 
 
         return DataResponse.ok(
             (if (userFactory.myUser.role == RoleType.EXECUTOR)
-                orderDao.findFreeAll(pageable, search, cityID)
+                orderDao.findFreeAll(pageable, search, cityID, categoryID, childCategoryID)
             else
-                orderDao.findAll(pageable, search, cityID))
+                orderDao.findAll(pageable, search, cityID, categoryID, childCategoryID))
                 .map {
                             orderFactor.create(it.copy())
                         }

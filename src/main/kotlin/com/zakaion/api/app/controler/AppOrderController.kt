@@ -21,7 +21,8 @@ class AppOrderController(
     private val cityDao: CityDao,
     private val categoryDao: CategoryDao,
     private val appDao: AppDao,
-    private val notificationService: NotificationService
+    private val notificationService: NotificationService,
+    private val childCategoryDao: ChildCategoryDao
 ) {
 
     @PostMapping("/add")
@@ -67,11 +68,11 @@ class AppOrderController(
                     this.masterID = partner.id
             })
 
-        val category = categoryDao.findById(addOrderModel.categoryID).orElseGet {
+        val category = childCategoryDao.findById(addOrderModel.categoryID).orElseGet {
             throw NotFound()
         }
 
-        if (!category.isActive)
+        if (!category.parent.isActive)
             throw BadParams()
 
         val orderEntity = orderDao.save(
@@ -85,7 +86,8 @@ class AppOrderController(
                 partner = partner,
                 city = city,
                 files = addOrderModel.files,
-                category = category,
+                category = category.parent,
+                childCategory = category,
                 app = app
             )
         )

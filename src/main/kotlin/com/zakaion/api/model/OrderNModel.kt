@@ -1,45 +1,48 @@
 package com.zakaion.api.model
 
 import com.zakaion.api.entity.order.AppEntity
-import com.zakaion.api.entity.order.CategoryEntity
+import com.zakaion.api.entity.order.category.CategoryEntity
 import com.zakaion.api.entity.order.OrderStatus
+import com.zakaion.api.entity.order.category.ChildCategoryEntity
 import com.zakaion.api.entity.region.CityEntity
 import java.util.*
 
 data class OrderNModel(
-        val id: Long,
+    val id: Long,
 
-        val status: OrderStatus,
+    val status: OrderStatus,
 
-        val title: String,
-        val content: String,
-        val price: Float,
-        val dateLine: String,
+    val title: String,
+    val content: String,
+    val price: Float,
+    val dateLine: String,
 
-        val city: CityEntity,
+    val city: CityEntity,
 
-        val client: ClientInfo,
-        val executor: ExecutorInfo?,
-        val partner: PartnerInfo?,
-        val app: AppEntity?,
+    val client: ClientInfo,
+    val executor: ExecutorInfo?,
+    val partner: PartnerInfo?,
+    val app: AppEntity?,
 
-        val creationDate: Date,
+    val creationDate: Date,
 
-        var editEnable: Boolean = false,
-        var beExecutorEnable: Boolean = false,
-        var setExecutorEnable: Boolean = false,
-        var cancelExecutorEnable: Boolean = false,
-        var inWorkEnable: Boolean = false,
-        var doneEnable: Boolean = false,
-        var cancelEnable: Boolean = false,
+    var editEnable: Boolean = false,
+    var beExecutorEnable: Boolean = false,
+    var setExecutorEnable: Boolean = false,
+    var cancelExecutorEnable: Boolean = false,
+    var inWorkEnable: Boolean = false,
+    var doneEnable: Boolean = false,
+    var cancelEnable: Boolean = false,
 
-        var commentEnable: Boolean = false,
+    var commentEnable: Boolean = false,
 
-        val files: List<String>,
+    val files: List<String>,
 
-        val toShareSum: Float,
+    val toShareSum: Float,
 
-        val category: CategoryEntity,
+    val category: CategoryEntity,
 
-        var defuseMeExecutorEnable: Boolean = false
-        )
+    var defuseMeExecutorEnable: Boolean = false,
+
+    val childCategory: ChildCategoryEntity
+)

@@ -54,7 +54,9 @@ class OrderFactor(private val userFactory: UserFactory,
 
                 toShareSum = ((order.price * Preference.orderSumOutPercent / 100)) - orderSum,
 
-                category = order.category
+                category = order.category,
+
+                childCategory = order.childCategory
         )
 
         val adminsRole = arrayOf(RoleType.SUPER_ADMIN, RoleType.ADMIN, RoleType.EDITOR)
@@ -82,7 +84,7 @@ class OrderFactor(private val userFactory: UserFactory,
 
         mOrder.inWorkEnable = order.status == OrderStatus.PROCESS && myUser.id == order.executor?.id
 
-        if (myUser.id == mOrder.executor?.id && order.status == OrderStatus.PROCESS) {
+        if (myUser.id == mOrder.executor?.id && order.status == OrderStatus.IN_WORK) {
             mOrder.doneEnable = mOrder.toShareSum <= 0
         }
 

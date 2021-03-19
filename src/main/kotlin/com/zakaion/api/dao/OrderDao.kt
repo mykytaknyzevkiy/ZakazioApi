@@ -26,15 +26,19 @@ interface OrderDao : PagingAndSortingRepository<OrderEntity, Long> {
     @Query(value = "select * from order_n where (client_id = :u_id or executor_id = :u_id or partner_id = :u_id) and (title like %:search% or content like %:search%) order by creation_date_time desc", nativeQuery = true)
     fun findUserOrders(pageable: Pageable, @Param("u_id") userID: Long, @Param("search") search: String): Page<OrderEntity>
 
-    @Query(value = "select * from order_n where (title like %:search% or content like %:search%) and (city_id = :city_id or :city_id = -1) order by creation_date_time desc", nativeQuery = true)
+    @Query(value = "select * from order_n where (title like %:search% or content like %:search%) and (city_id = :city_id or :city_id = -1) and (category_id = :category_id or :category_id = -1) and (child_category_id = :child_category_id or :child_category_id = -1) order by creation_date_time desc", nativeQuery = true)
     fun findAll(pageable: Pageable,
                 @Param("search") search: String,
-                @Param("city_id") cityID: Long) : Page<OrderEntity>
+                @Param("city_id") cityID: Long,
+                @Param("category_id") categoryID: Long,
+                @Param("child_category_id") childCategoryID: Long) : Page<OrderEntity>
 
-    @Query(value = "select * from order_n where executor_id = null && (title like %:search% or content like %:search%) and (city_id = :city_id or :city_id = -1) order by creation_date_time desc", nativeQuery = true)
+    @Query(value = "select * from order_n where executor_id IS NULL and (title like %:search% or content like %:search%) and (city_id = :city_id or :city_id = -1) and (category_id = :category_id or :category_id = -1) and (child_category_id = :child_category_id or :child_category_id = -1) order by creation_date_time desc", nativeQuery = true)
     fun findFreeAll(pageable: Pageable,
                 @Param("search") search: String,
-                @Param("city_id") cityID: Long) : Page<OrderEntity>
+                @Param("city_id") cityID: Long,
+                @Param("category_id") categoryID: Long,
+                @Param("child_category_id") childCategoryID: Long) : Page<OrderEntity>
 
     @Query(value = "select * from order_n where creation_date_time BETWEEN :startDate and :endDate order by creation_date_time desc", nativeQuery = true)
     fun findAll(@Param("startDate") startDate: Date, @Param("endDate") endDate: Date) : Iterable<OrderEntity>

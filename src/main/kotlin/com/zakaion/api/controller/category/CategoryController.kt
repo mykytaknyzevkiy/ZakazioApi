@@ -2,7 +2,9 @@ package com.zakaion.api.controller.category
 
 import com.zakaion.api.controller.BaseController
 import com.zakaion.api.dao.CategoryDao
-import com.zakaion.api.entity.order.CategoryEntity
+import com.zakaion.api.dao.ChildCategoryDao
+import com.zakaion.api.entity.order.category.CategoryEntity
+import com.zakaion.api.entity.order.category.ChildCategoryEntity
 import com.zakaion.api.exception.BadParams
 import com.zakaion.api.exception.NotFound
 import com.zakaion.api.model.DataResponse
@@ -18,7 +20,8 @@ import java.util.*
 @CrossOrigin
 @RequestMapping(value = ["category"])
 class CategoryController(private val categoryDao: CategoryDao,
-                         private val storageService: StorageService) : BaseController() {
+                         private val storageService: StorageService,
+                         private val childCategoryDao: ChildCategoryDao) : BaseController() {
 
     @GetMapping("/list")
     fun list(pageable: Pageable) : DataResponse<Page<CategoryEntity>> {
@@ -77,6 +80,54 @@ class CategoryController(private val categoryDao: CategoryDao,
                 categoryDao.save(
                         category
                 )
+        )
+    }
+
+    @GetMapping("/{parent_id}/list")
+    fun listChild(pageable: Pageable,
+                   @RequestParam("query") query: String,
+                   @PathVariable("parent_id") parentID: Long) : DataResponse<Page<ChildCategoryEntity>> {
+
+        return DataResponse.ok(
+            childCategoryDao.findAll(pageable, parentID, query)
+        )
+    }
+
+    @PostMapping("/{parent_id}/add")
+    @CanSuperAdmin_Admin_Editor
+    fun addChild(@PathVariable("parent_id") parentID: Long,
+            @RequestBody editCategoryModel: EditCategoryModel) : DataResponse<ChildCategoryEntity> {
+        if (editCategoryModel.name.isEmpty()) throw BadParams()
+
+        val child = ChildCategoryEntity(
+            name = editCategoryModel.name,
+            parent = categoryDao.findById(parentID).orElseGet {
+                throw NotFound()
+            }
+        )
+
+        return DataResponse.ok(
+            childCategoryDao.save(
+                child
+            )
+        )
+    }
+
+    @PutMapping("/{parent_id}/{id}/update")
+    @CanSuperAdmin_Admin_Editor
+    fun updateChild(@PathVariable("parent_id") parentID: Long,
+                    @PathVariable("id") childID: Long,
+                    @RequestBody editCategoryModel: EditCategoryModel) : DataResponse<ChildCategoryEntity> {
+        if (editCategoryModel.name.isEmpty()) throw BadParams()
+
+        val child = childCategoryDao.findById(childID).orElseGet {
+            throw BadParams()
+        }
+
+        return DataResponse.ok(
+            childCategoryDao.save(
+                child.copy(name = editCategoryModel.name)
+            )
         )
     }
 

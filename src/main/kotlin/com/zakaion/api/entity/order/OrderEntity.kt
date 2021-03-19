@@ -1,10 +1,10 @@
 package com.zakaion.api.entity.order
 
+import com.zakaion.api.entity.order.category.CategoryEntity
+import com.zakaion.api.entity.order.category.ChildCategoryEntity
 import com.zakaion.api.entity.region.CityEntity
 import com.zakaion.api.entity.user.UserEntity
-import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.DynamicInsert
-import org.hibernate.annotations.UpdateTimestamp
 import java.util.*
 import javax.persistence.*
 
@@ -54,7 +54,11 @@ data class OrderEntity(
         val files: List<String>,
 
         @OneToOne
-        val category: CategoryEntity
+        val category: CategoryEntity,
+
+        @OneToOne
+        @JoinColumn(name = "child_category_id")
+        val childCategory: ChildCategoryEntity
 ) {
 
         fun creationCalendar() = Calendar.getInstance().apply {

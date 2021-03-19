@@ -11,7 +11,7 @@ import java.util.*
 
 interface TransactionInDao : PagingAndSortingRepository<TransactionInEntity, Long> {
 
-    @Query(value = "select * from transaction_in where user_id = :userID", nativeQuery = true)
+    @Query(value = "select * from transaction_in where user_id = :userID order by creation_date_time desc", nativeQuery = true)
     fun find(@Param("userID") userID: Long, pageable: Pageable) : Page<TransactionInEntity>
 
     @Query(value = "select * from transaction_in where user_id = :userID", nativeQuery = true)
@@ -19,6 +19,9 @@ interface TransactionInDao : PagingAndSortingRepository<TransactionInEntity, Lon
 
     @Query(value = "select * from transaction_in where order_id = :orderID", nativeQuery = true)
     fun findOrder(@Param("orderID") orderID: Long) : Iterable<TransactionInEntity>
+
+    @Query(value = "select * from transaction_in where order_id = :orderID order by creation_date_time desc", nativeQuery = true)
+    fun findOrder(@Param("orderID") orderID: Long, pageable: Pageable) : Page<TransactionInEntity>
 
     @Query(value = "select * from transaction_in where creation_date_time BETWEEN :startDate and :endDate", nativeQuery = true)
     fun findAll(@Param("startDate") startDate: Date, @Param("endDate") endDate: Date) : Iterable<TransactionInEntity>
