@@ -1,5 +1,8 @@
 package com.zakaion.api.service
 
+import com.zakaion.api.dao.FileDao
+import com.zakaion.api.entity.FileEntity
+import com.zakaion.api.exception.NotFound
 import org.springframework.core.io.Resource
 import org.springframework.core.io.UrlResource
 import org.springframework.stereotype.Service
@@ -14,7 +17,7 @@ import java.nio.file.Paths
 import kotlin.streams.toList
 
 @Service
-class StorageService {
+class StorageService(private val fileDao: FileDao) {
 
     //private val root: Path = Paths.get("/Users/mykyta/Documents/ZakazioApi/test")
 
@@ -35,7 +38,14 @@ class StorageService {
     fun store(file: MultipartFile): String {
         try {
             val fileName = System.currentTimeMillis().toString() + "." + file.originalFilename?.substringAfterLast('.', "")
-            Files.copy(file.inputStream, this.root.resolve(fileName))
+
+            fileDao.save(
+                FileEntity(
+                    name = fileName,
+                    data = file.bytes
+                )
+            )
+
             return fileName
         } catch (e: Exception) {
             throw RuntimeException("Could not store the file. Error: " + e.message)
@@ -45,11 +55,12 @@ class StorageService {
     fun store(bytes: ByteArray, format: String): String {
         val fileName = System.currentTimeMillis().toString() + "." + format
 
-        FileOutputStream(fileName).use { stream -> stream.write(bytes) }
-
-        Files.copy(File(fileName).inputStream(), this.root.resolve(fileName))
-
-        File(fileName).delete()
+        fileDao.save(
+            FileEntity(
+                name = fileName,
+                data = bytes
+            )
+        )
 
         return fileName
     }
@@ -84,6 +95,12 @@ class StorageService {
         } catch (e: MalformedURLException) {
             throw RuntimeException("Error: " + e.message)
         }
+    }
+
+    fun loadAsBytes(filename: String): ByteArray {
+        return fileDao.find(name = filename).orElseGet {
+            throw NotFound()
+        }.data
     }
 
 }

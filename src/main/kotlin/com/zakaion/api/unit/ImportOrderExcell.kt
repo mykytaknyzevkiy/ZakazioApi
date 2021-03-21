@@ -174,7 +174,7 @@ class ImportOrderExcell(private val orderDao: OrderDao,
                 continue
             }
 
-            val order = OrderEntity(
+            /*val order = OrderEntity(
                 client = client,
                 title = row.getCell(titleRowNum).stringCellValue,
                 content = row.getCell(contentRowNum).stringCellValue,
@@ -186,7 +186,7 @@ class ImportOrderExcell(private val orderDao: OrderDao,
                 creationDateTime = creatingDate
             )
 
-            orderDao.save(order)
+            orderDao.save(order)*/
         }
     }
 
