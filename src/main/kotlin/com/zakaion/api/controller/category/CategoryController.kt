@@ -136,14 +136,17 @@ class CategoryController(private val categoryDao: CategoryDao,
     }
 
     @GetMapping("/global/search")
-    fun globalSearch(@RequestParam("query") query: String): DataResponse<List<GlobalCategory>> {
+    suspend fun globalSearch(@RequestParam("query") query: String): DataResponse<List<GlobalCategory>> = withContext(Dispatchers.IO) {
         val maps = HashMap<CategoryEntity, ArrayList<ChildCategoryEntity>>()
 
-        categoryDao.searchAllActive(query).forEach {
+        val parentListQuery = async(Dispatchers.IO) { categoryDao.searchAllActive(query) }
+        val childListQuery = async(Dispatchers.IO) { childCategoryDao.findAll(query) }
+
+        parentListQuery.await().forEach {
             maps[it] = arrayListOf()
         }
 
-        childCategoryDao.findAll(query).forEach {
+        childListQuery.await().forEach {
             if (!maps.containsKey(it.parent)) {
                 maps[it.parent] = arrayListOf()
             }
@@ -152,7 +155,9 @@ class CategoryController(private val categoryDao: CategoryDao,
 
         maps.keys.forEach {
             if (maps[it]!!.isEmpty())
-                maps[it]!!.addAll(childCategoryDao.findAll(it.id, ""))
+                maps[it]!!.addAll(
+                    async { childCategoryDao.findAll(it.id, "") }.await()
+                )
         }
 
         val data = ArrayList<GlobalCategory>()
@@ -163,7 +168,7 @@ class CategoryController(private val categoryDao: CategoryDao,
             ))
         }
 
-        return DataResponse.ok(
+        return@withContext DataResponse.ok(
             data = data
         )
     }
