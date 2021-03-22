@@ -15,4 +15,7 @@ interface CategoryDao : PagingAndSortingRepository<CategoryEntity, Long> {
     @Query(value = "select * from category where is_active = 1 and name like %:query%", nativeQuery = true)
     fun searchAllActive(pageable: Pageable, @Param("query") query: String) : Page<CategoryEntity>
 
+    @Query(value = "select * from category where is_active = 1 and name like %:query%", nativeQuery = true)
+    fun searchAllActive(@Param("query") query: String) : Iterable<CategoryEntity>
+
 }

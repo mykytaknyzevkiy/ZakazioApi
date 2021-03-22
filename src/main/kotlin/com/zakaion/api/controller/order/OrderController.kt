@@ -273,7 +273,7 @@ class OrderController(private val orderDao: OrderDao,
 
 
         return DataResponse.ok(
-            (if (userFactory.myUser.role == RoleType.EXECUTOR)
+            (if (userFactory.myUser.role == RoleType.EXECUTOR || userFactory.myUser.role == RoleType.PARTNER)
                 orderDao.findFreeAll(pageable, search, cityID, categoryID, childCategoryID)
             else
                 orderDao.findAll(pageable, search, cityID, categoryID, childCategoryID))

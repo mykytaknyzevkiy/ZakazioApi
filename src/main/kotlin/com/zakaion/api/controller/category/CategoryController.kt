@@ -9,12 +9,16 @@ import com.zakaion.api.exception.BadParams
 import com.zakaion.api.exception.NotFound
 import com.zakaion.api.model.DataResponse
 import com.zakaion.api.model.EditCategoryModel
+import com.zakaion.api.model.GlobalCategory
 import com.zakaion.api.roleControllers.CanSuperAdmin_Admin_Editor
 import com.zakaion.api.service.StorageService
+import kotlinx.coroutines.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.web.bind.annotation.*
 import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 @RestController
 @CrossOrigin
@@ -128,6 +132,39 @@ class CategoryController(private val categoryDao: CategoryDao,
             childCategoryDao.save(
                 child.copy(name = editCategoryModel.name)
             )
+        )
+    }
+
+    @GetMapping("/global/search")
+    fun globalSearch(@RequestParam("query") query: String): DataResponse<List<GlobalCategory>> {
+        val maps = HashMap<CategoryEntity, ArrayList<ChildCategoryEntity>>()
+
+        categoryDao.searchAllActive(query).forEach {
+            maps[it] = arrayListOf()
+        }
+
+        childCategoryDao.findAll(query).forEach {
+            if (!maps.containsKey(it.parent)) {
+                maps[it.parent] = arrayListOf()
+            }
+            maps[it.parent]?.add(it)
+        }
+
+        maps.keys.forEach {
+            if (maps[it]!!.isEmpty())
+                maps[it]!!.addAll(childCategoryDao.findAll(it.id, ""))
+        }
+
+        val data = ArrayList<GlobalCategory>()
+
+        maps.forEach { (parent, childList) ->
+            data.add(GlobalCategory(
+                parent, childList
+            ))
+        }
+
+        return DataResponse.ok(
+            data = data
         )
     }
 

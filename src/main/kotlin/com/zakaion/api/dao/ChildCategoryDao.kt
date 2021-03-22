@@ -17,4 +17,16 @@ interface ChildCategoryDao : PagingAndSortingRepository<ChildCategoryEntity, Lon
                 @Param("PARENT_ID") parentID: Long,
                 @Param("QUERY") query: String): Page<ChildCategoryEntity>
 
+    @Query("select * from category_child where parent_id = :PARENT_ID and name like %:QUERY%", nativeQuery = true)
+    fun findAll(@Param("PARENT_ID") parentID: Long,
+                @Param("QUERY") query: String): Iterable<ChildCategoryEntity>
+
+    @Query("select * from category_child where parent_id = :PARENT_ID and name like %:QUERY% limit :LIMIT", nativeQuery = true)
+    fun findAll(@Param("PARENT_ID") parentID: Long,
+                @Param("QUERY") query: String,
+                @Param("LIMIT") limit: Int): Iterable<ChildCategoryEntity>
+
+    @Query("select * from category_child where name like %:QUERY%", nativeQuery = true)
+    fun findAll(@Param("QUERY") query: String): Iterable<ChildCategoryEntity>
+
 }

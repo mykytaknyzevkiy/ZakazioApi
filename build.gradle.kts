@@ -35,6 +35,8 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 
 	implementation("org.springframework.boot:spring-boot-starter-web")
+	//implementation("org.springframework.boot:spring-boot-starter-webflux")
+
 
 	implementation( "mysql:mysql-connector-java:8.0.21")
 	runtimeOnly ("mysql:mysql-connector-java")
@@ -61,6 +63,10 @@ dependencies {
 	implementation("org.apache.poi:poi-ooxml:3.15")
 
 	implementation("org.thymeleaf:thymeleaf:3.0.11.RELEASE")
+
+	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3")
+	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.4.3")
+
 }
 
 tasks.withType<Test> {
