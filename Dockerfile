@@ -6,7 +6,7 @@ COPY . /usr/src/java-code/
 
 RUN gradle bootWar
 
-FROM openjdk:11-jdk-slim
+FROM openjdk:latest
 
 WORKDIR /usr/src/java-app
 COPY --from=builder /usr/src/java-code/build/libs/*.war ./app.war

@@ -10,15 +10,13 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.web.filter.CommonsRequestLoggingFilter
 import com.zakaion.api.service.StorageService
 
-
 @Configuration
-class DoStart(private val buildProperties: BuildProperties,
-              private val userDao: UserDao, 
+class DoStart(private val userDao: UserDao,
               private val storageService: StorageService) {
 
     @Bean
     fun start() {
-        appVersion = buildProperties.version
+        appVersion = "2"
         if (!userDao.findAll().any { it.role == RoleType.SUPER_ADMIN }) {
             userDao.save(
                     UserEntity(
