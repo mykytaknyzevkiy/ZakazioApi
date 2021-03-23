@@ -16,7 +16,7 @@ class DoStart(private val userDao: UserDao,
 
     @Bean
     fun start() {
-        appVersion = "2"
+        appVersion = "2-new"
         if (!userDao.findAll().any { it.role == RoleType.SUPER_ADMIN }) {
             userDao.save(
                     UserEntity(
