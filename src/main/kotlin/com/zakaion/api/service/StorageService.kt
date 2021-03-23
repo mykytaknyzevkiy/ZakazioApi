@@ -1,8 +1,5 @@
 package com.zakaion.api.service
 
-import com.zakaion.api.dao.FileDao
-import com.zakaion.api.entity.FileEntity
-import com.zakaion.api.exception.NotFound
 import org.springframework.core.io.Resource
 import org.springframework.core.io.UrlResource
 import org.springframework.stereotype.Service
@@ -17,7 +14,7 @@ import java.nio.file.Paths
 import kotlin.streams.toList
 
 @Service
-class StorageService(private val fileDao: FileDao) {
+class StorageService {
 
     //private val root: Path = Paths.get("/Users/mykyta/Documents/ZakazioApi/test")
 
@@ -38,14 +35,7 @@ class StorageService(private val fileDao: FileDao) {
     fun store(file: MultipartFile): String {
         try {
             val fileName = System.currentTimeMillis().toString() + "." + file.originalFilename?.substringAfterLast('.', "")
-
-            fileDao.save(
-                FileEntity(
-                    name = fileName,
-                    data = file.bytes
-                )
-            )
-
+            Files.copy(file.inputStream, this.root.resolve(fileName))
             return fileName
         } catch (e: Exception) {
             throw RuntimeException("Could not store the file. Error: " + e.message)
@@ -55,12 +45,11 @@ class StorageService(private val fileDao: FileDao) {
     fun store(bytes: ByteArray, format: String): String {
         val fileName = System.currentTimeMillis().toString() + "." + format
 
-        fileDao.save(
-            FileEntity(
-                name = fileName,
-                data = bytes
-            )
-        )
+        FileOutputStream(fileName).use { stream -> stream.write(bytes) }
+
+        Files.copy(File(fileName).inputStream(), this.root.resolve(fileName))
+
+        File(fileName).delete()
 
         return fileName
     }
@@ -95,12 +84,6 @@ class StorageService(private val fileDao: FileDao) {
         } catch (e: MalformedURLException) {
             throw RuntimeException("Error: " + e.message)
         }
-    }
-
-    fun loadAsBytes(filename: String): ByteArray {
-        return fileDao.find(name = filename).orElseGet {
-            throw NotFound()
-        }.data
     }
 
 }

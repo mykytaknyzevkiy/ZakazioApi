@@ -19,7 +19,9 @@ class FileController(private val storageService: StorageService) : BaseControlle
 
     @GetMapping(value = ["/{filename:.+}"], produces = [MediaType.APPLICATION_OCTET_STREAM_VALUE])
     fun file(@PathVariable filename: String): ByteArray {
-        return storageService.loadAsBytes(filename)
+        val file = storageService.loadAsFile(filename)
+
+        return file.readBytes()
     }
 
     @PostMapping("/add")
