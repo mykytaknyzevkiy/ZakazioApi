@@ -16,7 +16,7 @@ services:
     ports:
       - 8080:8080
     depends_on:
-      - mysql-developmentgit
+      - mysql-development
     environment:
       API_URL: https://api.zakazy.online/api/v1
       CRM_URL: https://zakazio-56c70.web.app/#/
