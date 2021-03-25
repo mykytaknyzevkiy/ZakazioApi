@@ -17,3 +17,8 @@ services:
       - 8080:8080
     depends_on:
       - mysql-development
+    environment:
+      API_URL: http://localhost:8080/api/v1
+      CRM_URL: http://localhost
+      CLOUD_PAYMENT_PUBLIC: pk_8507dee1d9c8b1519a3f5b5b3d872
+      CLOUD_PAYMENT_PRIVATE: 0e9f48b377588f22f628825b7f1e42f0

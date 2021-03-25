@@ -2,6 +2,7 @@ package com.zakaion.api.service
 
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
+import com.zakaion.api.ConstService
 import com.zakaion.api.model.AddCardModel
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.http.HttpEntity
@@ -15,11 +16,14 @@ import java.util.*
 import java.util.HashMap
 
 @Service
-class CloudPaymentService(restTemplateBuilder: RestTemplateBuilder) {
+class CloudPaymentService(
+    restTemplateBuilder: RestTemplateBuilder,
+    constService: ConstService
+) {
 
     private val restTemplate = restTemplateBuilder.build().apply {
         interceptors.add(
-            BasicAuthorizationInterceptor("pk_8507dee1d9c8b1519a3f5b5b3d872", "0e9f48b377588f22f628825b7f1e42f0")
+            BasicAuthorizationInterceptor(constService.cloudPaymentPublicKey, constService.cloudPaymentPrivateKey)
         )
     }
 

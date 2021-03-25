@@ -1,6 +1,7 @@
 package com.zakaion.api.controller.payment
 
 import com.google.gson.Gson
+import com.zakaion.api.ConstService
 import com.zakaion.api.controller.BaseController
 import com.zakaion.api.dao.BankCardDao
 import com.zakaion.api.dao.TransactionInDao
@@ -21,6 +22,7 @@ import org.springframework.core.io.ClassPathResource
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.MediaType
+import org.springframework.util.ResourceUtils
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -32,7 +34,8 @@ class PaymentController(
         private val userFactory: UserFactory,
         private val transactionInDao: TransactionInDao,
         private val bankCardDao: BankCardDao,
-        private val cloudPaymentService: CloudPaymentService
+        private val cloudPaymentService: CloudPaymentService,
+        private val constService: ConstService
 ) : BaseController() {
 
     @GetMapping("/{userID}/balance")
@@ -135,7 +138,7 @@ class PaymentController(
         val process3ds = cloudPaymentService.process3ds(transactionId, paRes) ?: throw BadParams()
 
         if (!process3ds.success || process3ds.model?.amount == null)
-            return ClassPathResource("templates/fail_payed.html").file.readBytes()
+            return ResourceUtils.getFile("classpath:templates/fail_payed.html").readBytes()
 
         transactionInDao.save(
             TransactionInEntity(
@@ -146,7 +149,7 @@ class PaymentController(
             )
         )
 
-        return ClassPathResource("templates/success_payed.html").file.readBytes()
+        return ResourceUtils.getFile("classpath:templates/success_payed.html").readBytes()
     }
 
     @GetMapping("/{userID}/cloudpayment/3ds/{cardID}", produces = [MediaType.TEXT_HTML_VALUE])
@@ -177,7 +180,7 @@ class PaymentController(
                 "<form name=\"downloadForm\" target=\"hidden_iframe\" action=\"$acsUrl\" method=\"POST\">\n" +
                 "    <input type=\"hidden\" name=\"PaReq\" value=\"$paReq\">\n" +
                 "    <input type=\"hidden\" name=\"MD\" value=\"$transactionId\">\n" +
-                "    <input type=\"hidden\" name=\"TermUrl\" value=\"https://api.zakazy.online/api/v1/payment/$userID/cloudpayment/3ds/process/$bankCardID\">\n" +
+                "    <input type=\"hidden\" name=\"TermUrl\" value=\"${constService.apiUrl}/payment/$userID/cloudpayment/3ds/process/$bankCardID\">\n" +
                 "</form>\n" +
                 "\n" +
                 "<script>\n" +
