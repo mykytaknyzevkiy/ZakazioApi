@@ -320,10 +320,10 @@ class DashboardController(private val orderDao: OrderDao,
         val orders = async(Dispatchers.IO) {orderDao.findAll(startDate, endDate)}
 
         val executors = async(Dispatchers.IO) {
-            val list = setOf<UserEntity>()
+            val list = arrayListOf<UserEntity>()
             orders.await().forEach { order ->
                 if (order.executor != null)
-                    list.plus(order.executor)
+                    list.add(order.executor!!)
             }
             list
         }
@@ -355,7 +355,8 @@ class DashboardController(private val orderDao: OrderDao,
                 }
 
                 val executorInfo = async(Dispatchers.IO) {
-                    userFactory.create(executorEntity) as ExecutorInfo
+                    //userFactory.create(executorEntity) as ExecutorInfo
+                    executorEntity
                 }
                 val partners = async(Dispatchers.IO) {
                     val list = arrayListOf<UserEntity>()
@@ -365,12 +366,12 @@ class DashboardController(private val orderDao: OrderDao,
                         }
                     }
                     list
-                        .map {
+                        /*.map {
                         async(Dispatchers.IO) {
                             userFactory.create(it) as PartnerInfo
                         }
                     }
-                        .awaitAll()
+                        .awaitAll()*/
                 }
                 val childCategories = async(Dispatchers.IO) {
                     eOrders
@@ -449,9 +450,9 @@ class DashboardController(private val orderDao: OrderDao,
 }
 
 data class DashBoardExecutor(
-    val executor: ExecutorInfo,
+    val executor: UserEntity,
 
-    val partners: List<PartnerInfo>,
+    val partners: List<UserEntity>,
 
     val childCategories: List<ChildCategoryEntity>,
 
