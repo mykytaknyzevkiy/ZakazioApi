@@ -7,16 +7,20 @@ import com.zakaion.api.dao.UserDao
 import com.zakaion.api.entity.order.AppEntity
 import com.zakaion.api.entity.order.OrderEntity
 import com.zakaion.api.entity.order.OrderStatus
+import com.zakaion.api.entity.order.category.ChildCategoryEntity
+import com.zakaion.api.entity.transaction.TransactionImp
 import com.zakaion.api.entity.transaction.creationCalendar
 import com.zakaion.api.entity.user.RoleType
+import com.zakaion.api.entity.user.UserEntity
 import com.zakaion.api.factor.user.UserFactory
 import com.zakaion.api.model.*
-import com.zakaion.api.roleControllers.CanSuperAdmin_Admin_Editor
 import com.zakaion.api.service.Preference
+import kotlinx.coroutines.*
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.web.bind.annotation.*
 import java.util.*
 import java.util.concurrent.TimeUnit
+import javax.servlet.http.Part
 import kotlin.collections.ArrayList
 import kotlin.collections.LinkedHashMap
 
@@ -30,7 +34,6 @@ class DashboardController(private val orderDao: OrderDao,
                           private val transactionOutDao: TransactionOutDao) {
 
     @GetMapping("/system")
-    @CanSuperAdmin_Admin_Editor
     fun system(@RequestParam(name = "start_date", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") startDate: Date? = null,
                @RequestParam(name = "end_date", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") endDate: Date? = null) : DataResponse<DashboardModel> {
 
@@ -309,4 +312,158 @@ class DashboardController(private val orderDao: OrderDao,
         )
     }
 
+    @GetMapping("/executors")
+    suspend fun executors(@RequestParam(name = "start_date")
+                  @DateTimeFormat(pattern = "yyyy-MM-dd") startDate: Date,
+                  @RequestParam(name = "end_date")
+                  @DateTimeFormat(pattern = "yyyy-MM-dd") endDate: Date): DataResponse<List<DashBoardExecutor>> = withContext(Dispatchers.IO) {
+        val orders = async(Dispatchers.IO) {orderDao.findAll(startDate, endDate)}
+
+        val executors = async(Dispatchers.IO) {
+            val list = setOf<UserEntity>()
+            orders.await().forEach { order ->
+                if (order.executor != null)
+                    list.plus(order.executor)
+            }
+            list
+        }
+
+        val transactions = async(Dispatchers.IO) {
+            val list = arrayListOf<TransactionImp>()
+            list.addAll(transactionInDao.findAll(startDate, endDate))
+            list.addAll(transactionOutDao.findAll(startDate, endDate))
+            list.sortBy { it.creationDateTime.time }
+            list
+        }
+
+        val data = async(Dispatchers.IO) {
+            val list = arrayListOf<DashBoardExecutor>()
+            executors.await().forEach { executorEntity ->
+                val eOrders = async(Dispatchers.IO) {
+                    orders.await().filter {
+                        it.executor?.id == executorEntity.id
+                    }
+                }
+                val eTransactions = async(Dispatchers.IO) {
+                    val orderIds = eOrders.await().map { it.id }
+                    val list = arrayListOf<TransactionImp>()
+                    transactions.await().forEach { transaction ->
+                        if (orderIds.contains(transaction.order?.id))
+                            list.add(transaction)
+                    }
+                    list
+                }
+
+                val executorInfo = async(Dispatchers.IO) {
+                    userFactory.create(executorEntity) as ExecutorInfo
+                }
+                val partners = async(Dispatchers.IO) {
+                    val list = arrayListOf<UserEntity>()
+                    eOrders.await().forEach { order ->
+                        if (order.partner != null) {
+                            list.add(order.partner)
+                        }
+                    }
+                    list
+                        .map {
+                        async(Dispatchers.IO) {
+                            userFactory.create(it) as PartnerInfo
+                        }
+                    }
+                        .awaitAll()
+                }
+                val childCategories = async(Dispatchers.IO) {
+                    eOrders
+                        .await()
+                        .map {
+                            it.childCategory
+                        }
+                }
+                val orderInWorkCount = async(Dispatchers.IO) {
+                    var count = 0
+                    eOrders.await().forEach { order ->
+                        if (order.status == OrderStatus.IN_WORK)
+                            count++
+                    }
+                    count
+                }
+                val orderCancelCount = async(Dispatchers.IO) {
+                    var count = 0
+                    eOrders.await().forEach { order ->
+                        if (order.status == OrderStatus.CANCEL)
+                            count++
+                    }
+                    count
+                }
+                val orderDoneCount = async(Dispatchers.IO) {
+                    var count = 0
+                    eOrders.await().forEach { order ->
+                        if (order.status == OrderStatus.DONE)
+                            count++
+                    }
+                    count
+                }
+                val ordersSum = async(Dispatchers.IO) {
+                    var count = 0f
+                    eOrders.await().forEach { order ->
+                        count += order.price
+                    }
+                    count
+                }
+                val partnerAmount = async(Dispatchers.IO) {
+                    var sum = 0f
+                    eTransactions.await().forEach { transaction ->
+                        if (transaction.user.role == RoleType.PARTNER)
+                            sum += transaction.amount
+                    }
+                    sum
+                }
+                val systemAmount = async(Dispatchers.IO) {
+                    var sum = 0f
+                    eTransactions.await().forEach { transaction ->
+                        if (transaction.user.role == RoleType.SUPER_ADMIN)
+                            sum += transaction.amount
+                    }
+                    sum
+                }
+
+                val element = DashBoardExecutor(
+                    executor = executorInfo.await(),
+                    partners = partners.await(),
+                    childCategories = childCategories.await(),
+                    orderInWorkCount = orderInWorkCount.await(),
+                    orderCancelCount = orderCancelCount.await(),
+                    orderDoneCount = orderDoneCount.await(),
+                    ordersSum = ordersSum.await(),
+                    partnerAmount = partnerAmount.await(),
+                    systemAmount = systemAmount.await()
+                )
+
+                list.add(element)
+            }
+            list
+        }
+
+        return@withContext DataResponse.ok(data.await())
+    }
 }
+
+data class DashBoardExecutor(
+    val executor: ExecutorInfo,
+
+    val partners: List<PartnerInfo>,
+
+    val childCategories: List<ChildCategoryEntity>,
+
+    val orderInWorkCount: Int,
+
+    val orderCancelCount: Int,
+
+    val orderDoneCount: Int,
+
+    val ordersSum: Float,
+
+    val partnerAmount: Float,
+
+    val systemAmount: Float
+)
