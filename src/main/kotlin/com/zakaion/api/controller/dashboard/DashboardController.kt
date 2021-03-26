@@ -322,8 +322,11 @@ class DashboardController(private val orderDao: OrderDao,
         val executors = async(Dispatchers.IO) {
             val list = arrayListOf<UserEntity>()
             orders.await().forEach { order ->
-                if (order.executor != null)
-                    list.add(order.executor!!)
+                if (order.executor != null) {
+                    if (!list.map { it.id }.contains(order.executor!!.id)) {
+                        list.add(order.executor!!)
+                    }
+                }
             }
             list
         }
