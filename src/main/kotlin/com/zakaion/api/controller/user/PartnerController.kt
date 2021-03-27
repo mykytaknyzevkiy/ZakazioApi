@@ -140,7 +140,7 @@ class PartnerController (private val userDao: UserDao,
     suspend fun import(@PathVariable filename: String) : DataResponse<Nothing?> = withContext(Dispatchers.IO) {
         val inputStream = storageService.loadAsFile(filename).inputStream()
 
-        importExcellService.processUser(inputStream, RoleType.EXECUTOR)
+        importExcellService.processUser(inputStream, RoleType.PARTNER)
 
         return@withContext DataResponse.ok(null)
     }
