@@ -27,7 +27,9 @@ class OrderFactor(private val userFactory: UserFactory,
         )
     }
 
-    fun create(order: OrderEntity) : OrderNModel {
+    fun create(orderM: OrderEntity) : OrderNModel {
+        val order = orderM.copy()
+
         val orderSum = transactionService.orderBalance(order.id)
 
         val mOrder = OrderNModel(

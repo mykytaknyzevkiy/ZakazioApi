@@ -14,6 +14,10 @@ import com.zakaion.api.factor.user.UserFactory
 import com.zakaion.api.model.*
 import com.zakaion.api.service.AuthTokenService
 import com.zakaion.api.service.SmsService
+import com.zakaion.api.service.StorageService
+import com.zakaion.api.unit.ImportExcellService
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.security.access.prepost.PreAuthorize
@@ -26,7 +30,9 @@ class ClientController (private val userDao: UserDao,
                         private val authTokenService: AuthTokenService,
                         private val userController: UserController,
                         private val smsService: SmsService,
-                        private val userFactory: UserFactory) : BaseController(){
+                        private val userFactory: UserFactory,
+                        private val storageService: StorageService,
+                        private val importExcellService: ImportExcellService) : BaseController(){
 
     @GetMapping("/list")
     @PreAuthorize(_Can_SuperAdmin_Admin_Editor_Partner)
@@ -141,5 +147,14 @@ class ClientController (private val userDao: UserDao,
                         }
                 )
         )
+    }
+
+    @PostMapping("/import/{filename:.+}")
+    suspend fun import(@PathVariable filename: String) : DataResponse<Nothing?> = withContext(Dispatchers.IO) {
+        val inputStream = storageService.loadAsFile(filename).inputStream()
+
+        importExcellService.processUser(inputStream, RoleType.CLIENT)
+
+        return@withContext DataResponse.ok(null)
     }
 }

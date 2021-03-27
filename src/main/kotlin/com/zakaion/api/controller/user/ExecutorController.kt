@@ -10,6 +10,10 @@ import com.zakaion.api.factor.user.UserFactory
 import com.zakaion.api.model.*
 import com.zakaion.api.service.AuthTokenService
 import com.zakaion.api.service.SmsService
+import com.zakaion.api.service.StorageService
+import com.zakaion.api.unit.ImportExcellService
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.security.access.prepost.PreAuthorize
@@ -24,7 +28,10 @@ class ExecutorController (private val userDao: UserDao,
                           private val feedbackDao: FeedbackDao,
                           private val orderDao: OrderDao,
                           private val smsService: SmsService,
-                          private val userFactory: UserFactory) : BaseController(){
+                          private val userFactory: UserFactory,
+                          private val storageService: StorageService,
+                          private val importExcellService: ImportExcellService
+) : BaseController(){
 
     @PostMapping("/register/phone")
     fun registerPhone(@RequestBody phoneRegister: PhoneRegister) : DataResponse<TokenModel> {
@@ -160,5 +167,14 @@ class ExecutorController (private val userDao: UserDao,
         return DataResponse.ok(
                 null
         )
+    }
+
+    @PostMapping("/import/{filename:.+}")
+    suspend fun import(@PathVariable filename: String) : DataResponse<Nothing?> = withContext(Dispatchers.IO) {
+        val inputStream = storageService.loadAsFile(filename).inputStream()
+
+        importExcellService.processUser(inputStream, RoleType.EXECUTOR)
+
+        return@withContext DataResponse.ok(null)
     }
 }

@@ -9,6 +9,10 @@ import com.zakaion.api.exception.BadParams
 import com.zakaion.api.exception.NotFound
 import com.zakaion.api.model.CityModel
 import com.zakaion.api.model.DataResponse
+import com.zakaion.api.service.StorageService
+import com.zakaion.api.unit.ImportExcellService
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.web.bind.annotation.*
@@ -18,7 +22,9 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping(value = ["region"])
 class RegionController(
         private val regionDao: RegionDao,
-        private val cityDao: CityDao
+        private val cityDao: CityDao,
+        private val storageService: StorageService,
+        private val importExcellService: ImportExcellService
 ) : BaseController() {
 
     @GetMapping("/list")
@@ -139,6 +145,15 @@ class RegionController(
         )
 
         return DataResponse.ok(null)
+    }
+
+    @PostMapping("/import/{filename:.+}")
+    suspend fun import(@PathVariable filename: String) : DataResponse<Nothing?> = withContext(Dispatchers.IO) {
+        val inputStream = storageService.loadAsFile(filename).inputStream()
+
+        importExcellService.processAddress(inputStream)
+
+        return@withContext DataResponse.ok(null)
     }
 
 }

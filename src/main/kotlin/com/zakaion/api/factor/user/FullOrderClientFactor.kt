@@ -5,6 +5,8 @@ import com.zakaion.api.dao.FeedbackDao
 import com.zakaion.api.dao.OrderDao
 import com.zakaion.api.dao.PassportDao
 import com.zakaion.api.dao.PortfolioDao
+import com.zakaion.api.dao.history.OrderHistoryDao
+import com.zakaion.api.entity.history.OrderHistoryType
 import com.zakaion.api.entity.order.FeedbackEntity
 import com.zakaion.api.entity.user.RoleType
 import com.zakaion.api.entity.user.UserEntity
@@ -18,7 +20,9 @@ class FullOrderClientFactor(user: UserEntity,
                             private val orderDao: OrderDao,
                             private val feedbackDao: FeedbackDao,
                             private val passportDao: PassportDao,
-                            private val portfolioDao: PortfolioDao) : UserImpFactor(user) {
+                            private val portfolioDao: PortfolioDao,
+                            private val orderHistoryDao: OrderHistoryDao
+) : UserImpFactor(user) {
 
     override fun create(): FullOrderClientImp {
         return when (user.role) {
@@ -42,7 +46,15 @@ class FullOrderClientFactor(user: UserEntity,
                     val stars = num
                     (stars / allFeedbacks.size).toFloat()
                 },
-                order = UserOrder.create(orders = orders),
+                order = UserOrder.create(orders = orders).apply {
+                   this.count.declined = run {
+                       val findAll = orderHistoryDao.findAll(id)
+                       val orderIds = findAll.filter { it.type == OrderHistoryType.BE_EXECUTOR }.map { it.order.id }
+                       findAll.filter {
+                           orderIds.contains(it.order.id) && it.type == OrderHistoryType.CANCEL_EXECUTOR
+                       }.size
+                   }
+                },
                 passport = passportDao.findAll().find { it.user.id == id },
                 portfolioCount = portfolio.size
         ).apply {

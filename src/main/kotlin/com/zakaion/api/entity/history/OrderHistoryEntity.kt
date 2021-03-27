@@ -18,5 +18,19 @@ data class OrderHistoryEntity(
     val order: OrderEntity,
     @CreationTimestamp
     @Column(name = "creation_date_time", columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
-    override val creationDateTime: Date = Date()
+    override val creationDateTime: Date = Date(),
+    @Enumerated
+    val type: OrderHistoryType
     ) : HistoryImp
+
+enum class OrderHistoryType {
+    CREATE,
+    EDIT,
+    BE_EXECUTOR,
+    SET_EXECUTOR,
+    CANCEL_EXECUTOR,
+    START_WORK,
+    DONE_WORK,
+    CANCEL,
+    SHARE_SUM
+}

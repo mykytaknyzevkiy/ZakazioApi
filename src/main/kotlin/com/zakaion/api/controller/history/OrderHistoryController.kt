@@ -2,6 +2,8 @@ package com.zakaion.api.controller.history
 
 import com.zakaion.api.dao.history.OrderHistoryDao
 import com.zakaion.api.entity.history.OrderHistoryEntity
+import com.zakaion.api.entity.history.OrderHistoryType
+import com.zakaion.api.entity.history.OrderHistoryType.*
 import com.zakaion.api.entity.order.OrderEntity
 import com.zakaion.api.entity.user.UserEntity
 import com.zakaion.api.factor.user.UserFactory
@@ -16,11 +18,22 @@ import org.springframework.web.bind.annotation.*
 class OrderHistoryController(private val orderHistoryDao: OrderHistoryDao,
                              private val userFactory: UserFactory)  {
 
-    fun add(order: OrderEntity, user: UserEntity, data: String) {
+    fun add(order: OrderEntity, user: UserEntity, type: OrderHistoryType) {
         orderHistoryDao.save(OrderHistoryEntity(
             user = user,
-            data = data,
-            order = order
+            data = when (type) {
+                CREATE -> "Создал заказ"
+                EDIT -> "Отредактировал"
+                BE_EXECUTOR -> "Стал исполнителем"
+                SET_EXECUTOR -> "Назначил исполнителя"
+                CANCEL_EXECUTOR -> "Отменил исполнителя"
+                START_WORK -> "Начал работу"
+                DONE_WORK -> "Завершил работу"
+                CANCEL -> "Отменил заказ"
+                SHARE_SUM -> "Перевел сумму"
+            },
+            order = order,
+            type = type
         ))
     }
 

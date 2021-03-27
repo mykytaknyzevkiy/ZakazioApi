@@ -6,11 +6,11 @@ import com.zakaion.api.controller.user.ExecutorController
 import com.zakaion.api.controller.user.PartnerController
 import com.zakaion.api.controller.user.UserController
 import com.zakaion.api.dao.*
+import com.zakaion.api.entity.history.OrderHistoryType
 import com.zakaion.api.entity.order.OrderEntity
 import com.zakaion.api.entity.order.OrderStatus
 import com.zakaion.api.entity.user.RoleType
 import com.zakaion.api.entity.user.UserEntity
-import com.zakaion.api.entity.user.UserImp
 import com.zakaion.api.exception.BadParams
 import com.zakaion.api.exception.NoPermittedMethod
 import com.zakaion.api.exception.NotFound
@@ -22,7 +22,9 @@ import com.zakaion.api.service.AuthTokenService
 import com.zakaion.api.service.NotificationService
 import com.zakaion.api.service.StorageService
 import com.zakaion.api.service.TransactionService
-import com.zakaion.api.unit.ImportOrderExcell
+import com.zakaion.api.unit.ImportExcellService
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.web.bind.annotation.*
@@ -45,7 +47,7 @@ class OrderController(private val orderDao: OrderDao,
                       private val transactionService: TransactionService,
                       private val storageService: StorageService,
                       private val categoryDao: CategoryDao,
-                      private val importOrderExcell: ImportOrderExcell,
+                      private val importExcellService: ImportExcellService,
                       private val historyController: OrderHistoryController,
                       private val childCategoryDao: ChildCategoryDao
                       ) : BaseController() {
@@ -152,7 +154,7 @@ class OrderController(private val orderDao: OrderDao,
 
         notificationService.onCreateOrder(orderEntity)
 
-        historyController.add(orderEntity, myUser, "Создал заказ")
+        historyController.add(orderEntity, myUser, OrderHistoryType.CREATE)
 
         return DataResponse.ok(null)
     }
@@ -177,7 +179,7 @@ class OrderController(private val orderDao: OrderDao,
                 )
         )
 
-        historyController.add(order, userFactory.myUser, "Отредактировал заказ")
+        historyController.add(order, userFactory.myUser, OrderHistoryType.EDIT)
 
         return DataResponse.ok(null)
     }
@@ -325,7 +327,7 @@ class OrderController(private val orderDao: OrderDao,
 
         setExecutor(id, myUser.id)
 
-        historyController.add(order, myUser, "Стал исполнителем")
+        historyController.add(order, myUser, OrderHistoryType.BE_EXECUTOR)
 
         return DataResponse.ok(null)
     }
@@ -367,7 +369,7 @@ class OrderController(private val orderDao: OrderDao,
 
         notificationService.onClientHasExecutorOrder(nOrder)
 
-        historyController.add(order, userFactory.myUser, "Назначил исполнителя")
+        historyController.add(order, userFactory.myUser, OrderHistoryType.SET_EXECUTOR)
 
         return DataResponse.ok(null)
     }
@@ -383,14 +385,25 @@ class OrderController(private val orderDao: OrderDao,
         if (!mOrder.cancelExecutorEnable && !mOrder.defuseMeExecutorEnable)
             throw NoPermittedMethod()
 
-        val nOrder = orderDao.save(
+        orderDao.save(
                 order.copy(
                         status = OrderStatus.PROCESS,
                         executor = null
                 )
         )
 
-        historyController.add(order, userFactory.myUser, "Отменил исполнителя")
+        historyController.add(order, userFactory.myUser, OrderHistoryType.CANCEL_EXECUTOR)
+
+        if (userFactory.myUser.id == order.executor?.id) {
+            val executor = userFactory.create(order.executor) as ExecutorInfo
+            if (executor.order.count.declined % 4 == 0) {
+                userDao.save(
+                    executor.user.copy(
+                        isBlocked = true
+                    )
+                )
+            }
+        }
 
         return DataResponse.ok(null)
     }
@@ -413,7 +426,7 @@ class OrderController(private val orderDao: OrderDao,
 
         notificationService.onClientOrderInWork(order)
 
-        historyController.add(order, userFactory.myUser, "Начал работу")
+        historyController.add(order, userFactory.myUser, OrderHistoryType.START_WORK)
 
         return DataResponse.ok(null)
     }
@@ -437,7 +450,7 @@ class OrderController(private val orderDao: OrderDao,
         notificationService.addClientFeedback(order)
         notificationService.addExecutorFeedback(order)
 
-        historyController.add(order, userFactory.myUser, "Завершил работу")
+        historyController.add(order, userFactory.myUser, OrderHistoryType.DONE_WORK)
 
         return DataResponse.ok(null)
     }
@@ -458,14 +471,16 @@ class OrderController(private val orderDao: OrderDao,
                         order.copy(status = OrderStatus.CANCEL)
                 )
 
-        historyController.add(order, userFactory.myUser, "Отменил заказ")
+        historyController.add(order, userFactory.myUser, OrderHistoryType.CANCEL)
 
         return DataResponse.ok(null)
     }
 
     @PutMapping("/{id}/share/sum/{amount}")
     fun shareSum(@PathVariable("id") id: Long,
-                 @PathVariable("amount") amount: Float) : DataResponse<Nothing?> {
+                 @PathVariable("amount") amountM: Float) : DataResponse<Nothing?> {
+        var amount = amountM
+
         val order = orderDao.findById(id).orElseGet {
             throw NotFound()
         }
@@ -473,29 +488,25 @@ class OrderController(private val orderDao: OrderDao,
         if (userFactory.myUser.id != order.executor?.id)
             throw NoPermittedMethod()
 
+        val orderFull = orderFactor.create(order)
+
+        if (amount > orderFull.toShareSum)
+            amount = orderFull.toShareSum
+
         transactionService.processOrder(order, amount)
 
-        historyController.add(order, userFactory.myUser, "Перевел сумму в размере $amount")
-
-        return DataResponse.ok(null)
-    }
-
-    @PostMapping("/import")
-    fun import(@RequestParam("file") file: MultipartFile) : DataResponse<Nothing?> {
-        val inputStream = file.inputStream
-
-        importOrderExcell.build(inputStream)
+        historyController.add(order, userFactory.myUser, OrderHistoryType.SHARE_SUM)
 
         return DataResponse.ok(null)
     }
 
     @PostMapping("/import/{filename:.+}")
-    fun import(@PathVariable filename: String) : DataResponse<Nothing?> {
+    suspend fun import(@PathVariable filename: String) : DataResponse<Nothing?> = withContext(Dispatchers.IO) {
         val inputStream = storageService.loadAsFile(filename).inputStream()
 
-        importOrderExcell.build(inputStream)
+        importExcellService.processOrder(inputStream)
 
-        return DataResponse.ok(null)
+        return@withContext DataResponse.ok(null)
     }
 
 }

@@ -12,6 +12,7 @@ import com.zakaion.api.model.EditCategoryModel
 import com.zakaion.api.model.GlobalCategory
 import com.zakaion.api.roleControllers.CanSuperAdmin_Admin_Editor
 import com.zakaion.api.service.StorageService
+import com.zakaion.api.unit.ImportExcellService
 import kotlinx.coroutines.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -25,7 +26,8 @@ import kotlin.collections.HashMap
 @RequestMapping(value = ["category"])
 class CategoryController(private val categoryDao: CategoryDao,
                          private val storageService: StorageService,
-                         private val childCategoryDao: ChildCategoryDao) : BaseController() {
+                         private val childCategoryDao: ChildCategoryDao,
+                         private val importExcellService: ImportExcellService) : BaseController() {
 
     @GetMapping("/list")
     fun list(pageable: Pageable) : DataResponse<Page<CategoryEntity>> {
@@ -173,4 +175,12 @@ class CategoryController(private val categoryDao: CategoryDao,
         )
     }
 
+    @PostMapping("/import/{filename:.+}")
+    suspend fun import(@PathVariable filename: String) : DataResponse<Nothing?> = withContext(Dispatchers.IO) {
+        val inputStream = storageService.loadAsFile(filename).inputStream()
+
+        importExcellService.processCategory(inputStream)
+
+        return@withContext DataResponse.ok(null)
+    }
 }

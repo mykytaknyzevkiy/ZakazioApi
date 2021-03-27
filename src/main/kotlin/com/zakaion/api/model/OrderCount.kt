@@ -7,7 +7,7 @@ import com.zakaion.api.service.Preference
 data class OrderCount(
     val open: Int = 0,
     val close: Int = 0,
-    val declined: Int = 0,
+    var declined: Int = 0,
     val max: Int = Preference.executorMaxOrder
 ) {
 

@@ -4,7 +4,7 @@ USER root
 WORKDIR /usr/src/java-code
 COPY . /usr/src/java-code/
 
-RUN gradle bootWar
+RUN gradle bootWar --stacktrace
 
 FROM openjdk:latest
 
