@@ -41,7 +41,7 @@ class ImportExcellService(private val orderDao: OrderDao,
 
             val title = row.getCell(titleCellIndex(mainCells)).stringCellValue
             val content = row.getCell(contentCellIndex(mainCells)).stringCellValue
-            val price = row.getCell(priceCellIndex(mainCells)).numericCellValue
+            val price = row.getCell(priceCellIndex(mainCells)).toString().toFloat()
             val dateLine = row.getCell(dateLineCellIndex(mainCells)).stringCellValue
 
             val regionName = row.getCell(regionCellIndex(mainCells)).stringCellValue
@@ -52,12 +52,12 @@ class ImportExcellService(private val orderDao: OrderDao,
 
             val clientName = row.getCell(clientNameCellIndex(mainCells)).stringCellValue
             val clientPhone = run {
-                var clientPhone = row.getCell(clientPhoneCellIndex(mainCells)).stringCellValue
-                clientPhone = clientPhone.replace(Regex("[^A-Za-z0-9 ]"), "")
-                clientPhone = if (clientPhone.startsWith("7"))
+                var clientPhone = row.getCell(clientPhoneCellIndex(mainCells)).toString()
+                clientPhone = clientPhone.filter { it.isDigit() }
+                /*clientPhone = if (clientPhone.startsWith("7"))
                     "+$clientPhone"
                 else
-                    "+7$clientPhone"
+                    "+7$clientPhone"*/
                 clientPhone
             }
             val clientEmail = row.getCell(clientEmailCellIndex(mainCells)).stringCellValue
@@ -334,7 +334,7 @@ class ImportExcellService(private val orderDao: OrderDao,
         var index = 0
 
         for (cell in cells) {
-            if (cell.stringCellValue == name) {
+            if (cell.toString() == name) {
                 break
             }
             index++
