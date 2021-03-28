@@ -24,6 +24,8 @@ import com.zakaion.api.service.StorageService
 import com.zakaion.api.service.TransactionService
 import com.zakaion.api.unit.ImportExcellService
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -501,12 +503,14 @@ class OrderController(private val orderDao: OrderDao,
     }
 
     @PostMapping("/import/{filename:.+}")
-    suspend fun import(@PathVariable filename: String) : DataResponse<Nothing?> = withContext(Dispatchers.IO) {
+    fun import(@PathVariable filename: String) : DataResponse<Nothing?> {
         val inputStream = storageService.loadAsFile(filename).inputStream()
 
-        importExcellService.processOrder(inputStream)
+        GlobalScope.launch(Dispatchers.IO) {
+            importExcellService.processOrder(inputStream)
+        }
 
-        return@withContext DataResponse.ok(null)
+        return DataResponse.ok(null)
     }
 
 }
