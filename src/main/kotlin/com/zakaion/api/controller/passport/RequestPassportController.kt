@@ -7,9 +7,11 @@ import com.zakaion.api.dao.RequestPassportDao
 import com.zakaion.api.dao.UserDao
 import com.zakaion.api.entity.executor.PassportEntity
 import com.zakaion.api.entity.executor.RequestPassportEntity
+import com.zakaion.api.entity.user.RoleType
 import com.zakaion.api.entity.user._Can_SuperAdmin_Admin_Editor
 import com.zakaion.api.exception.BadParams
 import com.zakaion.api.exception.NotFound
+import com.zakaion.api.factor.user.UserFactory
 import com.zakaion.api.model.DataResponse
 import com.zakaion.api.model.PassportModel
 import com.zakaion.api.service.StorageService
@@ -23,6 +25,7 @@ import java.util.*
 @CrossOrigin(origins = ["*"], maxAge = 3600)
 @RequestMapping(value = ["passport/request"])
 class RequestPassportController(
+        private val userFactory: UserFactory,
         private val userController: UserController,
         private val userDao: UserDao,
         private val requestPassportDao: RequestPassportDao,
@@ -33,8 +36,15 @@ class RequestPassportController(
     @GetMapping("/list")
     @PreAuthorize(_Can_SuperAdmin_Admin_Editor)
     fun list(pageable: Pageable) : DataResponse<Page<RequestPassportEntity>> {
+        val data = requestPassportDao.findAll(pageable)
+
+        data.removeAll {
+            it.user.id ==  userFactory.myUser.id ||
+                    (it.user.role == RoleType.ADMIN && userFactory.myUser.role == RoleType.EDITOR)
+        }
+
         return DataResponse.ok(
-                requestPassportDao.findAll(pageable)
+                data
         )
     }
 
