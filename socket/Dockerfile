@@ -2,7 +2,7 @@ FROM gradle:latest AS builder
 
 USER root
 WORKDIR /usr/socket/src/java-code
-COPY . /usr/socket/src/java-code/
+COPY ... /usr/socket/src/java-code/
 
 RUN gradle bootWar --stacktrace
 
