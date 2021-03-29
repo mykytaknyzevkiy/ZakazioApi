@@ -12,13 +12,22 @@ services:
       - "3306:3306"
 
   api:
-    build: .
+    build: api
+    container_name: api
     ports:
       - 8080:8080
     depends_on:
       - mysql-development
     environment:
       API_URL: https://api.zakazy.online/api/v1
-      CRM_URL: https://zakazio-56c70.web.app/#/
+      CRM_URL: https://zakazio-56c70.web.app
       CLOUD_PAYMENT_PUBLIC: pk_8507dee1d9c8b1519a3f5b5b3d872
       CLOUD_PAYMENT_PRIVATE: 0e9f48b377588f22f628825b7f1e42f0
+
+  socket:
+    build: socket
+    container_name: socket
+    ports:
+      - 8181:8181
+    environment:
+      CRM_URL: https://zakazio-56c70.web.app
