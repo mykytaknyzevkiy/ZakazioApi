@@ -1,5 +1,7 @@
-git add --all
+git pull
 
-git commit -m "Release"
+docker-compose stop
 
-git push
+docker-compose build --no-cache
+
+docker-compose up -d
