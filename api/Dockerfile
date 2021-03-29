@@ -1,12 +1,8 @@
-FROM ubuntu
-
-COPY . /usr/src/java-code/
-RUN ls -la /
-
 FROM gradle:latest AS builder
 
 USER root
 WORKDIR /usr/src/java-code
+COPY . /usr/src/java-code
 
 RUN gradle bootWar --stacktrace
 
