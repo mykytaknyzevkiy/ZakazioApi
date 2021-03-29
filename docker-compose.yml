@@ -31,3 +31,9 @@ services:
       - 8181:8181
     environment:
       CRM_URL: http://crm.zakazy.online
+
+  crm:
+    build: crm
+    container_name: crm
+    ports:
+      - 80:80    
