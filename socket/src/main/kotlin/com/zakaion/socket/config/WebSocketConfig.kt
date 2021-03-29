@@ -23,6 +23,10 @@ class WebSocketConfig(env: Environment) : WebSocketMessageBrokerConfigurer {
     }
 
     override fun registerStompEndpoints(registry: StompEndpointRegistry) {
+        registry.addEndpoint("/nikolay")
+            .setAllowedOrigins("*")
+            .withSockJS()
+
         registry.addEndpoint("/out")
             .setAllowedOrigins(crmUrl)
             .withSockJS()
