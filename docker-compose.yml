@@ -14,7 +14,7 @@ services:
   api:
     build: 
       context: .
-      dockerfile: api
+      dockerfile: api/Dockerfile
     container_name: api
     ports:
       - 8080:8080
@@ -29,7 +29,7 @@ services:
   socket:
     build: 
       context: .
-      dockerfile: socket
+      dockerfile: socket/Dockerfile
     container_name: socket
     ports:
       - 8181:8181
