@@ -3,6 +3,7 @@ package com.zakaion.api.entity.blog
 import java.util.*
 import javax.persistence.*
 
+@Entity(name = "blog")
 data class BlogEntity(
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
