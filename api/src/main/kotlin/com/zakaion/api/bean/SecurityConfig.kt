@@ -64,7 +64,9 @@ class SecurityConfig(private val authTokenService: AuthTokenService) : WebSecuri
                         "/region/*",
                         "/region/**",
 
-                        "/payment/**"
+                        "/payment/**",
+
+                        "/blog/**"
                 ).permitAll()
                 .anyRequest()
                 .authenticated()
