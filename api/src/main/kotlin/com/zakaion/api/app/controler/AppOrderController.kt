@@ -10,7 +10,17 @@ import com.zakaion.api.model.AddOrderModel
 import com.zakaion.api.model.DataResponse
 import com.zakaion.api.service.NotificationService
 import com.zakaion.api.app.Const
+import org.springframework.core.io.ClassPathResource
+import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
+import java.io.File
+import java.util.stream.Collectors
+
+import java.io.BufferedReader
+
+import java.io.InputStream
+import java.io.InputStreamReader
+
 
 @RestController
 @CrossOrigin
@@ -96,5 +106,27 @@ class AppOrderController(
 
         return DataResponse.ok(null)
     }
+
+    @GetMapping("/widget", produces = ["text/javascript"])
+    fun buildWidget(@PathVariable(Const.app_token_key) appToken: String): ByteArray {
+
+        var js = getResourceFileAsString("widgets/create_order_widget.js")
+
+        js = js.replace("{{APP_KEY}}", appToken)
+
+        return js.toByteArray()
+    }
+
+
+    private fun getResourceFileAsString(fileName: String): String {
+        val `is`: InputStream = getResourceFileAsInputStream(fileName)
+        val reader = BufferedReader(InputStreamReader(`is`))
+        return reader.lines().collect(Collectors.joining(System.lineSeparator())) as String
+    }
+
+    private fun getResourceFileAsInputStream(fileName: String): InputStream {
+        return ClassPathResource(fileName).inputStream
+    }
+
 
 }

@@ -138,7 +138,7 @@ class PaymentController(
         val process3ds = cloudPaymentService.process3ds(transactionId, paRes) ?: throw BadParams()
 
         if (!process3ds.success || process3ds.model?.amount == null)
-            return ResourceUtils.getFile("classpath:templates/fail_payed.html").readBytes()
+            return ClassPathResource("templates/fail_payed.html").file.readBytes()
 
         transactionInDao.save(
             TransactionInEntity(
@@ -149,7 +149,7 @@ class PaymentController(
             )
         )
 
-        return ResourceUtils.getFile("classpath:templates/success_payed.html").readBytes()
+        return ClassPathResource("templates/success_payed.html").file.readBytes()
     }
 
     @GetMapping("/{userID}/cloudpayment/3ds/{cardID}", produces = [MediaType.TEXT_HTML_VALUE])
