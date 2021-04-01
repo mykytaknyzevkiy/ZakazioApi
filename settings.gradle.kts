@@ -9,3 +9,4 @@ rootProject.name = "Zazakio-api"
 
 include("api")
 include("socket")
+include("sms")

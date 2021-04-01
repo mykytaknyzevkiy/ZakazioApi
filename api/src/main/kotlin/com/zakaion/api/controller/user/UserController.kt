@@ -11,11 +11,13 @@ import com.zakaion.api.factor.user.UserFactory
 import com.zakaion.api.model.*
 import com.zakaion.api.roleControllers.CanSuperAdmin_Admin_Editor
 import com.zakaion.api.service.AuthTokenService
+import com.zakaion.api.service.EmailService
 import com.zakaion.api.service.SmsService
 import com.zakaion.api.service.StorageService
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
 import java.util.*
+import kotlin.random.Random
 
 @RestController
 @CrossOrigin(origins = ["*"], maxAge = 3600)
@@ -28,7 +30,8 @@ class UserController(private val userDao: UserDao,
                      private val feedbackDao: FeedbackDao,
                      private val smsService: SmsService,
                      private val cityDao: CityDao,
-                     private val userFactory: UserFactory) : BaseController() {
+                     private val userFactory: UserFactory,
+                     private val emailService: EmailService) : BaseController() {
 
     @PostMapping("/login")
     fun login(@RequestBody loginModel: LoginModel): DataResponse<TokenModel> {
@@ -190,8 +193,11 @@ class UserController(private val userDao: UserDao,
         if (myUser.email.isNullOrEmpty()) throw BadParams()
 
         if (phoneRegister.code == null || phoneRegister.token == null) {
-            //TODO(Send mail with code)
-            val token = authTokenService.generatePhoneToken(myUser.email!!, "1234")
+            val code = Random(4).nextInt().toString()
+
+
+            emailService.sendMsg(myUser.email!!, code)
+            val token = authTokenService.generatePhoneToken(myUser.email!!, code)
 
             return DataResponse.ok(
                     TokenModel((token))
