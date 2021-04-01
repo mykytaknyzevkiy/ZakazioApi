@@ -31,3 +31,9 @@ services:
       - 8181:8181
     environment:
       CRM_URL: http://localhost:63227
+
+  sms:
+    build: sms
+    container_name: sms
+    ports:
+      - 8282:8282
