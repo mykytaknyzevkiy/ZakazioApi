@@ -11,6 +11,15 @@ services:
     ports:
       - "3306:3306"
 
+  sms_db:
+    image: mysql:8.0.17
+    container_name: sms_db
+    environment:
+      MYSQL_ROOT_PASSWORD: k6G1tgJLM9hMXvwR
+      MYSQL_DATABASE: sms_db
+    ports:
+      - "3307:3307"
+
   api:
     build: api
     container_name: api
