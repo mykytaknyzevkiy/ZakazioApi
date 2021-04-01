@@ -66,6 +66,11 @@ class MessageController(private val messageDao: MessageDao,
 
         message.status = MessageStatus.DONE
 
+        message.worker?.let {
+            it.maxSms = it.maxSms - 1
+            deviceDao.save(it)
+        }
+
         messageDao.save(message)
 
         return DataResponse.ok(null)
