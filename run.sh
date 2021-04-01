@@ -1,3 +1,4 @@
+git reset --hard HEAD
 git pull
 
 chmod a+x ./gradlew
