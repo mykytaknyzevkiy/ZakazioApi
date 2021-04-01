@@ -9,7 +9,7 @@ services:
       MYSQL_ROOT_PASSWORD: k6G1tgJLM9hMXvwR
       MYSQL_DATABASE: zakazio_db
     ports:
-      - "3306:3306"
+      - "3307:3306"
 
   sms_db:
     image: mysql:8.0.17
@@ -18,7 +18,7 @@ services:
       MYSQL_ROOT_PASSWORD: k6G1tgJLM9hMXvwR
       MYSQL_DATABASE: sms_db
     ports:
-      - "3307:3307"
+      - "3306:3306"
 
   api:
     build: api
@@ -46,3 +46,5 @@ services:
     container_name: sms
     ports:
       - 8282:8282
+    depends_on:
+      - sms_db
