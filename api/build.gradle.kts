@@ -32,6 +32,7 @@ dependencies {
 	providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-websocket")
+	implementation("org.springframework.boot:spring-boot-starter-mail")
 
 	implementation( "mysql:mysql-connector-java:8.0.21")
 	runtimeOnly ("mysql:mysql-connector-java")
