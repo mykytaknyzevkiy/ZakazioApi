@@ -61,9 +61,9 @@ class MessageController(private val messageDao: MessageDao,
         messageDao.save(message)
 
         return DataResponse.ok(
-            message.copy(
+            message/*.copy(
                 content = translit(message.content)
-            )
+            )*/
         )
     }
 
