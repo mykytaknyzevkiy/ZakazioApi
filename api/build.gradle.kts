@@ -49,6 +49,8 @@ dependencies {
 	implementation("org.apache.poi:poi-ooxml:3.15")
 
 	implementation("org.thymeleaf:thymeleaf:3.0.11.RELEASE")
+
+	implementation(project(":sms"))
 }
 
 tasks.withType<KotlinCompile> {

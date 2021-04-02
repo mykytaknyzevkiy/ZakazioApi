@@ -172,6 +172,7 @@ class UserController(private val userDao: UserDao,
 
             return DataResponse.ok(
                     TokenModel((token))
+
             )
         }
 
@@ -193,8 +194,7 @@ class UserController(private val userDao: UserDao,
         if (myUser.email.isNullOrEmpty()) throw BadParams()
 
         if (phoneRegister.code == null || phoneRegister.token == null) {
-            val code = Random(4).nextInt().toString()
-
+            val code = "1234"
 
             emailService.sendMsg(myUser.email!!, code)
             val token = authTokenService.generatePhoneToken(myUser.email!!, code)

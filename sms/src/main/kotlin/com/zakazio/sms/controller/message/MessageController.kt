@@ -16,6 +16,10 @@ class MessageController(private val messageDao: MessageDao,
 
     @PostMapping("/add")
     fun add(@RequestBody body: MessageRequestModel): DataResponse<Nothing?> {
+        println("on add message")
+        println("phone: ${body.phoneNumber}")
+        println("content: ${body.content}")
+
         messageDao.save(MessageEntity(
             phoneNumber = body.phoneNumber,
             content = body.content
@@ -39,6 +43,9 @@ class MessageController(private val messageDao: MessageDao,
             throw RuntimeException("Not found")
         }
 
+        if (device.maxSms <= 0)
+            return DataResponse.ok(null)
+
         val messages = messageDao.findAll().filter { it.status == MessageStatus.OPEN }
 
         if (messages.isEmpty())
@@ -54,7 +61,9 @@ class MessageController(private val messageDao: MessageDao,
         messageDao.save(message)
 
         return DataResponse.ok(
-            message
+            message.copy(
+                content = translit(message.content)
+            )
         )
     }
 
@@ -87,5 +96,154 @@ class MessageController(private val messageDao: MessageDao,
         messageDao.save(message)
 
         return DataResponse.ok(null)
+    }
+
+    fun translit(str: String): String {
+        var str: String = str
+        val lat_up: Array<String> = arrayOf(
+            "A",
+            "B",
+            "V",
+            "G",
+            "D",
+            "E",
+            "Yo",
+            "Zh",
+            "Z",
+            "I",
+            "Y",
+            "K",
+            "L",
+            "M",
+            "N",
+            "O",
+            "P",
+            "R",
+            "S",
+            "T",
+            "U",
+            "F",
+            "Kh",
+            "Ts",
+            "Ch",
+            "Sh",
+            "Shch",
+            "\"",
+            "Y",
+            "'",
+            "E",
+            "Yu",
+            "Ya"
+        )
+        val lat_low: Array<String> = arrayOf(
+            "a",
+            "b",
+            "v",
+            "g",
+            "d",
+            "e",
+            "yo",
+            "zh",
+            "z",
+            "i",
+            "y",
+            "k",
+            "l",
+            "m",
+            "n",
+            "o",
+            "p",
+            "r",
+            "s",
+            "t",
+            "u",
+            "f",
+            "kh",
+            "ts",
+            "ch",
+            "sh",
+            "shch",
+            "\"",
+            "y",
+            "'",
+            "e",
+            "yu",
+            "ya"
+        )
+        val rus_up: Array<String> = arrayOf(
+            "А",
+            "Б",
+            "В",
+            "Г",
+            "Д",
+            "Е",
+            "Ё",
+            "Ж",
+            "З",
+            "И",
+            "Й",
+            "К",
+            "Л",
+            "М",
+            "Н",
+            "О",
+            "П",
+            "Р",
+            "С",
+            "Т",
+            "У",
+            "Ф",
+            "Х",
+            "Ц",
+            "Ч",
+            "Ш",
+            "Щ",
+            "Ъ",
+            "Ы",
+            "Ь",
+            "Э",
+            "Ю",
+            "Я"
+        )
+        val rus_low: Array<String> = arrayOf(
+            "а",
+            "б",
+            "в",
+            "г",
+            "д",
+            "е",
+            "ё",
+            "ж",
+            "з",
+            "и",
+            "й",
+            "к",
+            "л",
+            "м",
+            "н",
+            "о",
+            "п",
+            "р",
+            "с",
+            "т",
+            "у",
+            "ф",
+            "х",
+            "ц",
+            "ч",
+            "ш",
+            "щ",
+            "ъ",
+            "ы",
+            "ь",
+            "э",
+            "ю",
+            "я"
+        )
+        for (i in 0..32) {
+            str = str.replace(rus_up[i], lat_up[i])
+            str = str.replace(rus_low[i], lat_low[i])
+        }
+        return str
     }
 }

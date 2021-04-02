@@ -15,12 +15,12 @@ class SmsService(restTemplateBuilder: RestTemplateBuilder) {
     private val restTemplate = restTemplateBuilder.build()
 
     private val headers = HttpHeaders().apply {
-        contentType = MediaType.APPLICATION_JSON
-        accept = Collections.singletonList(MediaType.APPLICATION_JSON)
+        contentType = MediaType.APPLICATION_JSON_UTF8
+        accept = Collections.singletonList(MediaType.APPLICATION_JSON_UTF8)
     }
 
     fun sendMsg(phoneNumber: String, msg: String) {
-        val url = "https://sms.zakazy.online/api/v1/message/add"
+        val url = "http://sms:8282/api/v1/message/add"
 
         // create a map for post parameters
         val map = HashMap<String, Any>()
