@@ -109,7 +109,7 @@ class ExecutorController (private val userDao: UserDao,
     fun listPartner(
         @PathVariable("id") id: Long,
         pageable: Pageable,
-        @RequestParam("search", required = false, defaultValue = "null") search: String
+        @RequestParam("search", required = false, defaultValue = "") search: String
     ) : DataResponse<Page<ExecutorInfo>> {
         val data = userDao.findByRole(RoleType.EXECUTOR.ordinal, id, search, pageable).map {user->
                     userFactory.create(user) as ExecutorInfo
