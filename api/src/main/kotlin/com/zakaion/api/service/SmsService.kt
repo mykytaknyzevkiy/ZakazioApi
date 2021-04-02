@@ -20,7 +20,7 @@ class SmsService(restTemplateBuilder: RestTemplateBuilder) {
     }
 
     fun sendMsg(phoneNumber: String, msg: String) {
-        val url = "http://sms:8282/api/v1/message/add"
+        val url = "https://sms.zakazy.online/api/v1/message/add"
 
         // create a map for post parameters
         val map = HashMap<String, Any>()
