@@ -2,6 +2,7 @@ package com.zakaion.api.controller.payment
 
 import com.google.gson.Gson
 import com.zakaion.api.ConstService
+import com.zakaion.api.ExFuncs
 import com.zakaion.api.controller.BaseController
 import com.zakaion.api.dao.BankCardDao
 import com.zakaion.api.dao.TransactionInDao
@@ -138,7 +139,7 @@ class PaymentController(
         val process3ds = cloudPaymentService.process3ds(transactionId, paRes) ?: throw BadParams()
 
         if (!process3ds.success || process3ds.model?.amount == null)
-            return ClassPathResource("templates/fail_payed.html").file.readBytes()
+            return ExFuncs.getResourceFileAsString("templates/fail_payed.html").replace("{{CRM_URL}}", constService.crmUrl).toByteArray()
 
         transactionInDao.save(
             TransactionInEntity(
@@ -149,7 +150,7 @@ class PaymentController(
             )
         )
 
-        return ClassPathResource("templates/success_payed.html").file.readBytes()
+        return ExFuncs.getResourceFileAsString("templates/success_payed.html").replace("{{CRM_URL}}", constService.crmUrl).toByteArray()
     }
 
     @GetMapping("/{userID}/cloudpayment/3ds/{cardID}", produces = [MediaType.TEXT_HTML_VALUE])

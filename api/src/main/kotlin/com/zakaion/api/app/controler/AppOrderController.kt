@@ -1,5 +1,6 @@
 package com.zakaion.api.app.controler
 
+import com.zakaion.api.ExFuncs.getResourceFileAsString
 import com.zakaion.api.dao.*
 import com.zakaion.api.entity.order.OrderEntity
 import com.zakaion.api.entity.user.RoleType
@@ -115,17 +116,6 @@ class AppOrderController(
         js = js.replace("{{APP_KEY}}", appToken)
 
         return js.toByteArray()
-    }
-
-
-    private fun getResourceFileAsString(fileName: String): String {
-        val `is`: InputStream = getResourceFileAsInputStream(fileName)
-        val reader = BufferedReader(InputStreamReader(`is`))
-        return reader.lines().collect(Collectors.joining(System.lineSeparator())) as String
-    }
-
-    private fun getResourceFileAsInputStream(fileName: String): InputStream {
-        return ClassPathResource(fileName).inputStream
     }
 
 
