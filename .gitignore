@@ -2,3 +2,5 @@
 /api/build/
 /sms/build/
 /socket/build/
+/.gradle/
+/.idea/
