@@ -11,7 +11,16 @@ import java.net.MalformedURLException
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import javax.imageio.ImageIO
 import kotlin.streams.toList
+import javax.imageio.IIOImage
+
+import javax.imageio.ImageWriteParam
+
+import javax.imageio.stream.ImageOutputStream
+
+
+
 
 @Service
 class StorageService {
@@ -47,7 +56,27 @@ class StorageService {
 
         FileOutputStream(fileName).use { stream -> stream.write(bytes) }
 
-        Files.copy(File(fileName).inputStream(), this.root.resolve(fileName))
+        if (format == "jpg") {
+            val image = ImageIO.read(File(fileName))
+            val compressedImageFile = this.root.resolve(fileName).toFile()
+            val os = compressedImageFile.outputStream()
+            val writers = ImageIO.getImageWritersByFormatName("jpg")
+            val writer = writers.next()
+
+            val ios = ImageIO.createImageOutputStream(os)
+            writer.output = ios
+
+            val param = writer.defaultWriteParam
+
+            param.compressionMode = ImageWriteParam.MODE_EXPLICIT
+            param.compressionQuality = 0.10f
+            writer.write(null, IIOImage(image, null, null), param)
+            os.close()
+            ios.close()
+            writer.dispose()
+        } else {
+            Files.copy(File(fileName).inputStream(), this.root.resolve(fileName))
+        }
 
         File(fileName).delete()
 

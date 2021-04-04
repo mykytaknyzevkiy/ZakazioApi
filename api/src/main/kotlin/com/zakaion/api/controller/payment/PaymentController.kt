@@ -176,9 +176,8 @@ class PaymentController(
                 "</head>\n" +
                 "<body>\n" +
                 "\n" +
-                "<iframe name=\"hidden_iframe\" style=\"position:fixed; top:0; left:0; bottom:0; right:0; width:100%; height:100%; border:none; margin:0; padding:0; overflow:hidden; z-index:999999;\"></iframe>\n" +
                 "\n" +
-                "<form name=\"downloadForm\" target=\"hidden_iframe\" action=\"$acsUrl\" method=\"POST\">\n" +
+                "<form name=\"downloadForm\" action=\"$acsUrl\" method=\"POST\">\n" +
                 "    <input type=\"hidden\" name=\"PaReq\" value=\"$paReq\">\n" +
                 "    <input type=\"hidden\" name=\"MD\" value=\"$transactionId\">\n" +
                 "    <input type=\"hidden\" name=\"TermUrl\" value=\"${constService.apiUrl}/payment/$userID/cloudpayment/3ds/process/$bankCardID\">\n" +
