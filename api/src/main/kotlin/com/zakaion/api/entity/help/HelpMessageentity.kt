@@ -23,6 +23,9 @@ data class HelpMessageEntity(
     @Enumerated
     val status: HelpStatus = HelpStatus.OPEN,
 
+    @OneToOne
+    val worker: UserEntity? = null,
+
     @Column(name = "creation_date_time", insertable = true, updatable = true/*, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP"*/)
     //@CreationTimestamp
     val creationDateTime: Date = Date(),

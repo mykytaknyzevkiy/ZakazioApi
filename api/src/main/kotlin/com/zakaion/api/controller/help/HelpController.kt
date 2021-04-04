@@ -1,8 +1,10 @@
 package com.zakaion.api.controller.help
 
 import com.zakaion.api.dao.HelpMessageDao
+import com.zakaion.api.dao.UserDao
 import com.zakaion.api.entity.help.HelpMessageEntity
 import com.zakaion.api.entity.help.HelpStatus
+import com.zakaion.api.entity.user.RoleType
 import com.zakaion.api.exception.NotFound
 import com.zakaion.api.factor.user.UserFactory
 import com.zakaion.api.model.AddHelpRequestModel
@@ -15,10 +17,29 @@ import org.springframework.web.bind.annotation.*
 @CrossOrigin
 @RequestMapping(value = ["help"])
 class HelpController(private val helpMessageDao: HelpMessageDao,
-                     private val userFactory: UserFactory) {
+                     private val userFactory: UserFactory,
+                     private val userDao: UserDao) {
 
     @PostMapping("/add")
     fun add(@RequestBody addHelpRequestModel: AddHelpRequestModel): DataResponse<Nothing?> {
+
+        if (userFactory.myUser.masterID != null) {
+            val master = userDao.findById(userFactory.myUser.masterID!!).orElseGet {
+                throw NotFound()
+            }
+
+            helpMessageDao.save(
+                HelpMessageEntity(
+                    user = userFactory.myUser,
+                    message = addHelpRequestModel.message,
+                    files = addHelpRequestModel.files,
+                    worker = master
+                )
+            )
+
+            return DataResponse.ok(null)
+        }
+
         helpMessageDao.save(
             HelpMessageEntity(
                 user = userFactory.myUser,
@@ -59,7 +80,10 @@ class HelpController(private val helpMessageDao: HelpMessageDao,
     @GetMapping("/list")
     fun list(pageable: Pageable): DataResponse<Page<HelpMessageEntity>> {
         return DataResponse.ok(
-            helpMessageDao.findAll(pageable)
+            if (userFactory.myUser.role == RoleType.PARTNER)
+                helpMessageDao.findAllMaster(pageable, userFactory.myUser.id)
+            else
+                helpMessageDao.findAllNoMaster(pageable)
         )
     }
 
