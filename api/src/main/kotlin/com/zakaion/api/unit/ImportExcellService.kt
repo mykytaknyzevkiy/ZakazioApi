@@ -26,23 +26,245 @@ class ImportExcellService(private val orderDao: OrderDao,
                           private val childCategoryDao: ChildCategoryDao,
                           private val socketService: SocketService) {
 
-    suspend fun processOrder(file: InputStream) = withContext(Dispatchers.IO) {
+    suspend fun processOrder(uuid: String, file: InputStream, partner: UserEntity) = withContext(Dispatchers.IO) {
         val workbook: Workbook = XSSFWorkbook(file)
 
         val sheet = workbook.sheetIterator().next()
-        
-        val mainRow = sheet.first()
+
+        val rows = run {
+            val list = arrayListOf<Row>()
+            sheet.rowIterator().forEach {
+                if (it.getCell(0).toString().isNotEmpty()) {
+                    list.add(it)
+                }
+            }
+            list
+        }
+
+        if (rows.isEmpty()) {
+            return@withContext
+        }
+
         val mainCells = arrayListOf<Cell>()
 
-        mainRow.cellIterator().forEach {
+        rows.first().cellIterator().forEach {
             mainCells.add(it)
         }
 
-        try {
-            socketService.importOrderProcess(0, sheet.lastRowNum)
-        } catch (e: Exception) {
-            println(e)
+        val brokers = arrayListOf<Pair<Int, String>>()
+
+        val sendProcessSocketMsg: suspend (process: Int) -> Unit = {
+            socketService.importOrderProcess(uuid = uuid, process = it, max = rows.size - 1, brokers = brokers)
         }
+
+        sendProcessSocketMsg.invoke(0)
+
+        for (index in 1..rows.size) {
+            val row = rows[index]
+
+            val title = row.getCell(titleCellIndex(mainCells)).stringCellValue
+            val content = row.getCell(contentCellIndex(mainCells)).stringCellValue
+            val price = row.getCell(priceCellIndex(mainCells)).toString().toFloat()
+            val dateLine = row.getCell(dateLineCellIndex(mainCells)).stringCellValue
+
+            val regionName = row.getCell(regionCellIndex(mainCells)).stringCellValue
+            val cityName = row.getCell(cityCellIndex(mainCells)).stringCellValue
+
+            val categoryName = row.getCell(categoryCellIndex(mainCells)).stringCellValue
+            val childCategoryName = row.getCell(childCategoryCellIndex(mainCells)).stringCellValue
+
+            val clientName = row.getCell(clientNameCellIndex(mainCells)).stringCellValue
+            val clientPhone = run {
+                var clientPhone = row.getCell(clientPhoneCellIndex(mainCells)).toString()
+                clientPhone = clientPhone.filter { it.isDigit() }
+                /*clientPhone = if (clientPhone.startsWith("7"))
+                    "+$clientPhone"
+                else
+                    "+7$clientPhone"*/
+                "+$clientPhone"
+            }
+            val clientEmail = row.getCell(clientEmailCellIndex(mainCells)).stringCellValue
+
+            if (title.isNullOrEmpty()) {
+                brokers.add(Pair(index, "title is empty"))
+                sendProcessSocketMsg.invoke(index)
+                continue
+            }
+            else if (content.isNullOrEmpty()) {
+                brokers.add(Pair(index, "content is empty"))
+                sendProcessSocketMsg.invoke(index)
+                continue
+            }
+            else if (price <= 0) {
+                brokers.add(Pair(index, "price less than 0"))
+                sendProcessSocketMsg.invoke(index)
+                continue
+            }
+            else if (dateLine.isNullOrEmpty()) {
+                brokers.add(Pair(index, "dateline is empty"))
+                sendProcessSocketMsg.invoke(index)
+                continue
+            }
+
+            if (regionName.isNullOrEmpty()) {
+                brokers.add(Pair(index, "region is empty"))
+                sendProcessSocketMsg.invoke(index)
+                continue
+            }
+            else if (cityName.isNullOrEmpty()) {
+                brokers.add(Pair(index, "city is empty"))
+                sendProcessSocketMsg.invoke(index)
+                continue
+            }
+
+            if (categoryName.isNullOrEmpty()) {
+                brokers.add(Pair(index, "category is empty"))
+                sendProcessSocketMsg.invoke(index)
+                continue
+            }
+            else if (childCategoryName.isNullOrEmpty()) {
+                brokers.add(Pair(index, "child category is empty is empty"))
+                sendProcessSocketMsg.invoke(index)
+                continue
+            }
+
+            if (clientName.isNullOrEmpty()) {
+                brokers.add(Pair(index, "client name is empty"))
+                sendProcessSocketMsg.invoke(index)
+                continue
+            }
+            else if (clientEmail.isNullOrEmpty()) {
+                brokers.add(Pair(index, "client email is empty"))
+                sendProcessSocketMsg.invoke(index)
+                continue
+            }
+            else if (clientPhone.length <= 2) {
+                brokers.add(Pair(index, "client phone is empty"))
+                sendProcessSocketMsg.invoke(index)
+                continue
+            }
+
+            else if (!clientPhone.startsWith("+7")) {
+                brokers.add(Pair(index, "client phone wong format (has start with +7)"))
+                sendProcessSocketMsg.invoke(index)
+                continue
+            }
+
+            val client = async(Dispatchers.IO) {
+                userDao.findAll().find {
+                    it.phoneNumber == clientPhone && it.role == RoleType.CLIENT
+                } ?: userDao.save(
+                    UserEntity(
+                        firstName = clientName.split(" ")[0],
+                        lastName = clientName.split(" ").let {
+                            if (it.size >= 2)
+                                it[1]
+                            else
+                                ""
+                        },
+                        middleName =clientName.split(" ").let {
+                            if (it.size >= 3)
+                                it[2]
+                            else
+                                ""
+                        },
+                        email = clientEmail.replace(" ", ""),
+                        phoneNumber = clientPhone
+                    )
+                )
+            }
+
+            val region = regionDao.findAll().find {
+                it.name == regionName
+            }
+
+            if (region == null) {
+                brokers.add(Pair(index, "Not found region"))
+                sendProcessSocketMsg.invoke(index)
+                continue
+            }
+
+            val city = cityDao.findAll().find {
+                it.name == cityName && it.region.id == region.id
+            }
+
+            if (city == null) {
+                brokers.add(Pair(index, "Not found city"))
+                sendProcessSocketMsg.invoke(index)
+                continue
+            }
+
+            val category = categoryDao.findAll().find {
+                it.name == categoryName
+            }
+
+            if (category == null) {
+                brokers.add(Pair(index, "category not found"))
+                sendProcessSocketMsg.invoke(index)
+                continue
+            }
+
+            val childCategory = childCategoryDao.findAll().find {
+                it.parent.id == category.id && it.name == childCategoryName
+            }
+
+            if (childCategory == null) {
+                brokers.add(Pair(index, "child category not found"))
+                sendProcessSocketMsg.invoke(index)
+                continue
+            }
+
+            val order = OrderEntity(
+                client = client.await(),
+                title = title,
+                content = content,
+                price = price,
+                category = category,
+                city = city,
+                dateLine = dateLine,
+                files = emptyList(),
+                partner = partner,
+                childCategory = childCategory
+            )
+
+            orderDao.save(order)
+
+            sendProcessSocketMsg.invoke(index)
+        }
+    }
+
+    suspend fun processOrder(uuid: String, file: InputStream) = withContext(Dispatchers.IO) {
+        val workbook: Workbook = XSSFWorkbook(file)
+
+        val sheet = workbook.sheetIterator().next()
+
+        val rows = run {
+            val list = arrayListOf<Row>()
+            sheet.rowIterator().forEach {
+                if (it.getCell(0) != null && it.getCell(0).toString().isNotEmpty()) {
+                    list.add(it)
+                }
+            }
+            list
+        }
+
+        if (rows.isEmpty()) {
+            return@withContext
+        }
+
+        val mainCells = arrayListOf<Cell>()
+
+        rows.first().cellIterator().forEach {
+            mainCells.add(it)
+        }
+
+        val brokers = arrayListOf<Pair<Int, String>>()
+
+        val sendProcessSocketMsg: suspend (process: Int) -> Unit = {
+            socketService.importOrderProcess(uuid = uuid, process = it, max = rows.size - 1, brokers = brokers)
+        }
+
+        sendProcessSocketMsg.invoke(0)
 
         for (index in 1..sheet.lastRowNum) {
             val row = sheet.getRow(index)
@@ -70,31 +292,70 @@ class ImportExcellService(private val orderDao: OrderDao,
             }
             val clientEmail = row.getCell(clientEmailCellIndex(mainCells)).stringCellValue
 
-            if (title.isNullOrEmpty())
-                return@withContext
-            else if (content.isNullOrEmpty())
-                return@withContext
-            else if (price <= 0)
-                return@withContext
-            else if (dateLine.isNullOrEmpty())
-                return@withContext
+            if (title.isNullOrEmpty()) {
+                brokers.add(Pair(index, "title is empty"))
+                sendProcessSocketMsg.invoke(index)
+                continue
+            }
+            else if (content.isNullOrEmpty()) {
+                brokers.add(Pair(index, "content is empty"))
+                sendProcessSocketMsg.invoke(index)
+                continue
+            }
+            else if (price <= 0) {
+                brokers.add(Pair(index, "price less than 0"))
+                sendProcessSocketMsg.invoke(index)
+                continue
+            }
+            else if (dateLine.isNullOrEmpty()) {
+                brokers.add(Pair(index, "dateline is empty"))
+                sendProcessSocketMsg.invoke(index)
+                continue
+            }
 
-            if (regionName.isNullOrEmpty())
-                return@withContext
-            else if (cityName.isNullOrEmpty())
-                return@withContext
+            if (regionName.isNullOrEmpty()) {
+                brokers.add(Pair(index, "region is empty"))
+                sendProcessSocketMsg.invoke(index)
+                continue
+            }
+            else if (cityName.isNullOrEmpty()) {
+                brokers.add(Pair(index, "city is empty"))
+                sendProcessSocketMsg.invoke(index)
+                continue
+            }
 
-            if (categoryName.isNullOrEmpty())
-                return@withContext
-            else if (childCategoryName.isNullOrEmpty())
-                return@withContext
+            if (categoryName.isNullOrEmpty()) {
+                brokers.add(Pair(index, "category is empty"))
+                sendProcessSocketMsg.invoke(index)
+                continue
+            }
+            else if (childCategoryName.isNullOrEmpty()) {
+                brokers.add(Pair(index, "child category is empty is empty"))
+                sendProcessSocketMsg.invoke(index)
+                continue
+            }
 
-            if (clientName.isNullOrEmpty())
-                return@withContext
-            else if (clientEmail.isNullOrEmpty())
-                return@withContext
-            else if (clientPhone.isNullOrEmpty())
-                return@withContext
+            if (clientName.isNullOrEmpty()) {
+                brokers.add(Pair(index, "client name is empty"))
+                sendProcessSocketMsg.invoke(index)
+                continue
+            }
+            else if (clientEmail.isNullOrEmpty()) {
+                brokers.add(Pair(index, "client email is empty"))
+                sendProcessSocketMsg.invoke(index)
+                continue
+            }
+            else if (clientPhone.length <= 2) {
+                brokers.add(Pair(index, "client phone is empty"))
+                sendProcessSocketMsg.invoke(index)
+                continue
+            }
+
+            else if (!clientPhone.startsWith("+7")) {
+                brokers.add(Pair(index, "client phone wong format (has start with +7)"))
+                sendProcessSocketMsg.invoke(index)
+                continue
+            }
 
             val client = async(Dispatchers.IO) {
                 userDao.findAll().find {
@@ -177,17 +438,7 @@ class ImportExcellService(private val orderDao: OrderDao,
 
             orderDao.save(order)
 
-            try {
-                socketService.importOrderProcess(index, sheet.lastRowNum)
-            } catch (e: Exception) {
-                println(e)
-            }
-        }
-
-        try {
-            socketService.importOrderDone(0, sheet.lastRowNum)
-        } catch (e: Exception) {
-            println(e)
+            sendProcessSocketMsg.invoke(index)
         }
     }
 

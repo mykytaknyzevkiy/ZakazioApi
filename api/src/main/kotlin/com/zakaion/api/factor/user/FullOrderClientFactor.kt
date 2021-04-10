@@ -60,7 +60,6 @@ class FullOrderClientFactor(user: UserEntity,
         ).apply {
             order.enable = isEmailActive &&
                     isPassportActive &&
-                    isPhoneActive &&
                     portfolio.isNotEmpty() &&
                     !this@toExecutor.isBlocked &&
                     city != null

@@ -114,4 +114,6 @@ class AuthTokenService (private val userDao: UserDao) {
         )
     }
 
+    fun generateAuthCode() = "1234"
+
 }

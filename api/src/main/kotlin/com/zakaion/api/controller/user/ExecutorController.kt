@@ -9,6 +9,7 @@ import com.zakaion.api.exception.*
 import com.zakaion.api.factor.user.UserFactory
 import com.zakaion.api.model.*
 import com.zakaion.api.service.AuthTokenService
+import com.zakaion.api.service.EmailService
 import com.zakaion.api.service.SmsService
 import com.zakaion.api.service.StorageService
 import com.zakaion.api.unit.ImportExcellService
@@ -30,60 +31,12 @@ class ExecutorController (private val userDao: UserDao,
                           private val smsService: SmsService,
                           private val userFactory: UserFactory,
                           private val storageService: StorageService,
-                          private val importExcellService: ImportExcellService
-) : BaseController(){
+                          private val importExcellService: ImportExcellService,
+                          private val emailService: EmailService
+) : RoleUserController(userDao, authTokenService, emailService) {
 
-    @PostMapping("/register/phone")
-    fun registerPhone(@RequestBody phoneRegister: PhoneRegister) : DataResponse<TokenModel> {
-        if (userDao.findAll().any { it.phoneNumber == phoneRegister.phoneNumber })
-            throw AlreadyTaken()
-
-        if (phoneRegister.token != null && phoneRegister.smsCode != null) {
-            val phoneSms = authTokenService.parsePhoneToken(phoneRegister.token) ?: throw WrongPassword()
-            if (phoneSms.second != phoneRegister.smsCode) throw WrongPassword()
-
-            return DataResponse.ok(
-                    TokenModel(
-                            authTokenService.generatePhoneToken(phoneRegister.phoneNumber!!, "null")
-                    )
-            )
-        }
-
-        val code = "1234"
-
-        smsService.sendCode(phoneNumber = phoneRegister.phoneNumber!!, code = code)
-
-        return DataResponse.ok(
-                TokenModel(
-                        authTokenService.generatePhoneToken(phoneRegister.phoneNumber, code)
-                )
-        )
-    }
-
-    @PostMapping("/register")
-    fun register(@RequestBody userEntity: UserEntity,
-                 @RequestHeader("token") token: String) : DataResponse<TokenModel> {
-
-        val phoneNumber = authTokenService.parsePhoneToken(token)?.first ?: throw WrongPassword()
-
-        if (userDao.findAll().any { it.phoneNumber == phoneNumber || it.email == userEntity.email }) {
-            throw AlreadyTaken()
-        }
-
-        var user = userEntity.copy(
-                phoneNumber = phoneNumber,
-                role = RoleType.EXECUTOR,
-                isPhoneActive = true
-        )
-
-        user = userDao.save(user)
-
-        return DataResponse.ok(
-                TokenModel(
-                        authTokenService.generateToken(user)
-                )
-        )
-    }
+    override val roleType: RoleType
+        get() = RoleType.EXECUTOR
 
     @GetMapping("/list")
     fun list(pageable: Pageable,

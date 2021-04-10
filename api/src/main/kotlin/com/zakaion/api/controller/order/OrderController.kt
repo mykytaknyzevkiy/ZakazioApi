@@ -28,6 +28,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
+import java.util.*
 
 @RestController
 @CrossOrigin
@@ -501,21 +502,25 @@ class OrderController(private val orderDao: OrderDao,
     }
 
     @PostMapping("/import/{filename:.+}")
-    fun import(@PathVariable filename: String) : DataResponse<Nothing?> {
+    fun import(@PathVariable filename: String) : DataResponse<String> {
         val inputStream = storageService.loadAsFile(filename).inputStream()
 
-        GlobalScope.launch(Dispatchers.IO) {
-            importExcellService.processOrder(inputStream)
+        val uid = UUID.randomUUID().toString()
+
+        userFactory.myUser.let {
+            if (it.role == RoleType.PARTNER) {
+                GlobalScope.launch(Dispatchers.IO) {
+                    importExcellService.processOrder(uid, inputStream, it)
+                }
+            }
+            if (it.role == RoleType.SUPER_ADMIN) {
+                GlobalScope.launch(Dispatchers.IO) {
+                    importExcellService.processOrder(uid, inputStream)
+                }
+            }
         }
 
-        return DataResponse.ok(null)
-    }
-
-    @PostMapping("/test")
-    suspend fun test() : DataResponse<Nothing?> {
-        socketService.importOrderProcess(0, 10)
-
-        return DataResponse.ok(null)
+        return DataResponse.ok(uid)
     }
 
 }

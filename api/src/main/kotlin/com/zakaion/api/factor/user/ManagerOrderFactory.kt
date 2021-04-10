@@ -33,7 +33,7 @@ class ManagerOrderFactory(
         return PartnerInfo(
                 user = this,
                 order = UserOrder.create(orders).apply {
-                    this.enable = this@toPartner.isPassportActive && this@toPartner.isEmailActive && this@toPartner.isPassportActive && this@toPartner.city != null
+                    this.enable = this@toPartner.isPassportActive && this@toPartner.isEmailActive && this@toPartner.city != null
                 },
                 passport = passportDao.findAll().find { it.user.id == this.id }
         ).apply {

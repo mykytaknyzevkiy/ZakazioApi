@@ -19,9 +19,6 @@ import javax.imageio.ImageWriteParam
 
 import javax.imageio.stream.ImageOutputStream
 
-
-
-
 @Service
 class StorageService {
 
@@ -56,7 +53,7 @@ class StorageService {
 
         FileOutputStream(fileName).use { stream -> stream.write(bytes) }
 
-        if (format == "jpg") {
+        /*if (format == "jpg") {
             val image = ImageIO.read(File(fileName))
             val compressedImageFile = this.root.resolve(fileName).toFile()
             val os = compressedImageFile.outputStream()
@@ -76,7 +73,9 @@ class StorageService {
             writer.dispose()
         } else {
             Files.copy(File(fileName).inputStream(), this.root.resolve(fileName))
-        }
+        }*/
+
+        Files.copy(File(fileName).inputStream(), this.root.resolve(fileName))
 
         File(fileName).delete()
 

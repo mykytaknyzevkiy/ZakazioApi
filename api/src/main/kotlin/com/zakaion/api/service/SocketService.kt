@@ -20,31 +20,40 @@ class SocketService {
     }
 
     private suspend fun start() {
-        if (stompSession != null)
+        if (stompSession?.isConnected == true)
             return
 
+        print("on connect")
         stompSession = buildSocket("socket:8181/in", 8181)
     }
 
-    suspend fun importOrderProcess(process: Int, max: Int) {
+    suspend fun importOrderProcess(uuid: String, process: Int, max: Int, brokers: List<Pair<Int, String>>) {
         start()
 
-        stompSession?.send("/send/order/import/process", ImportOrderProcessRequest(
-            process, max
-        ))
-    }
-
-    suspend fun importOrderDone(process: Int, max: Int) {
-        start()
-
-        stompSession?.send("/send/order/import/done", ImportOrderProcessRequest(
-            process, max
-        ))
+        try {
+            stompSession?.send(
+                "/send/order/import/process",
+                ImportOrderProcessRequest(
+                    process = process,
+                    max = max,
+                    brokers = emptyList()
+                )
+            )
+        } catch (e: Exception) {
+            stompSession = null
+            print(e)
+        }
     }
 
 }
 
 data class ImportOrderProcessRequest(
     val process: Int,
-    val max: Int
+    val max: Int,
+    val brokers: List<ImportOrderProcessBrokeReason>
+)
+
+data class ImportOrderProcessBrokeReason(
+    val index: Int,
+    val reason: String
 )
