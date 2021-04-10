@@ -153,7 +153,7 @@ class SettingsController {
             PhoneNotificationPermitted.clientHasExecutor = bodyEdit.clientHasExecutor
 
         if (bodyEdit.clientOrderInWork != null)
-            PhoneNotificationPermitted.clientOrderInWork
+            PhoneNotificationPermitted.clientOrderInWork = bodyEdit.clientOrderInWork
 
         return DataResponse.ok(null)
     }
