@@ -39,7 +39,7 @@ services:
     ports:
       - 8181:8181
     environment:
-      CRM_URL: http://localhost:61942
+      CRM_URL: https://crm.zakazy.online
 
   sms:
     build: sms
