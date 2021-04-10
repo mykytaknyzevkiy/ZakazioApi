@@ -58,13 +58,13 @@ class FullOrderClientFactor(user: UserEntity,
                 passport = passportDao.findAll().find { it.user.id == id },
                 portfolioCount = portfolio.size
         ).apply {
-            if (order.enable) {
-                order.enable =
-                    isEmailActive &&
-                            isPassportActive &&
-                            portfolio.isNotEmpty() &&
-                            !isBlocked && city != null
-            }
+            order.enable =
+                        isEmailActive &&
+                        isPassportActive &&
+                        portfolio.isNotEmpty() &&
+                        !isBlocked &&
+                        city != null &&
+                        order.count.open <= order.count.max
             if (!order.enable && !isBlocked)
                 status = UserStatus.PROCESS
         }
