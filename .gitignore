@@ -4,3 +4,7 @@
 /socket/build/
 /.gradle/
 /.idea/
+/build/
+/.gradle/
+/.idea/
+/gradle/
