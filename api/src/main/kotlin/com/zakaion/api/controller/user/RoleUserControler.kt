@@ -14,7 +14,9 @@ import com.zakaion.api.service.NotificationService
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
+import org.springframework.web.bind.annotation.RestController
 
+@RestController
 abstract class RoleUserController(private val userDao: UserDao,
                                   private val authTokenService: AuthTokenService,
                                   private val emailService: EmailService) {
@@ -23,6 +25,7 @@ abstract class RoleUserController(private val userDao: UserDao,
 
     @PostMapping("/register/step/1")
     fun registerStep1(@RequestBody body: EmailRegister): DataResponse<TokenModel> {
+        print("on registerStep1")
         if (body.email.isNullOrEmpty())
             throw BadParams()
 
@@ -32,7 +35,7 @@ abstract class RoleUserController(private val userDao: UserDao,
 
         val code = authTokenService.generateAuthCode()
 
-        emailService.sendMsg(body.email, code)
+        emailService.sendVerificationCode(body.email, code)
 
         val token = authTokenService.generatePhoneToken(body.email, code)
 

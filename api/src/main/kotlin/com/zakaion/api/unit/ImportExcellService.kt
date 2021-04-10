@@ -266,8 +266,8 @@ class ImportExcellService(private val orderDao: OrderDao,
 
         sendProcessSocketMsg.invoke(0)
 
-        for (index in 1..sheet.lastRowNum) {
-            val row = sheet.getRow(index)
+        for (index in 1..rows.lastIndex) {
+            val row = rows[index]
 
             val title = row.getCell(titleCellIndex(mainCells)).stringCellValue
             val content = row.getCell(contentCellIndex(mainCells)).stringCellValue
@@ -284,10 +284,10 @@ class ImportExcellService(private val orderDao: OrderDao,
             val clientPhone = run {
                 var clientPhone = row.getCell(clientPhoneCellIndex(mainCells)).toString()
                 clientPhone = clientPhone.filter { it.isDigit() }
-                /*clientPhone = if (clientPhone.startsWith("7"))
-                    "+$clientPhone"
+                clientPhone = if (!clientPhone.startsWith("+7"))
+                    "+7$clientPhone"
                 else
-                    "+7$clientPhone"*/
+                    clientPhone
                 clientPhone
             }
             val clientEmail = row.getCell(clientEmailCellIndex(mainCells)).stringCellValue
@@ -352,7 +352,7 @@ class ImportExcellService(private val orderDao: OrderDao,
             }
 
             else if (!clientPhone.startsWith("+7")) {
-                brokers.add(Pair(index, "client phone wong format (has start with +7)"))
+                brokers.add(Pair(index, "client phone wrong format (has start with +7)"))
                 sendProcessSocketMsg.invoke(index)
                 continue
             }

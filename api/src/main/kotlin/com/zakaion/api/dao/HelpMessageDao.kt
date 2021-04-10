@@ -10,10 +10,10 @@ import org.springframework.data.repository.query.Param
 
 interface HelpMessageDao : PagingAndSortingRepository<HelpMessageEntity, Long> {
 
-    @Query(value = "select * from help_message where master_id IS NULL", nativeQuery = true)
+    @Query(value = "select * from help_message where worker_id IS NULL", nativeQuery = true)
     fun findAllNoMaster(pageable: Pageable): Page<HelpMessageEntity>
 
-    @Query(value = "select * from help_message where master_id = :masterID", nativeQuery = true)
+    @Query(value = "select * from help_message where worker_id = :masterID", nativeQuery = true)
     fun findAllMaster(pageable: Pageable, @Param("masterID") masterID: Long): Page<HelpMessageEntity>
 
 }

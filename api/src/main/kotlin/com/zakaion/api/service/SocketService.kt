@@ -30,6 +30,8 @@ class SocketService {
     suspend fun importOrderProcess(uuid: String, process: Int, max: Int, brokers: List<Pair<Int, String>>) {
         start()
 
+        print("Socket msg importOrderProcess $process of $max error:${Gson().toJson(brokers)}")
+
         try {
             stompSession?.send(
                 "/send/order/import/process",

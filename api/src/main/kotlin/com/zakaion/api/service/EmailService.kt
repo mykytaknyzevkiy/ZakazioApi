@@ -1,22 +1,40 @@
 package com.zakaion.api.service
 
-import org.springframework.mail.javamail.JavaMailSender
-import org.springframework.stereotype.Service
+import com.zakaion.api.ConstService
+import com.zakaion.api.ExFuncs
 import org.springframework.mail.SimpleMailMessage
+import org.springframework.mail.javamail.JavaMailSender
+import org.springframework.mail.javamail.MimeMessageHelper
+import org.springframework.stereotype.Service
+
 
 @Service
-class EmailService(private val emailSender: JavaMailSender) {
+class EmailService(private val emailSender: JavaMailSender,
+                   private val constService: ConstService) {
 
     fun sendMsg(email: String, msg: String) {
-        println("on send email")
         val message = SimpleMailMessage()
         message.setFrom("re_replay@zakazy.online")
         message.setTo(email)
         message.setSubject("Zakazy")
         message.setText(msg)
         emailSender.send(message)
-        println("sent email")
 
+    }
+
+    fun sendVerificationCode(email: String, code: String) {
+        val html: String = ExFuncs.getResourceFileAsString("templates/mail/code_vertification.html")
+            .replace("{{CODE}}", code)
+            .replace("{{API_URL}}", constService.apiUrl)
+
+        val mimeMessage = emailSender.createMimeMessage()
+        val message = MimeMessageHelper(mimeMessage, true, "UTF-8") // true = multipart
+        message.setSubject("Подтвердить почту")
+        message.setFrom("re_replay@zakazy.online")
+        message.setTo(email)
+        message.setText(html, true)
+
+        emailSender.send(mimeMessage)
     }
 
 }

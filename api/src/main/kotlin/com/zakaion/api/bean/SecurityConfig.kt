@@ -39,16 +39,15 @@ class SecurityConfig(private val authTokenService: AuthTokenService) : WebSecuri
                         "/user/login",
                         "/user/reset/password",
 
-                        "/executor/register",
-                        "/executor/register/phone",
+                        "/executor/register/**",
 
-                        "/partner/register",
-                        "/partner/register/phone",
+                        "/partner/register/**",
 
-                        "/client/register",
-                        "/client/register/phone",
+                        "/client/register/**",
 
                         "/file/*",
+
+                        "/file/**",
 
                         "/file",
 
