@@ -8,6 +8,8 @@ chmod a+x ./gradlew
 
 ./gradlew bootWar
 
+docker-compose build
+
 docker-compose stop
 
-docker-compose up -d --build --no-rm
+docker-compose up -d
