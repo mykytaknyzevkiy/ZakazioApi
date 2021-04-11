@@ -33,12 +33,21 @@ class SocketService {
         print("Socket msg importOrderProcess $process of $max error:${Gson().toJson(brokers)}")
 
         try {
+            val brokers1 = brokers.map {
+                ImportOrderProcessBrokeReason(
+                    index = it.first,
+                    reason = it.second
+                )
+            }
             stompSession?.send(
                 "/send/order/import/process",
                 ImportOrderProcessRequest(
                     process = process,
                     max = max,
-                    brokers = emptyList()
+                    brokers = if (brokers1.size > 5)
+                        brokers1.subList(0, 4)
+                              else
+                        brokers1
                 )
             )
         } catch (e: Exception) {

@@ -16,6 +16,9 @@ class MessageController(private val messageDao: MessageDao,
 
     @PostMapping("/add")
     fun add(@RequestBody body: MessageRequestModel): DataResponse<Nothing?> {
+        return DataResponse.ok(
+            null
+        )
         println("on add message")
         println("phone: ${body.phoneNumber}")
         println("content: ${body.content}")
