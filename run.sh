@@ -10,4 +10,4 @@ chmod a+x ./gradlew
 
 docker-compose stop
 
-docker-compose up -d --build
+docker-compose up -d --build --no-rm
