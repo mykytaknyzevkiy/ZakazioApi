@@ -25,22 +25,6 @@ import org.springframework.web.bind.annotation.*
 class AdminController (private val userDao: UserDao,
                        private val userFactory: UserFactory) : BaseController() {
 
-    @GetMapping("/list")
-    @PreAuthorize(_Can_SuperAdmin)
-    fun list(pageable: Pageable, @RequestParam("search", required = false, defaultValue = "") search: String? = null) : DataResponse<Page<UserFull>> {
-
-        val data = (
-                if (search.isNullOrEmpty()) userDao.findByRole(RoleType.ADMIN.ordinal, pageable)
-                else userDao.findByRole(RoleType.ADMIN.ordinal, search, pageable)
-                ).map {user->
-                    userFactory.create(user) as UserFull
-                }
-
-        return DataResponse.ok(
-                data
-        )
-    }
-
     @PostMapping("/add")
     @PreAuthorize(_Can_SuperAdmin)
     fun add(@RequestBody userEntity: UserEntity) : DataResponse<Nothing?> {

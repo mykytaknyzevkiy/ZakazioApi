@@ -1,25 +1,30 @@
 package com.zakaion.api.controller.user
 
+import com.zakaion.api.ExFuncs.toPage
 import com.zakaion.api.dao.UserDao
 import com.zakaion.api.entity.user.RoleType
 import com.zakaion.api.entity.user.UserEntity
+import com.zakaion.api.entity.user.UserImp
+import com.zakaion.api.entity.user.UserStatus
 import com.zakaion.api.exception.BadParams
 import com.zakaion.api.exception.WrongPassword
+import com.zakaion.api.factor.UserFullImp
+import com.zakaion.api.factor.user.UserFactory
 import com.zakaion.api.model.DataResponse
 import com.zakaion.api.model.EmailRegister
 import com.zakaion.api.model.TokenModel
 import com.zakaion.api.service.AuthTokenService
 import com.zakaion.api.service.EmailService
 import com.zakaion.api.service.NotificationService
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestHeader
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import org.springframework.web.bind.annotation.*
 
 @RestController
 abstract class RoleUserController(private val userDao: UserDao,
                                   private val authTokenService: AuthTokenService,
-                                  private val emailService: EmailService) {
+                                  private val emailService: EmailService,
+                                  private val userFactory: UserFactory) {
 
     abstract val roleType: RoleType
 
@@ -84,6 +89,54 @@ abstract class RoleUserController(private val userDao: UserDao,
             TokenModel(
                 authTokenService.generateToken(user)
             )
+        )
+    }
+
+    @GetMapping("/list")
+    fun list(pageable: Pageable,
+             @RequestParam("search", required = false, defaultValue = "") search: String,
+             @RequestParam("region_id", required = false, defaultValue = "-1") regionID: Long = -1L,
+             @RequestParam("city_id", required = false, defaultValue = "-1") cityID: Long = -1L,
+             @RequestParam("status", required = false) status: UserStatus? = null,
+             @RequestParam("masterID", required = false, defaultValue = "-1") masterID: Long = -1L): DataResponse<Page<UserImp?>> {
+        val searchOperator: (UserEntity) -> Boolean = {
+            it.id.toString().contains(search)
+                    || it.firstName.contains(search)
+                    || it.lastName.contains(search)
+                    || it.middleName.contains(search)
+                    || (it.email?.contains(search)?:false)
+                    || (it.phoneNumber?.contains(search)?:false)
+        }
+        val regionOperator: (UserEntity) -> Boolean = {
+            it.city?.region?.id == regionID || regionID == -1L
+        }
+        val cityOperator: (UserEntity) -> Boolean = {
+            it.city?.id == cityID || cityID == -1L
+        }
+        val masterOperator: (UserEntity) -> Boolean = {
+            it.masterID == masterID || masterID == -1L
+        }
+
+        val list: List<UserFullImp> = (
+                if (userFactory.myUser.role == RoleType.PARTNER)
+                    userDao.findByRole(roleType.ordinal, userFactory.myUser.id)
+                else
+                    userDao.findByRole(roleType.ordinal)
+                )
+            .filter {
+                searchOperator(it)
+                        && regionOperator(it)
+                        && cityOperator(it)
+                        && masterOperator(it)
+            }
+            .mapNotNull { userFactory.create(it) }
+            .filter {
+                    it.status == status || status == null
+                }
+            .toList()
+
+        return DataResponse.ok(
+            list.toPage(pageable)
         )
     }
 

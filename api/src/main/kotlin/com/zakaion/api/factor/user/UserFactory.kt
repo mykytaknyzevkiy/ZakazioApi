@@ -20,7 +20,7 @@ class UserFactory(private val orderDao: OrderDao,
                   private val transactionService: TransactionService,
                   private val orderHistoryDao: OrderHistoryDao) : MFactor() {
 
-    fun create(user: UserEntity?): UserImp? {
+    fun create(user: UserEntity?): UserFullImp? {
         if (user == null)
             return null
         return buildFactor(user.copy())

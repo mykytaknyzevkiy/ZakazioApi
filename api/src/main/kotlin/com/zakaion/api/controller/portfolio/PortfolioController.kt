@@ -50,7 +50,7 @@ class PortfolioController(private val portfolioDao: PortfolioDao,
         )
     }
 
-    @GetMapping("/{id}}/info")
+    @GetMapping("/{id}/info")
     fun info(@PathVariable("id") id: Long): DataResponse<PortfolioEntity> {
         return DataResponse.ok(
             portfolioDao.findById(id).orElseGet {

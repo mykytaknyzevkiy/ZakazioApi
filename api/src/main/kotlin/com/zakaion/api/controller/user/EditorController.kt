@@ -18,14 +18,6 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping(value = ["editor"])
 class EditorController(private val userDao: UserDao) : BaseController() {
 
-    @GetMapping("/list")
-    @CanSuperAdmin_Admin
-    fun list(pageable: Pageable) : DataResponse<Page<UserEntity>> {
-        return DataResponse.ok(
-                userDao.findByRole(RoleType.EDITOR.ordinal, pageable)
-        )
-    }
-
     @PostMapping("/add")
     @CanSuperAdmin_Admin
     fun add(@RequestBody userEntity: UserEntity) : DataResponse<UserEntity> {

@@ -33,36 +33,10 @@ class ClientController (private val userDao: UserDao,
                         private val userFactory: UserFactory,
                         private val storageService: StorageService,
                         private val importExcellService: ImportExcellService,
-                        private val emailService: EmailService) : RoleUserController(userDao, authTokenService, emailService) {
+                        private val emailService: EmailService) : RoleUserController(userDao, authTokenService, emailService, userFactory) {
 
     override val roleType: RoleType
         get() = RoleType.CLIENT
-
-    @GetMapping("/list")
-    @PreAuthorize(_Can_SuperAdmin_Admin_Editor_Partner)
-    fun list(pageable: Pageable, @RequestParam("search", required = false, defaultValue = "") search: String? = null) : DataResponse<Page<ClientInfo>> {
-        val myUser = userFactory.myUser
-
-        val data = if (myUser.role == RoleType.PARTNER) {
-            (
-                    if (search.isNullOrEmpty()) userDao.findByRole(RoleType.CLIENT.ordinal, myUser.id, pageable)
-                    else userDao.findByRole(RoleType.CLIENT.ordinal, myUser.id, search, pageable)
-                    )
-        }
-                else {
-            (
-                    if (search.isNullOrEmpty()) userDao.findByRole(RoleType.CLIENT.ordinal, pageable)
-                    else userDao.findByRole(RoleType.CLIENT.ordinal, search, pageable)
-                    )
-        }
-            .map {user->
-                    userFactory.create(user) as ClientInfo
-                }
-
-        return DataResponse.ok(
-                data
-        )
-    }
 
     @DeleteMapping("/{id}")
     @PreAuthorize(_Can_SuperAdmin_Admin_Editor)
