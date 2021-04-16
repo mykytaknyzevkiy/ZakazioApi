@@ -1,14 +1,17 @@
 package com.zakaion.api.bean
 
+import com.fasterxml.jackson.annotation.JsonCreator
+import com.fasterxml.jackson.module.paramnames.ParameterNamesModule
 import com.zakaion.api.appVersion
 import com.zakaion.api.dao.UserDao
 import com.zakaion.api.entity.user.RoleType
 import com.zakaion.api.entity.user.UserEntity
-import org.springframework.boot.info.BuildProperties
+import com.zakaion.api.service.StorageService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.web.filter.CommonsRequestLoggingFilter
-import com.zakaion.api.service.StorageService
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
+import java.text.SimpleDateFormat
+
 
 @Configuration
 class DoStart(private val userDao: UserDao,
@@ -16,7 +19,7 @@ class DoStart(private val userDao: UserDao,
 
     @Bean
     fun start() {
-        appVersion = "2-2-new"
+        appVersion = "2-3"
         if (!userDao.findAll().any { it.role == RoleType.SUPER_ADMIN }) {
             userDao.save(
                     UserEntity(
@@ -32,6 +35,18 @@ class DoStart(private val userDao: UserDao,
             )
         }
         storageService.init()
+    }
+
+    @Bean
+    fun jacksonBuilder(): Jackson2ObjectMapperBuilder? {
+        val b = Jackson2ObjectMapperBuilder()
+        b.indentOutput(true).dateFormat(SimpleDateFormat("yyyy-MM-dd HH:mm"))
+        return b
+    }
+
+    @Bean
+    fun parameterNamesModule(): ParameterNamesModule {
+        return ParameterNamesModule(JsonCreator.Mode.PROPERTIES)
     }
 
     /*@Bean

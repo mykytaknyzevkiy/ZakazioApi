@@ -25,7 +25,7 @@ data class OrderNModel(
     val partner: PartnerInfo?,
     val app: AppEntity?,
 
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    //@JsonFormat(pattern = "yyyy-MM-dd")
     val creationDate: Date,
 
     var editEnable: Boolean = false,
