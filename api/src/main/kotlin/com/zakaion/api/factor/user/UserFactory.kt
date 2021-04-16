@@ -36,6 +36,22 @@ class UserFactory(private val orderDao: OrderDao,
                 }
     }
 
+    suspend fun createWork(user: UserEntity?, myUser: UserEntity): UserFullImp? {
+        if (user == null)
+            return null
+        return buildFactor(user.copy())
+            .create()
+            .apply {
+                viewHideContacts(myUser)
+                if (!this.isPassportActive)
+                    this.passportInProgress = requestPassportDao.findAll().any { it.user.id == this.user.id }
+                if (user.role in arrayOf(RoleType.PARTNER, RoleType.EXECUTOR))
+                    this.balance = transactionService.userBalance(this.id)
+                if (user.isBlocked)
+                    this.status = UserStatus.BLOCKED
+            }
+    }
+
     private fun buildFactor(user: UserEntity) : UserImpFactor {
         return if (user.role == RoleType.CLIENT || user.role == RoleType.EXECUTOR)
             FullOrderClientFactor(user, orderDao, feedbackDao, passportDao, portfolioDao, orderHistoryDao)

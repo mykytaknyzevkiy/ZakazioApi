@@ -1,5 +1,6 @@
 package com.zakaion.api.model
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import com.zakaion.api.entity.order.AppEntity
 import com.zakaion.api.entity.order.category.CategoryEntity
 import com.zakaion.api.entity.order.OrderStatus
@@ -24,6 +25,7 @@ data class OrderNModel(
     val partner: PartnerInfo?,
     val app: AppEntity?,
 
+    @JsonFormat(pattern = "yyyy-MM-dd")
     val creationDate: Date,
 
     var editEnable: Boolean = false,

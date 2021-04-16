@@ -20,7 +20,7 @@ import java.util.*
 import kotlin.random.Random
 
 @RestController
-@CrossOrigin(origins = ["*"], maxAge = 3600)
+@CrossOrigin(origins = ["*"], allowedHeaders = ["*"])
 @RequestMapping(value = ["user"])
 class UserController(private val userDao: UserDao,
                      private val authTokenService: AuthTokenService,

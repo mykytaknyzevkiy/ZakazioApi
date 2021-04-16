@@ -1,5 +1,6 @@
 package com.zakaion.api.controller.user
 
+import com.zakaion.api.ExFuncs.mapWork
 import com.zakaion.api.ExFuncs.toPage
 import com.zakaion.api.dao.UserDao
 import com.zakaion.api.entity.user.RoleType
@@ -12,6 +13,7 @@ import com.zakaion.api.factor.UserFullImp
 import com.zakaion.api.factor.user.UserFactory
 import com.zakaion.api.model.DataResponse
 import com.zakaion.api.model.EmailRegister
+import com.zakaion.api.model.ExecutorInfo
 import com.zakaion.api.model.TokenModel
 import com.zakaion.api.service.AuthTokenService
 import com.zakaion.api.service.EmailService
@@ -93,7 +95,7 @@ abstract class RoleUserController(private val userDao: UserDao,
     }
 
     @GetMapping("/list")
-    fun list(pageable: Pageable,
+    suspend fun list(pageable: Pageable,
              @RequestParam("search", required = false, defaultValue = "") search: String,
              @RequestParam("region_id", required = false, defaultValue = "-1") regionID: Long = -1L,
              @RequestParam("city_id", required = false, defaultValue = "-1") cityID: Long = -1L,
@@ -117,23 +119,33 @@ abstract class RoleUserController(private val userDao: UserDao,
             it.masterID == masterID || masterID == -1L
         }
 
+        val myUser = userFactory.myUser
+
         val list: List<UserFullImp> = (
-                if (userFactory.myUser.role == RoleType.PARTNER)
+                if (myUser.role == RoleType.PARTNER)
                     userDao.findByRole(roleType.ordinal, userFactory.myUser.id)
                 else
                     userDao.findByRole(roleType.ordinal)
                 )
+            .asSequence()
             .filter {
                 searchOperator(it)
                         && regionOperator(it)
                         && cityOperator(it)
                         && masterOperator(it)
             }
-            .mapNotNull { userFactory.create(it) }
+            .toList()
+            .toPage(pageable)
+            .mapWork { userFactory.createWork(it, myUser)!! }
             .filter {
                     it.status == status || status == null
                 }
-            .toList()
+            .sortedByDescending {
+                if (it is ExecutorInfo)
+                    return@sortedByDescending it.rate.toLong()
+                else
+                    it.id
+            }
 
         return DataResponse.ok(
             list.toPage(pageable)

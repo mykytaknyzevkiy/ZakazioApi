@@ -1,5 +1,6 @@
 package com.zakaion.api.controller.order
 
+import com.zakaion.api.ExFuncs.mapWork
 import com.zakaion.api.ExFuncs.toPage
 import com.zakaion.api.controller.BaseController
 import com.zakaion.api.controller.history.OrderHistoryController
@@ -21,10 +22,7 @@ import com.zakaion.api.factor.user.UserFactory
 import com.zakaion.api.model.*
 import com.zakaion.api.service.*
 import com.zakaion.api.unit.ImportExcellService
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.web.bind.annotation.*
@@ -253,7 +251,7 @@ class OrderController(private val orderDao: OrderDao,
     }
 
     @GetMapping("/list")
-    fun list(pageable: Pageable,
+    suspend fun list(pageable: Pageable,
              @RequestParam(
                      "search",
                      required = false,
@@ -307,7 +305,10 @@ class OrderController(private val orderDao: OrderDao,
             it.status == status || status == null
         }
 
+        val myUser = userFactory.myUser
+
         val list = orderDao.findAll()
+            .asSequence()
             .filter {
                 searchOperator(it)
                         && cityOperator(it)
@@ -327,11 +328,15 @@ class OrderController(private val orderDao: OrderDao,
                 else
                     true
             }
-            .map { orderFactor.create(it) }
+            .sortedByDescending { it.creationCalendar().timeInMillis }
             .toList()
+            .toPage(pageable)
+            .mapWork {
+                orderFactor.createWork(it, myUser)
+            }
 
         return DataResponse.ok(
-            list.toPage(pageable)
+            list
         )
     }
 

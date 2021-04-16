@@ -7,8 +7,11 @@ import com.zakaion.api.entity.user.UserEntity
 import com.zakaion.api.entity.user.UserStatus
 import com.zakaion.api.exception.AlreadyTaken
 import com.zakaion.api.exception.NotFound
+import com.zakaion.api.factor.user.UserFactory
 import com.zakaion.api.model.DataResponse
 import com.zakaion.api.roleControllers.CanSuperAdmin_Admin
+import com.zakaion.api.service.AuthTokenService
+import com.zakaion.api.service.EmailService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.web.bind.annotation.*
@@ -16,7 +19,15 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @CrossOrigin
 @RequestMapping(value = ["editor"])
-class EditorController(private val userDao: UserDao) : BaseController() {
+class EditorController(
+    private val userDao: UserDao,
+    authTokenService: AuthTokenService,
+    emailService: EmailService,
+    userFactory: UserFactory
+) : RoleUserController(userDao, authTokenService, emailService, userFactory) {
+
+    override val roleType: RoleType
+        get() = RoleType.EDITOR
 
     @PostMapping("/add")
     @CanSuperAdmin_Admin

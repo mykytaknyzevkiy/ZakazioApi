@@ -19,13 +19,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 class SecurityConfig(private val authTokenService: AuthTokenService) : WebSecurityConfigurerAdapter() {
 
-    @Bean
-    fun corsN(): CorsConfigurationSource {
-        val source = UrlBasedCorsConfigurationSource()
-        source.registerCorsConfiguration("/**", CorsConfiguration().applyPermitDefaultValues())
-        return source
-    }
-
     override fun configure(http: HttpSecurity) {
         http
             .headers()

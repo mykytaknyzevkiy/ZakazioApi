@@ -1,5 +1,6 @@
 package com.zakaion.api.entity.executor
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.zakaion.api.entity.user.UserEntity
 import javax.persistence.*
