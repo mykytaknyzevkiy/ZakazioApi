@@ -183,7 +183,7 @@ class ZUrlController extends UrlStrategy {
 
   @override
   void pushState(Object? state, String title, String url) {
-    _platformLocation.pushState(state, title, url);
+    _platformLocation.pushState(state!, title, url);
   }
 
   @override
