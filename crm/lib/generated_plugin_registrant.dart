@@ -2,6 +2,8 @@
 // Generated file. Do not edit.
 //
 
+// ignore_for_file: lines_longer_than_80_chars
+
 import 'package:file_picker/src/file_picker_web.dart';
 import 'package:flutter_keyboard_visibility_web/flutter_keyboard_visibility_web.dart';
 import 'package:image_picker_web/image_picker_web.dart';

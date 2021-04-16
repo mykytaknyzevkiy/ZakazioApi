@@ -36,7 +36,6 @@ import 'dart:js' as js;
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:zakazy_crm_v2/screen/sms/SmsAdminScreen.dart';
 
-
 final zakazioScreens = [
   ZakazioScreens(route: "login", builder: (_) => LoginScreen(), drawerID: -2),
   ZakazioScreens(route: "main", builder: (_) => MainScreen(), drawerID: 0),
@@ -158,42 +157,13 @@ class ZakazioScreens {
   }
 }
 
-class ZUrlController extends UrlStrategy {
+class ZUrlController extends PathUrlStrategy {
   PlatformLocation _platformLocation = const BrowserPlatformLocation();
 
   @override
   String getPath() {
     final String path = _platformLocation.pathname + _platformLocation.search;
     return path;
-  }
-
-  @override
-  Object? getState() {
-    return null;
-  }
-
-  @override
-  Future<void> go(int count) async {
-  }
-
-  @override
-  String prepareExternalUrl(String internalUrl) {
-    return internalUrl;
-  }
-
-  @override
-  void pushState(Object? state, String title, String url) {
-    _platformLocation.pushState(state!, title, url);
-  }
-
-  @override
-  void replaceState(Object? state, String title, String url) {
-  }
-
-  @override
-  addPopStateListener(fn) {
-    _platformLocation.addPopStateListener(fn);
-    return () => _platformLocation.removePopStateListener(fn);
   }
 }
 
