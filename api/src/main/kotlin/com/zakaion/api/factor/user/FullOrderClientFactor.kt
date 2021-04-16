@@ -55,7 +55,7 @@ class FullOrderClientFactor(user: UserEntity,
                        }.size
                    }
                 },
-                passport = passportDao.findAll().find { it.user.id == id },
+                passport = passportDao.findAll().find { it.user.id == id }?.toInfoJson(),
                 portfolioCount = portfolio.size
         ).apply {
             order.enable =
@@ -84,7 +84,7 @@ class FullOrderClientFactor(user: UserEntity,
                     (stars / allFeedbacks.size).toFloat()
                 },
                 order = UserOrder.create(orders),
-                passport = passportDao.findAll().find { it.user.id == id }
+                passport = passportDao.findAll().find { it.user.id == id }?.toInfoJson()
         ).apply {
             order.enable = true
         }

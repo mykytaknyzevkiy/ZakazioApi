@@ -11,6 +11,15 @@ services:
     ports:
       - "3307:3306"
 
+  sms_db:
+    image: mysql:8.0.17
+    container_name: sms_db
+    environment:
+      MYSQL_ROOT_PASSWORD: k6G1tgJLM9hMXvwR
+      MYSQL_DATABASE: sms_db
+    ports:
+      - "3306:3306"
+
   api:
     build: api
     container_name: api
@@ -33,3 +42,11 @@ services:
       - 8181:8181
     environment:
       CRM_URL: https://crm.zakazy.online
+
+  sms:
+    build: sms
+    container_name: sms
+    ports:
+      - 8282:8282
+    depends_on:
+      - sms_db

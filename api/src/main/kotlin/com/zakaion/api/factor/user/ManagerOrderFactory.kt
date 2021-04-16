@@ -35,7 +35,7 @@ class ManagerOrderFactory(
                 order = UserOrder.create(orders).apply {
                     this.enable = this@toPartner.isPassportActive && this@toPartner.isEmailActive && this@toPartner.city != null
                 },
-                passport = passportDao.findAll().find { it.user.id == this.id }
+                passport = passportDao.findAll().find { it.user.id == this.id }?.toInfoJson()
         ).apply {
             if (this.status != UserStatus.BLOCKED) {
                 this.status = if (this.order.enable) UserStatus.ACTIVE else UserStatus.PROCESS
