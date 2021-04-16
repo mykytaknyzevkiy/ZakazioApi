@@ -11,15 +11,6 @@ services:
     ports:
       - "3307:3306"
 
-  sms_db:
-    image: mysql:8.0.17
-    container_name: sms_db
-    environment:
-      MYSQL_ROOT_PASSWORD: k6G1tgJLM9hMXvwR
-      MYSQL_DATABASE: sms_db
-    ports:
-      - "3306:3306"
-
   api:
     build: api
     container_name: api
@@ -32,6 +23,9 @@ services:
       CRM_URL: https://crm.zakazy.online
       CLOUD_PAYMENT_PUBLIC: pk_8507dee1d9c8b1519a3f5b5b3d872
       CLOUD_PAYMENT_PRIVATE: 0e9f48b377588f22f628825b7f1e42f0
+      EXTRA_FILE_URL: https://file.zakazy.online/
+    volumes:
+      - ./storage:/home/storage
 
   socket:
     build: socket
@@ -39,12 +33,20 @@ services:
     ports:
       - 8181:8181
     environment:
-      CRM_URL: http://localhost:61942
+      CRM_URL: https://crm.zakazy.online
 
-  sms:
-    build: sms
-    container_name: sms
+    #Nginx Service
+  webserver:
+    image: nginx:alpine
+    container_name: webserver
+    restart: unless-stopped
+    tty: true
     ports:
-      - 8282:8282
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/var/www:/var/www
+      - ./nginx/letsencrypt:/etc/letsencrypt
+      - ./nginx/conf.d:/etc/nginx/conf.d
     depends_on:
-      - sms_db
+      - api

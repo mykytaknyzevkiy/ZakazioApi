@@ -70,7 +70,10 @@ class RequestPassportController(
             throw BadParams()
 
 
-        if (passportDao.findAll().any { it.number == passportModel.number && it.serial == passportModel.serial})
+        if (passportDao.findAll().any { (it.number == passportModel.number && it.serial == passportModel.serial) || it.taxID == passportModel.taxID})
+            throw BadParams()
+
+        if (requestPassportDao.findAll().any { (it.number == passportModel.number && it.serial == passportModel.serial) || it.taxID == passportModel.taxID})
             throw BadParams()
 
         requestPassportDao

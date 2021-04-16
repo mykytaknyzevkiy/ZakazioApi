@@ -14,6 +14,8 @@ import com.zakaion.api.model.DataResponse
 import com.zakaion.api.model.PartnerInfo
 import com.zakaion.api.roleControllers.CanSuperAdmin
 import com.zakaion.api.roleControllers.CanSuperAdmin_Admin
+import com.zakaion.api.service.AuthTokenService
+import com.zakaion.api.service.EmailService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.security.access.prepost.PreAuthorize
@@ -22,24 +24,15 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @CrossOrigin
 @RequestMapping(value = ["admin"])
-class AdminController (private val userDao: UserDao,
-                       private val userFactory: UserFactory) : BaseController() {
+class AdminController(
+    private val userDao: UserDao,
+    authTokenService: AuthTokenService,
+    emailService: EmailService,
+    userFactory: UserFactory
+) : RoleUserController(userDao, authTokenService, emailService, userFactory) {
 
-    @GetMapping("/list")
-    @PreAuthorize(_Can_SuperAdmin)
-    fun list(pageable: Pageable, @RequestParam("search", required = false, defaultValue = "") search: String? = null) : DataResponse<Page<UserFull>> {
-
-        val data = (
-                if (search.isNullOrEmpty()) userDao.findByRole(RoleType.ADMIN.ordinal, pageable)
-                else userDao.findByRole(RoleType.ADMIN.ordinal, search, pageable)
-                ).map {user->
-                    userFactory.create(user) as UserFull
-                }
-
-        return DataResponse.ok(
-                data
-        )
-    }
+    override val roleType: RoleType
+        get() = RoleType.ADMIN
 
     @PostMapping("/add")
     @PreAuthorize(_Can_SuperAdmin)

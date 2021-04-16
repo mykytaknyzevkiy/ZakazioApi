@@ -24,7 +24,7 @@ class StorageService {
 
     //private val root: Path = Paths.get("/Users/mykyta/Documents/ZakazioApi/test")
 
-    private val root: Path = Paths.get("/storage")
+    private val root: Path = Paths.get("/home/storage")
 
     fun init() {
          try {

@@ -19,13 +19,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 class SecurityConfig(private val authTokenService: AuthTokenService) : WebSecurityConfigurerAdapter() {
 
-    @Bean
-    fun corsN(): CorsConfigurationSource {
-        val source = UrlBasedCorsConfigurationSource()
-        source.registerCorsConfiguration("/**", CorsConfiguration().applyPermitDefaultValues())
-        return source
-    }
-
     override fun configure(http: HttpSecurity) {
         http
             .headers()
@@ -39,16 +32,15 @@ class SecurityConfig(private val authTokenService: AuthTokenService) : WebSecuri
                         "/user/login",
                         "/user/reset/password",
 
-                        "/executor/register",
-                        "/executor/register/phone",
+                        "/executor/register/**",
 
-                        "/partner/register",
-                        "/partner/register/phone",
+                        "/partner/register/**",
 
-                        "/client/register",
-                        "/client/register/phone",
+                        "/client/register/**",
 
                         "/file/*",
+
+                        "/file/**",
 
                         "/file",
 

@@ -33,45 +33,10 @@ class ExecutorController (private val userDao: UserDao,
                           private val storageService: StorageService,
                           private val importExcellService: ImportExcellService,
                           private val emailService: EmailService
-) : RoleUserController(userDao, authTokenService, emailService) {
+) : RoleUserController(userDao, authTokenService, emailService, userFactory) {
 
     override val roleType: RoleType
         get() = RoleType.EXECUTOR
-
-    @GetMapping("/list")
-    fun list(pageable: Pageable,
-             @RequestParam("search", required = false, defaultValue = "") search: String) : DataResponse<Page<ExecutorInfo>> {
-        val myUser = userController.get().data
-
-        val data = if (myUser.role == RoleType.PARTNER) {
-            userDao.findByRole(RoleType.EXECUTOR.ordinal, myUser.id, search, pageable)
-        }
-        else {
-            userDao.findByRole(RoleType.EXECUTOR.ordinal, search, pageable)
-        }
-            .map {user->
-                userFactory.create(user) as ExecutorInfo
-            }
-
-        return DataResponse.ok(
-                data
-        )
-    }
-
-    @GetMapping("/list/partner/{id}")
-    fun listPartner(
-        @PathVariable("id") id: Long,
-        pageable: Pageable,
-        @RequestParam("search", required = false, defaultValue = "") search: String
-    ) : DataResponse<Page<ExecutorInfo>> {
-        val data = userDao.findByRole(RoleType.EXECUTOR.ordinal, id, search, pageable).map {user->
-                    userFactory.create(user) as ExecutorInfo
-                }
-
-        return DataResponse.ok(
-                data
-        )
-    }
 
     @GetMapping("/{id}")
     fun executor(@PathVariable("id") id: Long) : DataResponse<ExecutorInfo> {

@@ -20,7 +20,7 @@ import java.util.*
 import kotlin.random.Random
 
 @RestController
-@CrossOrigin(origins = ["*"], maxAge = 3600)
+@CrossOrigin(origins = ["*"], allowedHeaders = ["*"])
 @RequestMapping(value = ["user"])
 class UserController(private val userDao: UserDao,
                      private val authTokenService: AuthTokenService,
@@ -194,9 +194,10 @@ class UserController(private val userDao: UserDao,
         if (myUser.email.isNullOrEmpty()) throw BadParams()
 
         if (phoneRegister.code == null || phoneRegister.token == null) {
-            val code = "1234"
+            val code = authTokenService.generateAuthCode()
 
-            emailService.sendMsg(myUser.email!!, code)
+            emailService.sendVerificationCode(myUser.email!!, code)
+
             val token = authTokenService.generatePhoneToken(myUser.email!!, code)
 
             return DataResponse.ok(

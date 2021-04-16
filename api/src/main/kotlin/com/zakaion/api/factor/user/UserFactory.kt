@@ -20,7 +20,7 @@ class UserFactory(private val orderDao: OrderDao,
                   private val transactionService: TransactionService,
                   private val orderHistoryDao: OrderHistoryDao) : MFactor() {
 
-    fun create(user: UserEntity?): UserImp? {
+    fun create(user: UserEntity?): UserFullImp? {
         if (user == null)
             return null
         return buildFactor(user.copy())
@@ -34,6 +34,22 @@ class UserFactory(private val orderDao: OrderDao,
                     if (user.isBlocked)
                         this.status = UserStatus.BLOCKED
                 }
+    }
+
+    suspend fun createWork(user: UserEntity?, myUser: UserEntity): UserFullImp? {
+        if (user == null)
+            return null
+        return buildFactor(user.copy())
+            .create()
+            .apply {
+                viewHideContacts(myUser)
+                if (!this.isPassportActive)
+                    this.passportInProgress = requestPassportDao.findAll().any { it.user.id == this.user.id }
+                if (user.role in arrayOf(RoleType.PARTNER, RoleType.EXECUTOR))
+                    this.balance = transactionService.userBalance(this.id)
+                if (user.isBlocked)
+                    this.status = UserStatus.BLOCKED
+            }
     }
 
     private fun buildFactor(user: UserEntity) : UserImpFactor {

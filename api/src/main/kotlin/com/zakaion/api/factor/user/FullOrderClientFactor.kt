@@ -55,15 +55,17 @@ class FullOrderClientFactor(user: UserEntity,
                        }.size
                    }
                 },
-                passport = passportDao.findAll().find { it.user.id == id },
+                passport = passportDao.findAll().find { it.user.id == id }?.toInfoJson(),
                 portfolioCount = portfolio.size
         ).apply {
-            order.enable = isEmailActive &&
-                    isPassportActive &&
-                    portfolio.isNotEmpty() &&
-                    !this@toExecutor.isBlocked &&
-                    city != null
-            if (!order.enable)
+            order.enable =
+                        isEmailActive &&
+                        isPassportActive &&
+                        portfolio.isNotEmpty() &&
+                        !isBlocked &&
+                        city != null &&
+                        order.count.open < order.count.max
+            if (!order.enable && !isBlocked)
                 status = UserStatus.PROCESS
         }
     }
@@ -82,7 +84,7 @@ class FullOrderClientFactor(user: UserEntity,
                     (stars / allFeedbacks.size).toFloat()
                 },
                 order = UserOrder.create(orders),
-                passport = passportDao.findAll().find { it.user.id == id }
+                passport = passportDao.findAll().find { it.user.id == id }?.toInfoJson()
         ).apply {
             order.enable = true
         }

@@ -1,5 +1,6 @@
 package com.zakaion.api.controller.file
 
+import com.zakaion.api.ExFuncs
 import com.zakaion.api.controller.BaseController
 import com.zakaion.api.model.DataResponse
 import com.zakaion.api.model.UploadFileModel
@@ -34,6 +35,13 @@ class FileController(private val storageService: StorageService) : BaseControlle
         return DataResponse.ok(
             storageService.store(Base64.getDecoder().decode(body.file), body.format)
         )
+    }
+
+    @GetMapping(value = ["/resource/{filename:.+}"], produces = [MediaType.APPLICATION_OCTET_STREAM_VALUE])
+    fun fileResource(@PathVariable filename: String): ByteArray {
+        val file = ExFuncs.getResourceFileAsInputStream(filename)
+
+        return file.readBytes()
     }
 
 }

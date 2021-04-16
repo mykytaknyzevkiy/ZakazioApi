@@ -1,5 +1,7 @@
 package com.zakaion.api.controller.order
 
+import com.zakaion.api.ExFuncs.mapWork
+import com.zakaion.api.ExFuncs.toPage
 import com.zakaion.api.controller.BaseController
 import com.zakaion.api.controller.history.OrderHistoryController
 import com.zakaion.api.controller.user.ExecutorController
@@ -20,10 +22,7 @@ import com.zakaion.api.factor.user.UserFactory
 import com.zakaion.api.model.*
 import com.zakaion.api.service.*
 import com.zakaion.api.unit.ImportExcellService
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.web.bind.annotation.*
@@ -252,7 +251,7 @@ class OrderController(private val orderDao: OrderDao,
     }
 
     @GetMapping("/list")
-    fun list(pageable: Pageable,
+    suspend fun list(pageable: Pageable,
              @RequestParam(
                      "search",
                      required = false,
@@ -264,6 +263,11 @@ class OrderController(private val orderDao: OrderDao,
                  defaultValue = "-1"
              ) cityID: Long = -1,
              @RequestParam(
+                 "region_id",
+                 required = false,
+                 defaultValue = "-1"
+             ) regionID: Long = -1,
+             @RequestParam(
                  "category_id",
                  required = false,
                  defaultValue = "-1"
@@ -272,17 +276,67 @@ class OrderController(private val orderDao: OrderDao,
                  "child_category_id",
                  required = false,
                  defaultValue = "-1"
-             ) childCategoryID: Long = -1) : DataResponse<Page<OrderNModel>> {
+             ) childCategoryID: Long = -1,
+             @RequestParam(
+                 "status",
+                 required = false
+             ) status: OrderStatus?): DataResponse<Page<OrderNModel>> {
 
+        val searchOperator: (OrderEntity) -> Boolean = {
+            it.title.contains(search)
+                    || it.content.contains(search)
+                    || it.client.firstName.contains(search)
+                    || it.client.lastName.contains(search)
+                    || it.client.middleName.contains(search)
+        }
+        val cityOperator: (OrderEntity) -> Boolean = {
+            it.city.id == cityID || cityID == -1L
+        }
+        val regionOperator: (OrderEntity) -> Boolean = {
+            it.city.region.id == regionID || regionID == -1L
+        }
+        val categoryOperator: (OrderEntity) -> Boolean = {
+            it.category.id == categoryID || categoryID == -1L
+        }
+        val childCategoryOperator: (OrderEntity) -> Boolean = {
+            it.childCategory.id == childCategoryID || childCategoryID == -1L
+        }
+        val statusOperator: (OrderEntity) -> Boolean = {
+            it.status == status || status == null
+        }
+
+        val myUser = userFactory.myUser
+
+        val list = orderDao.findAll()
+            .asSequence()
+            .filter {
+                searchOperator(it)
+                        && cityOperator(it)
+                        && regionOperator(it)
+                        && categoryOperator(it)
+                        && childCategoryOperator(it)
+                        && statusOperator(it)
+            }
+            .filter {
+                val myUser = userFactory.myUser
+                if (arrayOf(RoleType.PARTNER, RoleType.EXECUTOR).contains(
+                        myUser.role
+                    )
+                ) {
+                    it.executor == null
+                }
+                else
+                    true
+            }
+            .sortedByDescending { it.creationCalendar().timeInMillis }
+            .toList()
+            .toPage(pageable)
+            .mapWork {
+                orderFactor.createWork(it, myUser)
+            }
 
         return DataResponse.ok(
-            (if (userFactory.myUser.role == RoleType.EXECUTOR || userFactory.myUser.role == RoleType.PARTNER)
-                orderDao.findFreeAll(pageable, search, cityID, categoryID, childCategoryID)
-            else
-                orderDao.findAll(pageable, search, cityID, categoryID, childCategoryID))
-                .map {
-                            orderFactor.create(it.copy())
-                        }
+            list
         )
     }
 
@@ -397,7 +451,7 @@ class OrderController(private val orderDao: OrderDao,
 
         if (userFactory.myUser.id == order.executor?.id) {
             val executor = userFactory.create(order.executor) as ExecutorInfo
-            if (executor.order.count.declined % 4 == 0) {
+            if (executor.order.count.declined > 4) {
                 userDao.save(
                     executor.user.copy(
                         isBlocked = true

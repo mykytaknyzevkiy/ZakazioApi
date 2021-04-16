@@ -35,26 +35,10 @@ class PartnerController (private val userDao: UserDao,
                          private val storageService: StorageService,
                          private val importExcellService: ImportExcellService,
                          private val emailService: EmailService
-) : RoleUserController(userDao, authTokenService, emailService) {
+) : RoleUserController(userDao, authTokenService, emailService, userFactory) {
 
     override val roleType: RoleType
         get() = RoleType.PARTNER
-
-    @GetMapping("/list")
-    @PreAuthorize(_Can_SuperAdmin_Admin_Editor)
-    fun list(pageable: Pageable, @RequestParam("search", required = false, defaultValue = "") search: String? = null) : DataResponse<Page<PartnerInfo>> {
-
-        val data = (
-                if (search.isNullOrEmpty()) userDao.findByRole(RoleType.PARTNER.ordinal, pageable)
-                else userDao.findByRole(RoleType.PARTNER.ordinal, search, pageable)
-                ).map {user->
-                    userFactory.create(user) as PartnerInfo
-                }
-
-        return DataResponse.ok(
-                data
-        )
-    }
 
     @DeleteMapping("/{id}")
     @PreAuthorize(_Can_SuperAdmin_Admin_Editor)

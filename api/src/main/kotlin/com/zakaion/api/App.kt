@@ -4,7 +4,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import java.util.*
 
-var appVersion: String = "no"
+var appVersion: String = "no-3333"
 
 @SpringBootApplication
 class ZakazioApplication

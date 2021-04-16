@@ -15,4 +15,6 @@ class ConstService(
     val cloudPaymentPublicKey: String = env.getProperty("cloudpayment.key.public")!!
 
     val cloudPaymentPrivateKey: String = env.getProperty("cloudpayment.key.private")!!
+
+    val fileStorageUrl: String = env.getProperty("file.storege.url")!!
 }
