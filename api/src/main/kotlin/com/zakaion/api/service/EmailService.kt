@@ -25,7 +25,7 @@ class EmailService(private val emailSender: JavaMailSender,
     fun sendVerificationCode(email: String, code: String) {
         val html: String = ExFuncs.getResourceFileAsString("templates/mail/code_vertification.html")
             .replace("{{CODE}}", code)
-            .replace("{{API_URL}}", constService.apiUrl)
+            .replace("{{FILE_STORAGE_URL}}", constService.fileStorageUrl)
 
         val mimeMessage = emailSender.createMimeMessage()
         val message = MimeMessageHelper(mimeMessage, true, "UTF-8") // true = multipart
@@ -56,7 +56,7 @@ class EmailService(private val emailSender: JavaMailSender,
             .replace("{{MAX}}", max.toString())
             .replace("{{ERROR_COUNT}}", brokers.size.toString())
             .replace("{{BROKER_LIST}}", brokersListHtml)
-            .replace("{{API_URL}}", constService.apiUrl)
+            .replace("{{FILE_STORAGE_URL}}", constService.apiUrl)
 
         val mimeMessage = emailSender.createMimeMessage()
         val message = MimeMessageHelper(mimeMessage, true, "UTF-8") // true = multipart
