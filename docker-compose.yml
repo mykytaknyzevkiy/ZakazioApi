@@ -48,5 +48,6 @@ services:
       - ./nginx/var/www:/var/www
       - ./nginx/letsencrypt:/etc/letsencrypt
       - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./crm/build/web:/site/crm
     depends_on:
       - api

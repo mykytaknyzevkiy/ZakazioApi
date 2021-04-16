@@ -1,0 +1,56 @@
+name: zakazy_crm_v2
+description: A new Flutter project.
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.12.0-0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  http: ^0.12.2
+
+  shared_preferences: any
+
+  rxdart: any  
+
+  cupertino_icons: any
+
+  hexcolor: any
+
+  image_picker_web: any
+
+  intl: any
+
+  file_picker: any
+
+  flutter_rating_bar: ^4.0.0
+
+  carousel_slider: 4.0.0-nullsafety.0
+
+  cached_network_image: any
+
+  flutter_typeahead: ^2.0.0
+
+  fl_chart: ^0.12.3
+
+  infinite_view_pager: ^1.0.0
+
+  stomp_dart_client: any
+
+  extended_image: any
+
+  flutter_multi_formatter: any
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+  
+  assets:
+    - assets/image/background.svg
+    - assets/image/background.jpg  
