@@ -151,12 +151,12 @@ class OrderFactor(private val userFactory: UserFactory,
         mOrder.beExecutorEnable = order.executor == null &&
                 myUser.role == RoleType.EXECUTOR &&
                 mOrder.status == OrderStatus.PROCESS &&
-                (userFactory.create(myUser) as ExecutorInfo).order.enable
+                (userFactory.createWork(myUser, myUser) as ExecutorInfo).order.enable
 
         mOrder.setExecutorEnable = mOrder.status == OrderStatus.PROCESS &&
                 order.executor == null &&
                 (myUser.role in adminsRole ||
-                        (myUser.role == RoleType.PARTNER && (userFactory.create(myUser) as PartnerInfo).order.enable) ||
+                        (myUser.role == RoleType.PARTNER && (userFactory.createWork(myUser, myUser) as PartnerInfo).order.enable) ||
                         myUser.id in arrayOf(order.client.id, order.partner?.id))
 
         mOrder.cancelExecutorEnable = order.status in arrayOf(OrderStatus.PROCESS, OrderStatus.IN_WORK) &&
