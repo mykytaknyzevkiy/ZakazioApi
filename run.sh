@@ -5,7 +5,7 @@ git pull
 # shellcheck disable=SC2164
 cd crm
 
-flutter build web --no-sound-null-safety --web-renderer canvaskit
+~/development/flutter/bin/flutter build web --no-sound-null-safety --web-renderer canvaskit
 
 cd /root/ZakazioApi
 
