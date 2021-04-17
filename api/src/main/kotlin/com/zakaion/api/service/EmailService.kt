@@ -23,9 +23,8 @@ class EmailService(private val emailSender: JavaMailSender,
     }
 
     fun sendVerificationCode(email: String, code: String) {
-        val html: String = ExFuncs.getResourceFileAsString("templates/mail/code_vertification.html")
+        val html: String = htmlTemplate("code_vertification.html")
             .replace("{{CODE}}", code)
-            .replace("{{FILE_STORAGE_URL}}", constService.fileStorageUrl)
 
         val mimeMessage = emailSender.createMimeMessage()
         val message = MimeMessageHelper(mimeMessage, true, "UTF-8") // true = multipart
@@ -51,12 +50,11 @@ class EmailService(private val emailSender: JavaMailSender,
             html.toString()
         }
 
-        val html: String = ExFuncs.getResourceFileAsString("templates/mail/import_done.html")
+        val html: String = htmlTemplate("import_done.html")
             .replace("{{IMPORTED}}", (max - brokers.size).toString())
             .replace("{{MAX}}", max.toString())
             .replace("{{ERROR_COUNT}}", brokers.size.toString())
             .replace("{{BROKER_LIST}}", brokersListHtml)
-            .replace("{{FILE_STORAGE_URL}}", constService.apiUrl)
 
         val mimeMessage = emailSender.createMimeMessage()
         val message = MimeMessageHelper(mimeMessage, true, "UTF-8") // true = multipart
@@ -67,5 +65,20 @@ class EmailService(private val emailSender: JavaMailSender,
 
         emailSender.send(mimeMessage)
     }
+
+    private fun htmlTemplate(name: String?): String {
+        val realName = name ?: "sample_message"
+
+        return ExFuncs.getResourceFileAsString("templates/mail/${realName}")
+            .replace("{{BOTTOM_SHEET}}", bottomSheetHtml())
+            .replace("{{FILE_STORAGE_URL}}", constService.fileStorageUrl)
+    }
+
+    private fun bottomSheetHtml() = ExFuncs.getResourceFileAsString("templates/mail/bottom_sheet.html")
+        .replace("{{COMPANY_NAME}}", Contacts.companyName)
+        .replace("{{FACEBOOK_URL}}", Contacts.facebook)
+        .replace("{{TWITTER_URL}}", Contacts.twitter)
+        .replace("{{INSTAGRAM_URL}}", Contacts.instagram)
+        .replace("{{LinkedIn_URL}}", Contacts.linkedIn)
 
 }
