@@ -46,7 +46,6 @@ services:
       - "443:443"
     volumes:
       - ./etc:/etc
-      - ./etc/nginx:/etc/nginx
       - ./etc/var:/var
       - ./crm/build/web:/site/crm
     depends_on:
