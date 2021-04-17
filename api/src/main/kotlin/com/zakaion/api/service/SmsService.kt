@@ -36,8 +36,7 @@ class SmsService(restTemplateBuilder: RestTemplateBuilder) {
     }
 
     fun sendCode(phoneNumber: String, code: String) {
-        val msg = Templates.smsAuth
-                .replace(TemplatesValueKey.smsCode, code)
+        val msg = "Ваш код авторизации $code"
 
         sendMsg(phoneNumber, msg)
     }

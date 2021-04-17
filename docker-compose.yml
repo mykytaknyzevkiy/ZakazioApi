@@ -23,7 +23,7 @@ services:
       CRM_URL: https://crm.zakazy.online
       CLOUD_PAYMENT_PUBLIC: pk_8507dee1d9c8b1519a3f5b5b3d872
       CLOUD_PAYMENT_PRIVATE: 0e9f48b377588f22f628825b7f1e42f0
-      EXTRA_FILE_URL: https://file.zakazy.online/
+      EXTRA_FILE_URL: https://file.zakazy.online
     volumes:
       - ./storage:/home/storage
 

@@ -49,7 +49,8 @@ class OrderController(private val orderDao: OrderDao,
                       private val importExcellService: ImportExcellService,
                       private val historyController: OrderHistoryController,
                       private val childCategoryDao: ChildCategoryDao,
-                      private val socketService: SocketService
+                      private val socketService: SocketService,
+                      private val orderService: OrderService
                       ) : BaseController() {
 
     @PostMapping("/add")
@@ -420,11 +421,13 @@ class OrderController(private val orderDao: OrderDao,
                 )
         )
 
-        notificationService.onYouOrderExecutor(nOrder)
+        notificationService.onExecutorInOrder(nOrder)
 
-        notificationService.onClientHasExecutorOrder(nOrder)
+        if (userFactory.myUser.id != executorDB.id) {
+            historyController.add(order, userFactory.myUser, OrderHistoryType.SET_EXECUTOR)
+        }
 
-        historyController.add(order, userFactory.myUser, OrderHistoryType.SET_EXECUTOR)
+        orderService.startExecutorWaitingTimerToStart(order.id, executorDB.id)
 
         return DataResponse.ok(null)
     }
@@ -479,7 +482,7 @@ class OrderController(private val orderDao: OrderDao,
                         order.copy(status = OrderStatus.IN_WORK)
                 )
 
-        notificationService.onClientOrderInWork(order)
+        notificationService.onOrderStatus(order)
 
         historyController.add(order, userFactory.myUser, OrderHistoryType.START_WORK)
 
@@ -502,8 +505,7 @@ class OrderController(private val orderDao: OrderDao,
                         order.copy(status = OrderStatus.DONE)
                 )
 
-        notificationService.addClientFeedback(order)
-        notificationService.addExecutorFeedback(order)
+        notificationService.onOrderStatus(order)
 
         historyController.add(order, userFactory.myUser, OrderHistoryType.DONE_WORK)
 
@@ -527,6 +529,8 @@ class OrderController(private val orderDao: OrderDao,
                 )
 
         historyController.add(order, userFactory.myUser, OrderHistoryType.CANCEL)
+
+        notificationService.onOrderStatus(order)
 
         return DataResponse.ok(null)
     }

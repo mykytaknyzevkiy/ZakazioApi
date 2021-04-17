@@ -3,6 +3,8 @@ package com.zakaion.api.service
 import com.zakaion.api.dao.UserDao
 import com.zakaion.api.dao.UserDeviceDao
 import com.zakaion.api.entity.order.OrderEntity
+import com.zakaion.api.entity.order.OrderStatus
+import com.zakaion.api.entity.order.OrderStatus.*
 import com.zakaion.api.entity.user.UserEntity
 import org.springframework.stereotype.Service
 
@@ -18,15 +20,7 @@ class NotificationService(private val userDao: UserDao,
     }
 
     fun onCreateOrder(orderEntity: OrderEntity) {
-        val msg = (if (orderEntity.app != null) Templates.createOrderViaApp else Templates.createOrder)
-                .replace(TemplatesValueKey.app, orderEntity.app?.name?:"")
-                .replace(TemplatesValueKey.user, when {
-                    orderEntity.app != null -> "${orderEntity.partner?.firstName} ${orderEntity.partner?.lastName} ${orderEntity.partner?.middleName}"
-                    orderEntity.partner != null -> "${orderEntity.partner?.firstName} ${orderEntity.partner?.lastName} ${orderEntity.partner?.middleName}"
-                    orderEntity.executor != null -> "${orderEntity.executor?.firstName} ${orderEntity.executor?.lastName} ${orderEntity.executor?.middleName}"
-                    else -> "${orderEntity.client.firstName} ${orderEntity.client.lastName} ${orderEntity.client.middleName}"
-                })
-                .replace(TemplatesValueKey.orderID, orderEntity.id.toString())
+        val msg = "У вас создан заказ №${orderEntity.id}"
 
         sendGCM(msg, when {
             orderEntity.partner != null -> orderEntity.partner!!
@@ -51,82 +45,56 @@ class NotificationService(private val userDao: UserDao,
         }
     }
 
-    fun onYouOrderExecutor(orderEntity: OrderEntity) {
+    fun onExecutorInOrder(orderEntity: OrderEntity) {
         val executor = orderEntity.executor!!
 
-        val msg = Templates.youExecutorOrder
-                .replace(TemplatesValueKey.orderID, orderEntity.id.toString())
+        val msg = "Вы стали исполнителем заказа №${orderEntity.id}." +
+                "\nУ вас есть ${Preference.executorWaitingTimeToStart} часов чтобы начать работу или заказ отправить " +
+                "в открытый доступ."
 
         sendGCM(msg, executor)
 
-        if (EmailNotificationPermitted.youExecutorOrder) {
+        if (EmailNotificationPermitted.onExecutorInOrder) {
             emailService.sendMsg(executor.email?:"", msg)
         }
 
-        if (PhoneNotificationPermitted.youExecutorOrder) {
+        if (PhoneNotificationPermitted.onExecutorInOrder) {
             smsService.sendMsg(executor.password?:"", msg)
         }
     }
 
-    fun onClientHasExecutorOrder(orderEntity: OrderEntity) {
+    fun onOrderStatus(orderEntity: OrderEntity) {
         val client = orderEntity.client
 
-        val msg = Templates.clientHasExecutorOrder
-                .replace(TemplatesValueKey.orderID, orderEntity.id.toString())
-                .replace(TemplatesValueKey.user,
-                        "${orderEntity.executor?.firstName} ${orderEntity.executor?.lastName} ${orderEntity.executor?.middleName}")
+        val msg = when (orderEntity.status) {
+            PROCESS -> return
+            IN_WORK -> "Исполнитель начал работу над вашим заказом №${orderEntity.id}"
+            DONE -> "Исполнитель завершил работу над вашим заказом №${orderEntity.id}." +
+                    "\nОцените пожалуйста его работу"
+            CANCEL -> "Ваш заказ №${orderEntity.id} отменен"
+        }
 
         sendGCM(msg, client)
 
-        if (EmailNotificationPermitted.clientHasExecutor)
+        if (EmailNotificationPermitted.onOrderStatus)
             emailService.sendMsg(client.email?:"", msg)
 
-        if (PhoneNotificationPermitted.clientHasExecutor)
-            smsService.sendCode(client.phoneNumber?:"", msg)
-
-    }
-
-    fun onClientOrderInWork(orderEntity: OrderEntity) {
-        val client = orderEntity.client
-
-        val msg = Templates.clientOrderInWork
-                .replace(TemplatesValueKey.orderID, orderEntity.id.toString())
-
-        sendGCM(msg, client)
-
-        if (EmailNotificationPermitted.clientOrderInWork)
-            emailService.sendMsg(client.email?:"", msg)
-
-        if (PhoneNotificationPermitted.clientOrderInWork)
+        if (PhoneNotificationPermitted.onOrderStatus)
             smsService.sendCode(client.phoneNumber?:"", msg)
     }
 
-    fun addExecutorFeedback(orderEntity: OrderEntity) {
-        val url = Preference.feedBackUrl
-                .replace(TemplatesValueKey.token,
-                        token.generateFeedbackToken(orderEntity.id, orderEntity.executor?.id?:0L)
-                )
+    fun finishExecutorWaitingTimeToStart(orderEntity: OrderEntity) {
+        val message = "Ваше время на то чтобы начать исполнение " +
+                "заказа №${orderEntity.id} закончилось." +
+                "\nТеперь заказ снова открыт для других исполнителей"
 
-        val msg = Templates.addExecutorFeedback
-                .replace(TemplatesValueKey.orderID, orderEntity.id.toString())
-                .replace(TemplatesValueKey.user, "${orderEntity.client.firstName} ${orderEntity.client.lastName} ${orderEntity.client.middleName}")
-                .replace(TemplatesValueKey.url, url)
+        if (EmailNotificationPermitted.finishExecutorWaitingTimeToStart) {
+            emailService.sendMsg(orderEntity.executor?.email?:return, message)
+        }
 
-        smsService.sendCode(orderEntity.executor?.phoneNumber?:"", msg)
-    }
-
-    fun addClientFeedback(orderEntity: OrderEntity) {
-        val url = Preference.feedBackUrl
-                .replace(TemplatesValueKey.token,
-                        token.generateFeedbackToken(orderEntity.id, orderEntity.client.id)
-                )
-
-        val msg = Templates.addClientFeedback
-                .replace(TemplatesValueKey.orderID, orderEntity.id.toString())
-                .replace(TemplatesValueKey.user, "${orderEntity.executor?.firstName} ${orderEntity.executor?.lastName} ${orderEntity.executor?.middleName}")
-                .replace(TemplatesValueKey.url, url)
-
-        smsService.sendCode(orderEntity.executor?.phoneNumber?:"", msg)
+        if (PhoneNotificationPermitted.finishExecutorWaitingTimeToStart) {
+            smsService.sendMsg(orderEntity.executor?.phoneNumber?:return, message)
+        }
     }
 
 }

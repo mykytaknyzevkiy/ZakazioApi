@@ -21,18 +21,6 @@ object Preference {
             properties.putInt(key, value)
         }
 
-    var feedBackUrl: String
-        get() {
-            val key = "feedBackUrl"
-
-            return properties.get(key, "http://localhost:8282/feedback/${TemplatesValueKey.token}/add")
-        }
-        set(value) {
-            val key = "feedBackUrl"
-
-            properties.put(key, value)
-        }
-
     var orderSumOutPercent: Int
         get() {
             val key = "orderSumOutPercent"
@@ -69,6 +57,19 @@ object Preference {
             properties.putInt(key, value)
         }
 
+    //Hours
+    var executorWaitingTimeToStart: Int
+        get() {
+            val key = "executorWaitingTimeToStart"
+
+            return properties.getInt(key, 5)
+        }
+        set(value) {
+            val key = "executorWaitingTimeToStart"
+
+            properties.putInt(key, value)
+        }
+
 }
 
 object EmailNotificationPermitted : NotificationPermittedImp() {
@@ -79,127 +80,6 @@ object EmailNotificationPermitted : NotificationPermittedImp() {
 object PhoneNotificationPermitted : NotificationPermittedImp() {
     override val type: String
         get() = "phone"
-}
-
-object Templates {
-
-    var smsAuth: String
-        get() {
-            val key = "template_sms_code"
-
-            return properties.get(key, "Ваш код: ${TemplatesValueKey.smsCode}")
-        }
-        set(value) {
-            val key = "template_sms_code"
-
-            properties.put(key, value)
-        }
-
-    var createOrder: String
-        get() {
-            val key = "template_create_order"
-
-            return properties.get(key, "Пользователь ${TemplatesValueKey.user} создал заказа с номером ${TemplatesValueKey.orderID}")
-        }
-        set(value) {
-            val key = "template_create_order"
-
-            properties.put(key, value)
-        }
-
-    var createOrderViaApp: String
-        get() {
-            val key = "template_create_order_via_app"
-
-            return properties.get(key, "Приложение ${TemplatesValueKey.app} от ${TemplatesValueKey.user} создал заказа с номером ${TemplatesValueKey.orderID}")
-        }
-        set(value) {
-            val key = "template_create_order_via_app"
-
-            properties.put(key, value)
-        }
-
-    var youExecutorOrder: String
-        get() {
-            val key = "template_you_executor_order"
-
-            return properties.get(key, "Вы стали исполнителем заказа с номером ${TemplatesValueKey.orderID}")
-        }
-        set(value) {
-            val key = "template_you_executor_order"
-
-            properties.put(key, value)
-        }
-
-    var clientHasExecutorOrder: String
-        get() {
-            val key = "template_client_has_executor"
-
-            return properties.get(key, "На ваш заказа с номером ${TemplatesValueKey.orderID} назначен исполнитель ${TemplatesValueKey.user}")
-        }
-        set(value) {
-            val key = "template_client_has_executor"
-
-            properties.put(key, value)
-        }
-
-    var clientOrderInWork: String
-        get() {
-            val key = "template_client_order_in_work"
-
-            return properties.get(key, "Исполнитель вашего заказа с номером ${TemplatesValueKey.orderID} начал работу")
-        }
-        set(value) {
-            val key = "template_client_order_in_work"
-
-            properties.put(key, value)
-        }
-
-    var addExecutorFeedback: String
-        get() {
-            val key = "template_add_executor_feedback"
-
-            return properties.get(key, "Оставьте пожалуйста отзыв про вашего исполнителя " +
-                    "${TemplatesValueKey.user} за проект с номером ${TemplatesValueKey.orderID}" + "\n" +
-                    TemplatesValueKey.url)
-        }
-        set(value) {
-            val key = "template_add_executor_feedback"
-
-            properties.put(key, value)
-        }
-
-    var addClientFeedback: String
-        get() {
-            val key = "template_add_client_feedback"
-
-            return properties.get(key, "Оставьте пожалуйста отзыв про вашего клиента " +
-                    "${TemplatesValueKey.user} за проект с номером ${TemplatesValueKey.orderID}" + "\n" +
-                    TemplatesValueKey.url)
-        }
-        set(value) {
-            val key = "template_add_client_feedback"
-
-            properties.put(key, value)
-        }
-
-}
-
-object TemplatesValueKey {
-
-    val smsCode = "{{sms_code}}"
-
-    val user = "{{user}}"
-
-    val orderID = "{{orderID}}"
-
-    val app = "{{app}}"
-
-    val url = "{{url}}"
-
-    val token = "{{toke}}"
-
-    val feedBackUrl = "{{feedBackUrl}}"
 }
 
 abstract class NotificationPermittedImp {
@@ -217,14 +97,14 @@ abstract class NotificationPermittedImp {
             properties.putBoolean(key, value)
         }
 
-    var youExecutorOrder: Boolean
+    var onExecutorInOrder: Boolean
         get() {
-            val key = "${type}_you_executor"
+            val key = "${type}_onExecutorInOrder"
 
             return properties.getBoolean(key, true)
         }
         set(value) {
-            val key = "${type}_you_executor"
+            val key = "${type}_onExecutorInOrder"
 
             properties.putBoolean(key, value)
         }
@@ -241,16 +121,117 @@ abstract class NotificationPermittedImp {
             properties.putBoolean(key, value)
         }
 
-    var clientOrderInWork: Boolean
+    var onOrderStatus: Boolean
         get() {
-            val key = "${type}_client_order_in_work"
+            val key = "${type}_onOrderStatus"
 
             return properties.getBoolean(key, true)
         }
         set(value) {
-            val key = "${type}_client_order_in_work"
+            val key = "${type}_onOrderStatus"
 
             properties.putBoolean(key, value)
         }
 
+    var finishExecutorWaitingTimeToStart: Boolean
+        get() {
+            val key = "${type}_finishExecutorWaitingTimeToStart"
+
+            return properties.getBoolean(key, true)
+        }
+        set(value) {
+            val key = "${type}_finishExecutorWaitingTimeToStart"
+
+            properties.putBoolean(key, value)
+        }
+
+}
+
+object Contacts {
+
+    private val properties: Preferences = Preferences.userRoot().node(javaClass.name)
+
+    var companyName: String
+        get() {
+            val key = "companyName"
+
+            return properties.get(key, "companyName")
+        }
+        set(value) {
+            val key = "companyName"
+
+            properties.put(key, value)
+        }
+
+    var phoneNumber: String
+        get() {
+            val key = "phoneNumber"
+
+            return properties.get(key, "phoneNumber")
+        }
+        set(value) {
+            val key = "phoneNumber"
+
+            properties.put(key, value)
+        }
+
+    var email: String
+        get() {
+            val key = "email"
+
+            return properties.get(key, "email")
+        }
+        set(value) {
+            val key = "email"
+
+            properties.put(key, value)
+        }
+
+    var facebook: String
+        get() {
+            val key = "facebook"
+
+            return properties.get(key, "facebook")
+        }
+        set(value) {
+            val key = "facebook"
+
+            properties.put(key, value)
+        }
+
+    var instagram: String
+        get() {
+            val key = "instagram"
+
+            return properties.get(key, "instagram")
+        }
+        set(value) {
+            val key = "instagram"
+
+            properties.put(key, value)
+        }
+
+    var twitter: String
+        get() {
+            val key = "twitter"
+
+            return properties.get(key, "twitter")
+        }
+        set(value) {
+            val key = "twitter"
+
+            properties.put(key, value)
+        }
+
+    var linkedIn: String
+        get() {
+            val key = "LinkedIn"
+
+            return properties.get(key, "LinkedIn")
+        }
+        set(value) {
+            val key = "LinkedIn"
+
+            properties.put(key, value)
+        }
 }

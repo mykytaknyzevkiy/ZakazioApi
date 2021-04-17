@@ -3,19 +3,18 @@ package com.zakaion.api.controller.settings
 import com.zakaion.api.entity.user._Can_SuperAdmin
 import com.zakaion.api.model.DataResponse
 import com.zakaion.api.model.NotificationPermittedModel
-import com.zakaion.api.model.NotificationTemplateSettingsModel
 import com.zakaion.api.model.PrimarySettingsModel
+import com.zakaion.api.model.SettingsContactsModel
+import com.zakaion.api.service.Contacts
 import com.zakaion.api.service.EmailNotificationPermitted
 import com.zakaion.api.service.PhoneNotificationPermitted
 import com.zakaion.api.service.Preference
-import com.zakaion.api.service.Templates
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @CrossOrigin
 @RequestMapping(value = ["settings"])
-@PreAuthorize(_Can_SuperAdmin)
 class SettingsController {
 
     @GetMapping("/primary")
@@ -23,22 +22,23 @@ class SettingsController {
         return DataResponse.ok(
                 PrimarySettingsModel(
                         executorMaxOrder = Preference.executorMaxOrder,
-                        feedBackUrl = Preference.feedBackUrl,
                         orderSumOutPercent = Preference.orderSumOutPercent,
                         orderPartnerPercent = Preference.orderPartnerPercent,
-                        executorPartnerPercent = Preference.executorPartnerPercent
+                        executorPartnerPercent = Preference.executorPartnerPercent,
+                        executorWaitingTimeToStart = Preference.executorWaitingTimeToStart
                 )
         )
     }
 
     @PutMapping("/primary")
+    @PreAuthorize(_Can_SuperAdmin)
     fun ediPrimary(@RequestBody primarySettingsModel: PrimarySettingsModel) : DataResponse<Nothing?> {
 
         if (primarySettingsModel.executorMaxOrder != null)
             Preference.executorMaxOrder = primarySettingsModel.executorMaxOrder
 
-        if (primarySettingsModel.feedBackUrl != null)
-            Preference.feedBackUrl = primarySettingsModel.feedBackUrl
+        if (primarySettingsModel.executorWaitingTimeToStart != null)
+            Preference.executorWaitingTimeToStart = primarySettingsModel.executorWaitingTimeToStart
 
         if (primarySettingsModel.orderSumOutPercent != null)
             Preference.orderSumOutPercent = primarySettingsModel.orderSumOutPercent
@@ -54,77 +54,28 @@ class SettingsController {
         )
     }
 
-    @GetMapping("/notification/template")
-    fun notificationTemplate() : DataResponse<NotificationTemplateSettingsModel> {
-        return DataResponse.ok(
-                NotificationTemplateSettingsModel(
-                        smsAuth = Templates.smsAuth,
-                        createOrder = Templates.createOrder,
-                        createOrderViaApp = Templates.createOrderViaApp,
-                        youExecutorOrder = Templates.youExecutorOrder,
-                        clientHasExecutorOrder = Templates.clientHasExecutorOrder,
-                        clientOrderInWork = Templates.clientOrderInWork,
-                        addExecutorFeedback = Templates.addExecutorFeedback,
-                        addClientFeedback = Templates.addClientFeedback
-                )
-        )
-    }
-
-    @PutMapping("/notification/template")
-    fun editNotificationTemplate(@RequestBody bodyEdit: NotificationTemplateSettingsModel) : DataResponse<Nothing?> {
-
-        if (bodyEdit.smsAuth != null)
-            Templates.smsAuth = bodyEdit.smsAuth
-
-        if (bodyEdit.createOrder != null)
-            Templates.createOrder = bodyEdit.createOrder
-
-        if (bodyEdit.createOrderViaApp != null)
-            Templates.createOrderViaApp = bodyEdit.createOrderViaApp
-
-        if (bodyEdit.youExecutorOrder != null)
-            Templates.youExecutorOrder = bodyEdit.youExecutorOrder
-
-        if (bodyEdit.clientHasExecutorOrder != null)
-            Templates.clientHasExecutorOrder = bodyEdit.clientHasExecutorOrder
-
-        if (bodyEdit.clientOrderInWork != null)
-            Templates.clientOrderInWork = bodyEdit.clientOrderInWork
-
-        if (bodyEdit.addExecutorFeedback != null)
-            Templates.addExecutorFeedback = bodyEdit.addExecutorFeedback
-
-        if (bodyEdit.addClientFeedback != null)
-            Templates.addClientFeedback = bodyEdit.addClientFeedback
-
-        return DataResponse.ok(null)
-    }
-
     @GetMapping("/notification/email/enables")
     fun notificationEmailPermission() : DataResponse<NotificationPermittedModel> {
         return DataResponse.ok(
                 NotificationPermittedModel(
                         createOrder = EmailNotificationPermitted.createOrder,
-                        youExecutorOrder = EmailNotificationPermitted.youExecutorOrder,
-                        clientHasExecutor = EmailNotificationPermitted.clientHasExecutor,
-                        clientOrderInWork = EmailNotificationPermitted.clientOrderInWork
+                        onExecutorInOrder = EmailNotificationPermitted.onExecutorInOrder,
+                        onOrderStatus = EmailNotificationPermitted.onOrderStatus
                 )
         )
     }
 
     @PutMapping("/notification/email/enables")
+    @PreAuthorize(_Can_SuperAdmin)
     fun editNotificationEmailPermission(@RequestBody bodyEdit: NotificationPermittedModel) : DataResponse<Nothing?> {
         if (bodyEdit.createOrder != null)
             EmailNotificationPermitted.createOrder = bodyEdit.createOrder
 
-        if (bodyEdit.youExecutorOrder != null)
-            EmailNotificationPermitted.youExecutorOrder = bodyEdit.youExecutorOrder
+        if (bodyEdit.onExecutorInOrder != null)
+            EmailNotificationPermitted.onExecutorInOrder = bodyEdit.onExecutorInOrder
 
-        if (bodyEdit.clientHasExecutor != null)
-            EmailNotificationPermitted.clientHasExecutor = bodyEdit.clientHasExecutor
-
-        if (bodyEdit.clientOrderInWork != null)
-            EmailNotificationPermitted.clientOrderInWork = bodyEdit.clientOrderInWork
+        if (bodyEdit.onOrderStatus != null)
+            EmailNotificationPermitted.onOrderStatus = bodyEdit.onOrderStatus
 
         return DataResponse.ok(null)
     }
@@ -133,29 +84,71 @@ class SettingsController {
     fun notificationPhonePermission() : DataResponse<NotificationPermittedModel> {
         return DataResponse.ok(
                 NotificationPermittedModel(
-                        createOrder = PhoneNotificationPermitted.createOrder,
-                        youExecutorOrder = PhoneNotificationPermitted.youExecutorOrder,
-                        clientHasExecutor = PhoneNotificationPermitted.clientHasExecutor,
-                        clientOrderInWork = PhoneNotificationPermitted.clientOrderInWork
+                    createOrder = EmailNotificationPermitted.createOrder,
+                    onExecutorInOrder = EmailNotificationPermitted.onExecutorInOrder,
+                    onOrderStatus = EmailNotificationPermitted.onOrderStatus
                 )
         )
     }
 
     @PutMapping("/notification/phone/enables")
+    @PreAuthorize(_Can_SuperAdmin)
     fun editNotificationPhonePermission(@RequestBody bodyEdit: NotificationPermittedModel) : DataResponse<Nothing?> {
         if (bodyEdit.createOrder != null)
             PhoneNotificationPermitted.createOrder = bodyEdit.createOrder
 
-        if (bodyEdit.youExecutorOrder != null)
-            PhoneNotificationPermitted.youExecutorOrder = bodyEdit.youExecutorOrder
+        if (bodyEdit.onExecutorInOrder != null)
+            PhoneNotificationPermitted.onExecutorInOrder = bodyEdit.onExecutorInOrder
 
-        if (bodyEdit.clientHasExecutor != null)
-            PhoneNotificationPermitted.clientHasExecutor = bodyEdit.clientHasExecutor
-
-        if (bodyEdit.clientOrderInWork != null)
-            PhoneNotificationPermitted.clientOrderInWork = bodyEdit.clientOrderInWork
+        if (bodyEdit.onOrderStatus != null)
+            PhoneNotificationPermitted.onOrderStatus = bodyEdit.onOrderStatus
 
         return DataResponse.ok(null)
+    }
+
+    @GetMapping("/contacts")
+    fun contacts(): DataResponse<SettingsContactsModel> {
+        return DataResponse.ok(
+            SettingsContactsModel(
+                companyName = Contacts.companyName,
+                phoneNumber = Contacts.phoneNumber,
+                email = Contacts.email,
+                facebook = Contacts.facebook,
+                instagram = Contacts.instagram,
+                twitter = Contacts.twitter,
+                linkedIn = Contacts.linkedIn
+            )
+        )
+    }
+
+    @PutMapping("/contacts")
+    @PreAuthorize(_Can_SuperAdmin)
+    fun editContacts(@RequestBody body: SettingsContactsModel): DataResponse<Nothing?> {
+        if (body.companyName != null) {
+            Contacts.companyName = body.companyName
+        }
+        if (body.phoneNumber != null) {
+            Contacts.phoneNumber = body.phoneNumber
+        }
+        if (body.email != null) {
+            Contacts.email = body.email
+        }
+        if (body.facebook != null) {
+            Contacts.facebook = body.facebook
+        }
+        if (body.instagram != null) {
+            Contacts.instagram = body.instagram
+        }
+        if (body.twitter != null) {
+            Contacts.twitter = body.twitter
+        }
+        if (body.linkedIn != null) {
+            Contacts.linkedIn = body.linkedIn
+        }
+
+        return DataResponse.ok(
+            null
+        )
     }
 
 }

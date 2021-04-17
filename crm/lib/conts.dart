@@ -9,7 +9,7 @@ const appName = "Zakazy-CRM V2.65";
 
 const appUrl = "https://api.zakazy.online/api/v1";
 
-const socketUrl = "ws://localhost:8181/out/websocket";
+const socketUrl = "wss://socket.zakazy.online/out/websocket";
 
 const phoneSize = 500;
 
