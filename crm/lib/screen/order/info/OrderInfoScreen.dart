@@ -134,6 +134,7 @@ class _OrderInfoScreenState
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             toShareSumBanner(order),
+            toFreeExecutor(order),
             OrderInfoToolbarCard(order),
             data(order)
           ],
@@ -147,6 +148,7 @@ class _OrderInfoScreenState
     children: [
       OrderClientInfoCard(order.client),
       OrderExecutorInfoCard(order.executor),
+      toFreeExecutor(order),
       toShareSumBanner(order),
       OrderInfoToolbarCard(order),
       data(order)
@@ -476,6 +478,29 @@ class _OrderInfoScreenState
                       style: TextStyle(color: Colors.white),
                     ),
                     Divider(
+                      height: 10,
+                      color: Colors.transparent,
+                    ),
+                    Text(
+                      "Мы, вам доверяем и предоставляем доступ к заявкам:" +
+                          "\n\n" +
+                    "1. за % с договора т.е за результат." +
+                    "\n2.По факту заключения вами договоров кол-во заказов в личном кабинете,  будет увеличенно." +
+                    "\n3. Наша команда, помогает вам затрачивая свое время и личные средства." +
+                    "\n4. У вас есть от 2-7 дней что бы заключить договора," +
+                    "\n5. Мы вам в этом способствуем." +
+                    "\n6. В случае низких показателей по заключению в договоров по истечению срока," +
+                    "заявки будут переданы другим партнерам, вам доступ будет закрыт и получение заказов" +
+                    "временно приостановленно." +
+                    "\n7. Взаимоуважение, и желание помочь купить клиенту , ваша величайшая ценность." +
+                        "\n\n" +
+                    "Важно!"+
+                    "Если упускаются этапы общения, уменьшается частота заключенных сделок." +
+                    "Присматривайтесь к рекомендациям сервиса это сэкономит вам время." +
+                    "\nВыгодных вам сделок и процветания!",
+                      style: TextStyle(color: Colors.white, fontSize: 12),
+                    ),
+                    Divider(
                       height: 25,
                       color: Colors.transparent,
                     ),
@@ -497,5 +522,30 @@ class _OrderInfoScreenState
             ),
           ),
         )
+      : Container();
+
+  toFreeExecutor(OrderModel order) =>
+      order.executor?.id ==
+          UserRepository.instance().myUserLiveData.value!.id
+          && order.statusInfo() == OrderStatus.PROCESS
+      ? Padding(
+        padding: EdgeInsets.only(bottom: 16),
+        child: Card(
+          elevation: 4,
+          color: Colors.redAccent,
+          child: SizedBox(
+            width: double.infinity,
+            child: Padding(
+              padding: EdgeInsets.all(24),
+              child: Text(
+                "-Контакты заказчика открыты\n" +
+                    "-У вас есть 2 часа, чтобы начать работу или отказаться от заказа. Иначе заказ с вас снимется\n" +
+                    "-Выбирайте заказы внимательно. При более 4 отказов от заказов ваш аккаунт временно заблокируется\n",
+                style: TextStyle(color: Colors.white),
+              )
+        ),
+      ),
+        ),
+      )
       : Container();
 }

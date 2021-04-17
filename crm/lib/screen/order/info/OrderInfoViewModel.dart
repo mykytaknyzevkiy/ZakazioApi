@@ -6,6 +6,7 @@ import 'package:zakazy_crm_v2/model/order/OrderModel.dart';
 import 'package:zakazy_crm_v2/model/order/OrderStatus.dart';
 import 'package:zakazy_crm_v2/model/transaction/TransactionModel.dart';
 import 'package:zakazy_crm_v2/model/unit/PagedListModel.dart';
+import 'package:zakazy_crm_v2/model/user/RoleType.dart';
 import 'package:zakazy_crm_v2/model/user/executor/ExecutorModel.dart';
 import 'package:zakazy_crm_v2/repository/FileRepository.dart';
 import 'package:zakazy_crm_v2/repository/OrderRepository.dart';
@@ -16,6 +17,7 @@ import 'package:zakazy_crm_v2/rest/JurnalRest.dart';
 import 'package:zakazy_crm_v2/rest/PaymentRest.dart';
 import 'package:zakazy_crm_v2/screen/ZakazyViewModel.dart';
 import 'package:zakazy_crm_v2/unit/FileSelect.dart';
+import 'package:zakazy_crm_v2/widget/HelpMessageBubleWidget.dart';
 
 class OrderInfoViewModel extends ZakazyViewModel {
   final _orderRepository = OrderRepository();
@@ -106,9 +108,45 @@ class OrderInfoViewModel extends ZakazyViewModel {
 
     final data = await _orderRepository.orderInfo(orderID);
 
+    await UserRepository.instance().initUser();
+
     orderData.add(data.data);
 
-    UserRepository.instance().initUser();
+    final myUser = UserRepository.instance().myUserLiveData.value!;
+
+    if (myUser.roleInfo() == RoleType.EXECUTOR && data.data!.executor == null) {
+      helpMessageData.add(
+          HelpMessageBubble(
+              "До того, как вы станете исполнителем у вас откроется доступ к контактам."
+                  "\nНе стоит брать заказ из любопытства и если он вам не подходит,"
+                  "у вас в сутки на начальном этапе всего 4 заказа."
+                  "\nДальше этот порог будет увеличен."
+                  "\nВнимательно прочтите пожелания заказчика в описании.",
+              null
+          )
+      );
+    }
+    else if (myUser.roleInfo() == RoleType.EXECUTOR
+        && data.data!.executor?.id == myUser.id
+        && data.data!.statusInfo() == OrderStatus.PROCESS) {
+      helpMessageData.add(
+          HelpMessageBubble(
+              "Рекомендации:" +
+                  "1. Поздоровайтесь и представьтесь\n" +
+                  "2. Уточните потребность\n" +
+          "3. Продемонстрируйте экспертность\n" +
+          "4. Отправьте ваше портфолио\n" +
+          "5. Задайте наводящие вопросы\n" +
+              "6. Попросите прислать ТЗ или эскиз\n" +
+          "7. Если не прислали ТЗ, напомните\n" +
+          "8. Уточняйте у клиента дату начала\n" +
+          "9. Выставьте предварительную сумму\n" +
+          "10. Дайте взвесить, наберите через 2 часа\n" +
+          "11. Не ваш заказ? опишите в комментарии",
+              null
+          )
+      );
+    }
 
     loadTransactions(0);
     loadHistory(0);

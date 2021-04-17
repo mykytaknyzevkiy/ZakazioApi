@@ -1,4 +1,5 @@
 import 'package:rxdart/subjects.dart';
+import 'package:zakazy_crm_v2/model/settings/SettingsContactsModel.dart';
 import 'package:zakazy_crm_v2/model/settings/notification_enable_settings.dart';
 import 'package:zakazy_crm_v2/model/settings/primary_settings.dart';
 import 'package:zakazy_crm_v2/rest/settings_rest.dart';
@@ -8,12 +9,31 @@ class SettingsFullViewModel extends ZakazyViewModel {
   final _settingsRest = SettingsRest();
 
   final primary = BehaviorSubject<PrimarySettings>();
+
+  final contacts = BehaviorSubject<SettingsContactsModel>();
+
   final notificationEnable = BehaviorSubject<
       MapEntry<NotificationEnableSettings, NotificationEnableSettings>>();
 
   final onEdit = BehaviorSubject<SettingsEditType>();
 
   final onExLoading = BehaviorSubject<bool>.seeded(false);
+
+  loadContacts() async {
+    contacts.add(null);
+    final data = await _settingsRest.contacts();
+    if (data.success) {
+      contacts.add(data.data);
+    }
+  }
+
+  editContacts(SettingsContactsModel set) async {
+    onExLoading.add(true);
+    await _settingsRest.editContacts(set);
+    onEdit.add(null);
+    loadContacts();
+    onExLoading.add(false);
+  }
 
   loadPrimary() async {
     primary.add(null);
@@ -55,7 +75,8 @@ class SettingsFullViewModel extends ZakazyViewModel {
     onEdit.close();
     onExLoading.close();
     notificationEnable.close();
+    contacts.close();
   }
 }
 
-enum SettingsEditType { PRIMARY, NOTIFICATION_ENABLES }
+enum SettingsEditType { PRIMARY, NOTIFICATION_ENABLES, CONTACTS }

@@ -1,3 +1,4 @@
+import 'package:zakazy_crm_v2/model/settings/SettingsContactsModel.dart';
 import 'package:zakazy_crm_v2/model/settings/notification_enable_settings.dart';
 import 'package:zakazy_crm_v2/model/settings/primary_settings.dart';
 import 'package:zakazy_crm_v2/model/unit/DataResponse.dart';
@@ -5,6 +6,17 @@ import 'package:zakazy_crm_v2/rest/ZakazioRest.dart';
 
 class SettingsRest extends ZakazioRest {
   final route = "/settings";
+
+  Future<DataResponse<SettingsContactsModel>> contacts() async {
+    final json = await get("$route/contacts", {}, {});
+
+    return DataResponse.fromJson(
+        json, (dataJson) => SettingsContactsModel.fromJson(dataJson));
+  }
+
+  editContacts(SettingsContactsModel set) async {
+    final json = await put("$route/contacts", {}, set.toJson());
+  }
 
   Future<DataResponse<PrimarySettings>> primary() async {
     final json = await get("$route/primary", {}, {});

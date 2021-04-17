@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:zakazy_crm_v2/model/settings/SettingsContactsModel.dart';
 import 'package:zakazy_crm_v2/model/settings/notification_enable_settings.dart';
 import 'package:zakazy_crm_v2/model/settings/primary_settings.dart';
 import 'package:zakazy_crm_v2/screen/HomeScreen.dart';
 import 'package:zakazy_crm_v2/screen/settings/SettingsFullVM.dart';
+import 'package:zakazy_crm_v2/screen/settings/edit/settings_edit_contacts.dart';
 import 'package:zakazy_crm_v2/screen/settings/edit/settings_edit_notification_enables.dart';
 import 'package:zakazy_crm_v2/screen/settings/edit/settings_edit_primary.dart';
 import 'package:zakazy_crm_v2/widget/payment/OrderTransactionList.dart';
@@ -22,6 +24,8 @@ class SettingsFullState
 
         if (snapShot.data == SettingsEditType.PRIMARY)
           return SettingseditPrimary();
+        else if (snapShot.data == SettingsEditType.CONTACTS)
+          return SettingsEditContacts();
         else if (snapShot.data == SettingsEditType.NOTIFICATION_ENABLES)
           return SettingsEditNotificationEnables();
         else
@@ -31,7 +35,7 @@ class SettingsFullState
   @override
   Widget body() => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [primaryBlock(), notitcationEnablesBlock()],
+        children: [primaryBlock(), contactsBlock(), notitcationEnablesBlock()],
       );
 
   primaryBlock() {
@@ -219,6 +223,82 @@ class SettingsFullState
             )));
   }
 
+  contactsBlock() {
+    viewModel().loadContacts();
+    return Card(
+        elevation: 4,
+        child: SizedBox(
+            width: double.infinity,
+            child: Stack(
+              alignment: Alignment.bottomRight,
+              children: [
+                Container(
+                  constraints: BoxConstraints(minHeight: 200),
+                  child: Padding(
+                    padding: EdgeInsets.all(24),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Контакты",
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                        Divider(
+                          height: 25,
+                          color: Colors.transparent,
+                        ),
+                        StreamBuilder<SettingsContactsModel>(
+                            stream: viewModel().contacts,
+                            builder: (_, snapShot) {
+                              if (!snapShot.hasData) {
+                                return Center(
+                                    child: CircularProgressIndicator());
+                              }
+                              final data = snapShot.requireData;
+
+                              return SizedBox(
+                                width: double.infinity,
+                                child: DataTable(
+                                  columns: [
+                                    BaseColumn(""),
+                                    BaseColumn("")
+                                  ],
+                                  rows: [
+                                    contactsSetRow("Название компании",
+                                        data.companyName),
+                                    contactsSetRow("Номер телефона",
+                                        data.phoneNumber),
+                                    contactsSetRow("Email",
+                                        data.email),
+                                    contactsSetRow("Facebook url",
+                                        data.facebook),
+                                    contactsSetRow("Instagram url",
+                                        data.instagram),
+                                    contactsSetRow("Twitter url",
+                                        data.twitter),
+                                    contactsSetRow("LinkedIn url",
+                                        data.linkedIn),
+                                  ],
+                                ),
+                              );
+                            })
+                      ],
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.all(24),
+                  child: FloatingActionButton(
+                    onPressed: () =>
+                    {viewModel().onEdit.add(SettingsEditType.CONTACTS)},
+                    child: Icon(Icons.edit),
+                  ),
+                )
+              ],
+            )));
+  }
+
   @override
   Widget top() => createTitleView("Настройки");
 
@@ -227,6 +307,9 @@ class SettingsFullState
 
   primarySetRow(String role, int procent) =>
       DataRow(cells: [BaseCell(role), BaseCell("$procent%")]);
+
+  contactsSetRow(String title, String data) =>
+      DataRow(cells: [BaseCell(title), BaseCell(data)]);
 
   notificationEnableSetRow(String topic, bool email, bool sms) =>
       DataRow(cells: [
