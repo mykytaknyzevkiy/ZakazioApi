@@ -5,7 +5,7 @@ const accentColor = Colors.white;
 
 const cardBackgroundColor = Colors.white;
 
-const appName = "Zakazy-CRM V2.66";
+const appName = "Zakazy-CRM V2.67";
 
 const appUrl = "https://api.zakazy.online/api/v1";
 
@@ -29,7 +29,7 @@ backgroundImage(BuildContext context) {
 fileUrl(String? file) {
   if (file == null)
     return "https://cdn1.iconfinder.com/data/icons/condominium-juristic-management-filled-outline/64/resolving_problems-resolving-problems-512.png";
-  return "$appUrl/file/" + file;
+  return "https://file.zakazy.online/" + file;
 }
 
 dataInfoField(String label, String txt) => Column(
