@@ -16,8 +16,7 @@ data class OrderHistoryEntity(
     override val data: String,
     @OneToOne
     val order: OrderEntity,
-    @CreationTimestamp
-    @Column(name = "creation_date_time", columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
+    @Column(name = "creation_date_time", insertable = true, updatable = true)
     override val creationDateTime: Date = Date(),
     @Enumerated
     val type: OrderHistoryType
