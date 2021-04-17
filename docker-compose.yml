@@ -45,9 +45,10 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./nginx/var/www:/var/www
+      - ./nginx/var:/var
       - ./nginx/letsencrypt:/etc/letsencrypt
-      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx:/etc/nginx
       - ./crm/build/web:/site/crm
+      - ./nginx/conf.d:/etc/nginx/conf.d
     depends_on:
       - api
