@@ -104,6 +104,7 @@ class OrderInfoViewModel extends ZakazyViewModel {
   }
 
   loadData(int orderID) async {
+    helpMessageData.add(null);
     orderData.add(null);
 
     final data = await _orderRepository.orderInfo(orderID);
@@ -131,7 +132,7 @@ class OrderInfoViewModel extends ZakazyViewModel {
         && data.data!.statusInfo() == OrderStatus.PROCESS) {
       helpMessageData.add(
           HelpMessageBubble(
-              "Рекомендации:" +
+              "Рекомендации:\n" +
                   "1. Поздоровайтесь и представьтесь\n" +
                   "2. Уточните потребность\n" +
           "3. Продемонстрируйте экспертность\n" +
