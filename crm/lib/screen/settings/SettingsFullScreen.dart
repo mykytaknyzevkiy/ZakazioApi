@@ -81,6 +81,19 @@ class SettingsFullState
                                   ),
                                   Text("${data.orderSumOutPercent}%"),
                                   Divider(
+                                    height: 15,
+                                    color: Colors.transparent,
+                                  ),
+                                  Text(
+                                    "Время для исполнителя чтобы начать работу:",
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                  Divider(
+                                    height: 5,
+                                    color: Colors.transparent,
+                                  ),
+                                  Text("${data.executorWaitingTimeToStart} часов"),
+                                  Divider(
                                     height: 25,
                                     color: Colors.transparent,
                                   ),
@@ -177,16 +190,12 @@ class SettingsFullState
                                         data.value.createOrder),
                                     notificationEnableSetRow(
                                         "Стал/Назначили исполнителем",
-                                        data.key.youExecutorOrder,
-                                        data.value.youExecutorOrder),
-                                    notificationEnableSetRow(
-                                        "Заказ получил исполнителя",
-                                        data.key.clientHasExecutor,
-                                        data.value.clientHasExecutor),
+                                        data.key.onExecutorInOrder,
+                                        data.value.onExecutorInOrder),
                                     notificationEnableSetRow(
                                         "Изменился статус заказа",
-                                        data.key.clientOrderInWork,
-                                        data.value.clientOrderInWork)
+                                        data.key.onOrderStatus,
+                                        data.value.onOrderStatus)
                                   ],
                                 ),
                               );

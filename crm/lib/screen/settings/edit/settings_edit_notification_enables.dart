@@ -10,7 +10,6 @@ class SettingsEditNotificationEnables extends StatelessWidget {
 
   late _Switcher createOrder;
   late _Switcher youExecutorOrder;
-  late _Switcher clientHasExecutor;
   late _Switcher clientOrderInWork;
 
   SettingsEditNotificationEnables() {
@@ -23,18 +22,13 @@ class SettingsEditNotificationEnables extends StatelessWidget {
 
     youExecutorOrder = _Switcher(
         title: "Стал/Назначили исполнителем",
-        email: data.key.youExecutorOrder,
-        sms: data.value.youExecutorOrder);
-
-    clientHasExecutor = _Switcher(
-        title: "Заказ получил исполнителя",
-        email: data.key.clientHasExecutor,
-        sms: data.value.clientHasExecutor);
+        email: data.key.onExecutorInOrder,
+        sms: data.value.onExecutorInOrder);
 
     clientOrderInWork = _Switcher(
         title: "Изменился статус заказа",
-        email: data.key.clientOrderInWork,
-        sms: data.value.clientOrderInWork);
+        email: data.key.onOrderStatus,
+        sms: data.value.onOrderStatus);
   }
 
   @override
@@ -61,11 +55,6 @@ class SettingsEditNotificationEnables extends StatelessWidget {
                     color: Colors.transparent,
                   ),
                   youExecutorOrder,
-                  Divider(
-                    height: 35,
-                    color: Colors.transparent,
-                  ),
-                  clientHasExecutor,
                   Divider(
                     height: 35,
                     color: Colors.transparent,
@@ -102,14 +91,11 @@ class SettingsEditNotificationEnables extends StatelessWidget {
               data.key.createOrder = createOrder.email;
               data.value.createOrder = createOrder.sms;
 
-              data.key.clientOrderInWork = clientOrderInWork.email;
-              data.value.clientOrderInWork = clientOrderInWork.sms;
+              data.key.onOrderStatus = clientOrderInWork.email;
+              data.value.onOrderStatus = clientOrderInWork.sms;
 
-              data.key.youExecutorOrder = youExecutorOrder.email;
-              data.value.youExecutorOrder = youExecutorOrder.sms;
-
-              data.key.clientHasExecutor = clientHasExecutor.email;
-              data.value.clientHasExecutor = clientHasExecutor.sms;
+              data.key.onExecutorInOrder = youExecutorOrder.email;
+              data.value.onExecutorInOrder = youExecutorOrder.sms;
 
               _viewModel.editNotificationEnable(data);
             },

@@ -1,22 +1,21 @@
 class NotificationEnableSettings {
   bool createOrder;
-  bool youExecutorOrder;
-  bool clientHasExecutor;
-  bool clientOrderInWork;
+  bool onExecutorInOrder;
+  bool onOrderStatus;
 
-  NotificationEnableSettings(this.clientHasExecutor, this.clientOrderInWork,
-      this.createOrder, this.youExecutorOrder);
+  NotificationEnableSettings(
+      this.onOrderStatus,
+      this.createOrder,
+      this.onExecutorInOrder);
 
   NotificationEnableSettings.fromJson(Map<String, dynamic> json)
       : createOrder = json["createOrder"],
-        youExecutorOrder = json["youExecutorOrder"],
-        clientHasExecutor = json["clientHasExecutor"],
-        clientOrderInWork = json["clientOrderInWork"];
+        onExecutorInOrder = json["onExecutorInOrder"],
+        onOrderStatus = json["onOrderStatus"];
 
   Map<String, dynamic> toJson() => {
     "createOrder": createOrder,
-    "youExecutorOrder": youExecutorOrder,
-    "clientHasExecutor": clientHasExecutor,
-    "clientOrderInWork": clientOrderInWork
+    "onExecutorInOrder": onExecutorInOrder,
+    "onOrderStatus": onOrderStatus
   };
 }

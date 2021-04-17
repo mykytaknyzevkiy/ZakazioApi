@@ -24,12 +24,18 @@ class SettingseditPrimary extends StatelessWidget {
       inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
       keyBoardType: TextInputType.number);
 
+  final _executorWaitingTimeToStart = ZTextField(
+      hint: "Часы ожидание для исполнителя чтобы начать заказ",
+      inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
+      keyBoardType: TextInputType.number);
+
   SettingseditPrimary() {
     final data = _viewModel.primary.value!;
 
     _orderOutProcentFiled.setText(data.orderSumOutPercent.toString());
     _orderPartnerProcentFiled.setText(data.orderPartnerPercent.toString());
     _agentExecutorProcentFiled.setText(data.executorPartnerPercent.toString());
+    _executorWaitingTimeToStart.setText(data.executorWaitingTimeToStart.toString());
   }
 
   @override
@@ -62,6 +68,11 @@ class SettingseditPrimary extends StatelessWidget {
                   ),
                   _agentExecutorProcentFiled,
                   Divider(
+                    height: 15,
+                    color: Colors.transparent,
+                  ),
+                  _executorWaitingTimeToStart,
+                  Divider(
                     height: 25,
                     color: Colors.transparent,
                   ),
@@ -90,6 +101,7 @@ class SettingseditPrimary extends StatelessWidget {
               final orderOut = int.tryParse(_orderOutProcentFiled.text());
               final partner = int.tryParse(_orderPartnerProcentFiled.text());
               final agent = int.tryParse(_agentExecutorProcentFiled.text());
+              final waitingTime = int.tryParse(_executorWaitingTimeToStart.text());
 
               if (orderOut == null || orderOut <= 0) {
                 _orderOutProcentFiled.setError("");
@@ -106,6 +118,11 @@ class SettingseditPrimary extends StatelessWidget {
                 return;
               }
 
+              if (waitingTime == null || waitingTime < 1) {
+                _executorWaitingTimeToStart.setError("Не может быть меньше 1 часа");
+                return;
+              }
+
               if ((partner + agent) >= 100) {
                 _agentExecutorProcentFiled.setError("");
                 _orderPartnerProcentFiled.setError("");
@@ -118,6 +135,7 @@ class SettingseditPrimary extends StatelessWidget {
               data.executorPartnerPercent = agent;
               data.orderPartnerPercent = partner;
               data.orderSumOutPercent = orderOut;
+              data.executorWaitingTimeToStart = waitingTime;
 
               _viewModel.editPrimary(data);
             },

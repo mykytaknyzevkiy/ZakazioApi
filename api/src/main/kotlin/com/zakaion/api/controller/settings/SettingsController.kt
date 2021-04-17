@@ -84,9 +84,9 @@ class SettingsController {
     fun notificationPhonePermission() : DataResponse<NotificationPermittedModel> {
         return DataResponse.ok(
                 NotificationPermittedModel(
-                    createOrder = EmailNotificationPermitted.createOrder,
-                    onExecutorInOrder = EmailNotificationPermitted.onExecutorInOrder,
-                    onOrderStatus = EmailNotificationPermitted.onOrderStatus
+                    createOrder = PhoneNotificationPermitted.createOrder,
+                    onExecutorInOrder = PhoneNotificationPermitted.onExecutorInOrder,
+                    onOrderStatus = PhoneNotificationPermitted.onOrderStatus
                 )
         )
     }
