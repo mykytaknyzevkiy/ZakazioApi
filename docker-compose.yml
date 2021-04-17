@@ -25,7 +25,7 @@ services:
       CLOUD_PAYMENT_PRIVATE: 0e9f48b377588f22f628825b7f1e42f0
       EXTRA_FILE_URL: https://file.zakazy.online
     volumes:
-      - ./home/storage:/home/storage
+      - /home/storage:/home/storage
 
   socket:
     build: socket
