@@ -23,20 +23,16 @@ class HelpMessageBubbleWidget extends StatelessWidget {
   Widget build(BuildContext context) => Card(
     elevation: 8,
     color: primaryColor,
-    child: SizedBox(
-      width: 400,
-      height: 200,
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Stack(
-          alignment: Alignment.topRight,
+    child: Padding(
+      padding: const EdgeInsets.all(24),
+      child: SizedBox(
+        width: 400,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              width: 400,
-              height: 200,
-              child: Padding(
-                padding: const EdgeInsets.only(top: 8),
+            Expanded(
                 child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Column(
@@ -49,9 +45,8 @@ class HelpMessageBubbleWidget extends StatelessWidget {
                               fontSize: 18
                           ),
                         ),
-                        Divider(
-                            height: 25,
-                            color: Colors.transparent
+                        SizedBox(
+                            height: 25
                         ),
                         Text(
                           _message,
@@ -61,9 +56,8 @@ class HelpMessageBubbleWidget extends StatelessWidget {
                         ),
                       ],
                     ),
-                    Divider(
-                        height: 15,
-                        color: Colors.transparent
+                    SizedBox(
+                        height: 15
                     ),
                     _buttonData != null
                         ? MyButton(
@@ -78,22 +72,18 @@ class HelpMessageBubbleWidget extends StatelessWidget {
                     )
                         : Container()
                   ],
-                ),
-              ),
+                )
             ),
-            Align(
-              alignment: Alignment.topRight,
-              child: IconButton(
-                  icon: Icon(
-                    Icons.close,
-                    color: Colors.white,
-                  ),
-                  onPressed: () => _onClose()
-              ),
+            IconButton(
+                icon: Icon(
+                  Icons.close,
+                  color: Colors.white,
+                ),
+                onPressed: () => _onClose()
             )
           ],
-        ),
-      ),
-    ),
+        )
+      )
+    )
   );
 }

@@ -10,6 +10,8 @@ import 'package:zakazy_crm_v2/screens.dart';
 import 'package:zakazy_crm_v2/widget/home/ZDrawer.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 
+BuildContext? mainContext;
+
 void main() async {
   setUrlStrategy(ZakazioNavigator.urlController);
   await ZakazioNavigator.init();
@@ -57,6 +59,7 @@ class _MyApp extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    mainContext = context;
     return MaterialApp(
       home: Scaffold(
           backgroundColor: HexColor("#fcfcfc"),

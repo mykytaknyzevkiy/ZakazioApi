@@ -13,14 +13,16 @@ import org.springframework.stereotype.Service
 class OrderService(private val orderDao: OrderDao,
                    private val notificationService: NotificationService) {
 
-    fun startExecutorWaitingTimerToStart(orderID: Long, executorID: Long) = GlobalScope.launch(Dispatchers.IO) {
-        delay(Preference.executorWaitingTimeToStart * 60 * 60 * 1000L)
-        val order = orderDao.findByIdOrNull(orderID) ?: return@launch
+    fun startExecutorWaitingTimerToStart(orderID: Long, executorID: Long) {
+        GlobalScope.launch(Dispatchers.IO) {
+            delay(Preference.executorWaitingTimeToStart * 60 * 60 * 1000L)
+            val order = orderDao.findByIdOrNull(orderID) ?: return@launch
 
-        if (order.status == OrderStatus.PROCESS && order.executor?.id == executorID) {
-            notificationService.finishExecutorWaitingTimeToStart(order)
-            order.executor = null
-            orderDao.save(order)
+            if (order.status == OrderStatus.PROCESS && order.executor?.id == executorID) {
+                notificationService.finishExecutorWaitingTimeToStart(order)
+                order.executor = null
+                orderDao.save(order)
+            }
         }
     }
 
