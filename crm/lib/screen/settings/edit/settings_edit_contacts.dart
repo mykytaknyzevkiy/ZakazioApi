@@ -30,10 +30,10 @@ class SettingsEditContacts extends StatelessWidget {
       hint: "Instagram url");
 
   final _twitterFiled = ZTextField(
-      hint: "Twitter url");
+      hint: "Whatsapp url");
 
   final _linkindinFiled = ZTextField(
-      hint: "LinkedIn url");
+      hint: "VK url");
 
   SettingsEditContacts() {
     final data = _viewModel.contacts.value!;
@@ -80,17 +80,17 @@ class SettingsEditContacts extends StatelessWidget {
                     height: 15,
                     color: Colors.transparent,
                   ),
-                  _facebookFiled,
-                  Divider(
-                    height: 15,
-                    color: Colors.transparent,
-                  ),
                   _instagramFiled,
                   Divider(
                     height: 15,
                     color: Colors.transparent,
                   ),
                   _linkindinFiled,
+                  Divider(
+                    height: 15,
+                    color: Colors.transparent,
+                  ),
+                  _twitterFiled,
                   Divider(
                     height: 25,
                     color: Colors.transparent,

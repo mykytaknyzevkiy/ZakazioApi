@@ -82,7 +82,7 @@ class OrderFactor(private val userFactory: UserFactory,
                 order.executor == null &&
                 (myUser.role in adminsRole ||
                         (myUser.role == RoleType.PARTNER && (userFactory.create(myUser) as PartnerInfo).order.enable) ||
-                myUser.id in arrayOf(order.client.id, order.partner?.id))
+                myUser.id in arrayOf(order.partner?.id))
 
         mOrder.cancelExecutorEnable = order.status in arrayOf(OrderStatus.PROCESS, OrderStatus.IN_WORK) &&
                 (myUser.id in arrayOf(order.client.id, order.partner?.id) || myUser.role in adminsRole) && mOrder.toShareSum >= 0
