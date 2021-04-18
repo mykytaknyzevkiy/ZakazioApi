@@ -35,17 +35,6 @@ services:
     environment:
       CRM_URL: https://crm.zakazy.online
 
-  sdk:
-    build: sdk
-    container_name: sdk
-    volumes:
-      - './sdk:/app'
-      - '/app/node_modules'
-    ports:
-      - 8282:8282
-    environment:
-      - CHOKIDAR_USEPOLLING=true
-
     #Nginx Service
   webserver:
     image: nginx:alpine
@@ -58,6 +47,7 @@ services:
       - ./etc/letsencrypt:/etc/letsencrypt
       - ./etc/nginx/conf.d:/etc/nginx/conf.d
       - ./crm/build/web:/site/crm
+      - ./sdk/dist:/site/sdk
       - /home/storage:/home/storage
     depends_on:
       - api
