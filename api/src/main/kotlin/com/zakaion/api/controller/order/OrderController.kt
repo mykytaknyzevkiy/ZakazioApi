@@ -454,7 +454,7 @@ class OrderController(private val orderDao: OrderDao,
 
         historyController.add(order, userFactory.myUser, OrderHistoryType.CANCEL_EXECUTOR)
 
-        val executorFull = userFactory.create(order.executor) as ExecutorInfo
+        val executorFull = userFactory.create(executor) as ExecutorInfo
         if (executorFull.order.count.declined >= 4) {
             executor.isBlocked = true
             userDao.save(
