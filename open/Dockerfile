@@ -10,7 +10,7 @@ RUN apk add git
 
 # copy the app, note .dockerignore
 COPY . /usr/src/nuxt-app/
-RUN npm install
+RUN npm install -g node-gyp
 
 # build necessary, even if no static files are needed,
 # since it builds the server as well
