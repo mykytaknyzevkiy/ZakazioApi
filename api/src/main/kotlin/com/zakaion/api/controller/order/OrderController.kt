@@ -443,6 +443,8 @@ class OrderController(private val orderDao: OrderDao,
         if (!mOrder.cancelExecutorEnable && !mOrder.defuseMeExecutorEnable)
             throw NoPermittedMethod()
 
+        val executor = order.executor!!
+
         orderDao.save(
                 order.copy(
                         status = OrderStatus.PROCESS,
@@ -452,14 +454,12 @@ class OrderController(private val orderDao: OrderDao,
 
         historyController.add(order, userFactory.myUser, OrderHistoryType.CANCEL_EXECUTOR)
 
-        if (userFactory.myUser.id == order.executor?.id) {
-            val executor = userFactory.create(order.executor) as ExecutorInfo
-            if (executor.order.count.declined >= 4) {
-                order.executor!!.isBlocked = true
-                userDao.save(
-                    order.executor!!
-                )
-            }
+        val executorFull = userFactory.create(order.executor) as ExecutorInfo
+        if (executorFull.order.count.declined >= 4) {
+            executor.isBlocked = true
+            userDao.save(
+                executor
+            )
         }
 
         return DataResponse.ok(null)
