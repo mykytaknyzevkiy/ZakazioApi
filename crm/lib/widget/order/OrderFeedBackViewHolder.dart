@@ -3,6 +3,8 @@ import 'dart:html';
 import 'package:flutter/material.dart';
 import 'package:zakazy_crm_v2/conts.dart';
 import 'package:zakazy_crm_v2/model/feedback/FeedbackModel.dart';
+import 'package:zakazy_crm_v2/widget/RatingBarWidget.dart';
+import 'package:zakazy_crm_v2/widget/user/UserAvater.dart';
 
 class OrderFeedBackViewHolder extends StatelessWidget {
   final FeedbackModel item;
@@ -32,27 +34,7 @@ class _Desktop extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Container(
-                    width: 75,
-                    height: 75,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(37.5),
-                        border: Border.all(
-                            color: primaryColor,
-                            width: 2
-                        )
-                    ),
-                    child: Center(
-                        child: Text(
-                          item.stars.toString(),
-                          style: TextStyle(
-                              fontSize: 32,
-                              fontWeight: FontWeight.bold,
-                              color: primaryColor
-                          ),
-                        )
-                    )
-                ),
+                UserAvatar(user: item.user, size: 55),
                 VerticalDivider(
                   width: 25,
                   color: Colors.transparent,
@@ -60,6 +42,11 @@ class _Desktop extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    RatingBarWidget(rate: item.stars),
+                    Divider(
+                      height: 15,
+                      color: Colors.transparent,
+                    ),
                     Text(
                         "${item.user.firstName} ${item.user.lastName}\n${item.user.middleName}",
                         style: const TextStyle(

@@ -55,25 +55,36 @@ class BlogInfoState extends State<BlogInfoScreen> {
                           color: Colors.transparent,
                           height: 40,
                         ),
-                        _titleField,
-                        Divider(
-                          height: 15,
-                          color: Colors.transparent,
+                        SizedBox(
+                          height: (MediaQuery.of(context).size.height - 230),
+                          child: SingleChildScrollView(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                _titleField,
+                                Divider(
+                                  height: 15,
+                                  color: Colors.transparent,
+                                ),
+                                Text(
+                                  "Обложка",
+                                  style: TextStyle(color: Colors.black, fontSize: 14),
+                                ),
+                                Divider(
+                                  height: 10,
+                                  color: Colors.transparent,
+                                ),
+                                _wallpaperselect,
+                                Divider(
+                                  height: 15,
+                                  color: Colors.transparent,
+                                ),
+                                _content,
+                              ],
+                            ),
+                          )
                         ),
-                        Text(
-                          "Обложка",
-                          style: TextStyle(color: Colors.black, fontSize: 14),
-                        ),
-                        Divider(
-                          height: 10,
-                          color: Colors.transparent,
-                        ),
-                        _wallpaperselect,
-                        Divider(
-                          height: 15,
-                          color: Colors.transparent,
-                        ),
-                        _content,
                         Divider(
                           height: 25,
                           color: Colors.transparent,

@@ -94,6 +94,14 @@ class UserAlertDangeral extends StatelessWidget {
       toDoIndex++;
     }
 
+    if (executorModel.isBlocked()) {
+      toDoText += "$toDoIndex) ";
+      toDoText += "Ваш аккаунт заблокирован, обратитесь за помошью";
+      toDoText += "\n";
+
+      toDoIndex++;
+    }
+
     return Padding(
         padding: const EdgeInsets.all(24),
         child: Container(

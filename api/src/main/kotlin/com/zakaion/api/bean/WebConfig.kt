@@ -27,6 +27,7 @@ class WebConfig : WebMvcConfigurer {
         registry.addConverter(StringToUserStatus())
         registry.addConverter(StringToOrderStatus())
         registry.addConverter(DateToString())
+        super.addFormatters(registry)
     }
 
     override fun configureMessageConverters(converters: MutableList<HttpMessageConverter<*>>) {
