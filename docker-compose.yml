@@ -25,7 +25,7 @@ services:
       CLOUD_PAYMENT_PRIVATE: 0e9f48b377588f22f628825b7f1e42f0
       EXTRA_FILE_URL: https://file.zakazy.online
     volumes:
-      - ./storage:/home/storage
+      - /home/storage:/home/storage
 
   socket:
     build: socket
@@ -47,6 +47,6 @@ services:
       - ./etc/letsencrypt:/etc/letsencrypt
       - ./etc/nginx/conf.d:/etc/nginx/conf.d
       - ./crm/build/web:/site/crm
-      - ./storage:/home/storage
+      - /home/storage:/home/storage
     depends_on:
       - api
