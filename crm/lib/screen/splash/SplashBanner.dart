@@ -37,16 +37,20 @@ class SplashBanner extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "РЕМОНТНЫЕ РАБОТЫ",
-            style: TextStyle(fontSize: 62, color: accentColor),
+            "ПАРТНЕРСТВО ЗА % С ДОГОВОРА\n"+
+                "CRM и ERP Система контроля\n"+
+                "заказов и исполнителей в 127\n"
+                    "нишах услуг в РФ и СНГ",
+            style: TextStyle(fontSize: 48, color: accentColor),
           ),
           Divider(
             color: Colors.transparent,
             height: 40,
           ),
           Text(
-            "Zakazy - Лушкий способ найти исполнителей\nкомнат квартир коттеджей офисов",
-            style: TextStyle(fontSize: 24, color: Colors.white70),
+            "*ТРАФИК х ЗАЯВКИ = СДЕЛКИ*\n"+
+  "СОЗДАЙ, СВОЮ НЕЙРОСЕТЬ...",
+            style: TextStyle(fontSize: 32, color: accentColor),
           )
         ],
       );

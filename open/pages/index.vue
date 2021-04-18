@@ -1,12 +1,14 @@
 <template>
   <div class="cover">
     <div class="cover__qube">
-      <h1 class="cover__title">Ремонтные работы</h1>
+      <h1 class="cover__title">CRM и ERP Система контроля</h1>
+      <p><h1 class="cover__title">заказов и исполнителей в 127\nнишах услуг в РФ и СНГ</h1></p>
+      <p><h1 class="cover__title">нишах услуг в РФ и СНГ</h1></p>
       <div class="cover__blocks">
-        <span class="cover__block">комнат</span>
-        <span class="cover__block">квартир</span>
-        <span class="cover__block">коттеджей</span>
-        <span class="cover__block">офисов</span>
+        <span class="cover__block">*ТРАФИК х ЗАЯВКИ = СДЕЛКИ*</span>
+      </div>
+      <div class="cover__blocks">
+              <span class="cover__block">СОЗДАЙ, СВОЮ НЕЙРОСЕТЬ...</span>
       </div>
       <!--      <div class="cover__nums">
         <div class="cover__num">
