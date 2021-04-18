@@ -1,5 +1,7 @@
-import 'dart:html';
 import 'package:flutter/material.dart';
+import 'dart:html' as html;
+import 'dart:html';
+import 'dart:ui' as ui;
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:rxdart/subjects.dart';
 import 'package:zakazy_crm_v2/repository/UserRepository.dart';
@@ -157,13 +159,44 @@ class ZakazioScreens {
   }
 }
 
-class ZUrlController extends PathUrlStrategy {
+class ZUrlController extends UrlStrategy {
   PlatformLocation _platformLocation = const BrowserPlatformLocation();
 
   @override
   String getPath() {
     final String path = _platformLocation.pathname + _platformLocation.search;
     return path;
+  }
+
+  @override
+  Object? getState() {
+    return null;
+  }
+
+  @override
+  Future<void> go(int count) async {
+   return;
+  }
+
+  @override
+  String prepareExternalUrl(String internalUrl) {
+    return internalUrl;
+  }
+
+  @override
+  void pushState(Object? state, String title, String url) {
+    _platformLocation.pushState(state, title, url);
+  }
+
+  @override
+  void replaceState(Object? state, String title, String url) {
+    _platformLocation.replaceState(state, title, url);
+  }
+
+  @override
+  ui.VoidCallback addPopStateListener(html.EventListener fn) {
+    _platformLocation.addPopStateListener(fn);
+    return () => _platformLocation.removePopStateListener(fn);
   }
 }
 
@@ -175,29 +208,14 @@ class ZakazioNavigator {
 
   static init() async {
     //await urlController.go(0);
-    /*final url = await js.context.callMethod("currentPath");
+    final url = await js.context.callMethod("currentPath");
     final screen = _findScreen(url);
 
     if (screen == null) {
       return;
     }
 
-    runScreen(screen);*/
-
-    /*window.addEventListener("popstate", (event) async {
-      print("popstate");
-      final url = window.location.pathname.toString().substring(1, window.location.pathname.toString().length);
-
-      print("popstate $url");
-
-      final screen = _findScreen(url);
-
-      if (screen == null) {
-        return;
-      }
-
-      runScreen(screen);
-    });*/
+    runScreen(screen);
 
     urlController.addPopStateListener((event) {
       final url = urlController.getPath().substring(1, window.location.pathname.toString().length);

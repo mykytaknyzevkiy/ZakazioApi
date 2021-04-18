@@ -176,7 +176,8 @@ class OrderController(private val orderDao: OrderDao,
                         title = editOrderModel.title,
                         content = editOrderModel.content,
                         price = editOrderModel.price,
-                        files = editOrderModel.files
+                        files = editOrderModel.files,
+                        dateLine = editOrderModel.dateLine
                 )
         )
 

@@ -4,6 +4,7 @@ import 'package:zakazy_crm_v2/conts.dart';
 import 'package:zakazy_crm_v2/model/transaction/TransactionModel.dart';
 import 'package:zakazy_crm_v2/model/unit/PagedListModel.dart';
 import 'package:zakazy_crm_v2/screen/order/info/OrderLogsList.dart';
+import 'package:zakazy_crm_v2/screens.dart';
 import 'package:zakazy_crm_v2/widget/PagesWidget.dart';
 
 class UserTransactionList extends StatelessWidget {
@@ -71,12 +72,19 @@ class _Desktop extends StatelessWidget {
                 )
             ),
             DataCell(
-                (e.order != null)
-                    ? Text(
-                    "Заказ №${e.order!.id}"
-                )
-                    : Text(
-                    "Карта"
+                GestureDetector(
+                  onTap: () {
+                    if (e.order != null) {
+                      ZakazioNavigator.pushWParams("order/info", {"id": e.order!.id});
+                    }
+                  },
+                  child: (e.order != null)
+                      ? Text(
+                      "Заказ №${e.order!.id}"
+                  )
+                      : Text(
+                      "Карта"
+                  ),
                 )
             ),
             DataCell(

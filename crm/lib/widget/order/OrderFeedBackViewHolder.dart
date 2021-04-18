@@ -36,39 +36,31 @@ class _Desktop extends StatelessWidget {
               children: [
                 UserAvatar(user: item.user, size: 75),
                 VerticalDivider(
-                  width: 25,
+                  width: 5,
                   color: Colors.transparent,
                 ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                            "${item.user.firstName} ${item.user.lastName}\n${item.user.middleName}",
-                            style: const TextStyle(
-                                fontSize: 18
-                            )
-                        ),
-                        Divider(
-                          height: 5,
-                          color: Colors.transparent,
-                        ),
-                        Text(item.comment)
-                      ],
-                    ),
-                    Divider(
-                      height: 5,
-                      color: Colors.transparent,
-                    ),
-                    SizedBox(
-                        width: 300,
-                        child: RatingBarWidget(rate: item.stars, isEnable: false)
-                    ),
-                  ],
+                Expanded(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                          "${item.user.firstName} ${item.user.lastName} ${item.user.middleName}",
+                          style: const TextStyle(
+                              fontSize: 18
+                          )
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Text(item.comment)
+                    ],
+                  )
+                ),
+                SizedBox(
+                    width: 200,
+                    child: RatingBarWidget(rate: item.stars, isEnable: false)
                 )
               ]
           )

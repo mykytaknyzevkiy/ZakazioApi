@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:zakazy_crm_v2/conts.dart';
 import 'package:zakazy_crm_v2/model/user/UserInfoModel.dart';
+import 'package:zakazy_crm_v2/screens.dart';
 
 class UserAvatar extends StatelessWidget {
   final UserInfoModel user;
@@ -11,11 +12,12 @@ class UserAvatar extends StatelessWidget {
   UserAvatar({required this.user, required this.size});
 
   @override
-  Widget build(BuildContext context) {
-    return user.avatar != null
+  Widget build(BuildContext context) => GestureDetector(
+    onTap: () => ZakazioNavigator.pushWParams("user/profile", {"userID": user.id}),
+    child: user.avatar != null
         ? CircleAvatar(
-            backgroundImage: CachedNetworkImageProvider(fileUrl(user.avatar!), imageRenderMethodForWeb: ImageRenderMethodForWeb.HtmlImage),
-            radius: size / 2)
-        : Icon(Icons.account_circle, size: this.size, color: primaryColor);
-  }
+        backgroundImage: CachedNetworkImageProvider(fileUrl(user.avatar!), imageRenderMethodForWeb: ImageRenderMethodForWeb.HtmlImage),
+        radius: size / 2)
+        : Icon(Icons.account_circle, size: this.size, color: primaryColor)
+  );
 }

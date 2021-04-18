@@ -81,7 +81,7 @@ class OrderRest extends ZakazioRest {
   Future<DataResponse<Null>> editOrder(int id, String title, String content,
       double price, String dateLine, List<String> files) async {
     final data = await put("/order/$id/edit", {},
-        {"title": title, "content": content, "price": price, "files": files});
+        {"title": title, "content": content, "price": price, "files": files, "dateLine": dateLine});
 
     try {
       return DataResponse.fromJson(data, (_) => null);
