@@ -60,7 +60,10 @@ class SecurityConfig(private val authTokenService: AuthTokenService) : WebSecuri
 
                         "/blog/**",
 
-                        "/settings/**"
+                        "/settings/**",
+
+                        "/portfolio/list/user/*",
+                        "/portfolio/*/info"
                 ).permitAll()
                 .anyRequest()
                 .authenticated()
