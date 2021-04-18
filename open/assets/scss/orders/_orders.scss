@@ -1,0 +1,12 @@
+.orders {
+  background-color: #c6c6c6;
+  @include content;
+}
+.orders__title {
+  @include page-title;
+}
+@include media-breakpoint-down(md) {
+  .orders {
+    padding-top: 30px;
+  }
+}

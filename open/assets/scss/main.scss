@@ -1,0 +1,30 @@
+@import "../../node_modules/bootstrap/scss/bootstrap-reboot.scss";
+@import "../../node_modules/bootstrap/scss/_containers.scss";
+
+@import "vars";
+@import "fonts";
+@import "mixins";
+
+@import "global";
+
+@import "layout/header";
+@import "layout/main";
+@import "layout/footer";
+
+@import "index/cover";
+@import 'index/_register.scss';
+
+@import 'orders/orders';
+@import 'orders/_order.scss';
+
+@import 'executors/_executors.scss';
+@import 'executors/_executor.scss';
+
+@import 'components/_rate.scss';
+@import 'components/_paginator.scss';
+
+@import 'profile/_profile.scss';
+
+@import 'blog/_blog.scss';
+
+

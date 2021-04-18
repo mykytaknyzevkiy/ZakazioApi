@@ -1,0 +1,26 @@
+.blog {
+  @include content;
+}
+.blog__title  {
+  font-family: $font-alt;
+  margin-bottom: 20px;
+}
+.blog__img {
+  margin-bottom: 30px;
+  width: 100%;
+  img {
+    max-width: 100%;
+    object-fit: contain;
+  }
+}
+.blog__item {
+  margin-bottom: 30px;
+  background-color: #fff;
+}
+.blog__item-separator {
+  margin-bottom: 60px;
+}
+.blog__item-title {
+  font-family: $font-alt;
+  font-size: 20px;
+}

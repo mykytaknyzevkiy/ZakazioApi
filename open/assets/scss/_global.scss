@@ -1,0 +1,17 @@
+* {
+  font-family: Arial, sans, serif;
+}
+#wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.content {
+  overflow: hidden;
+}
+
+body.no-overflow {
+  overflow: hidden;
+}

@@ -1,0 +1,17 @@
+@font-face {
+  font-family: 'nfscarbon';
+  src: url('~assets/fonts/nfscarbonfont.woff2') format('woff2'),
+  url('~assets/fonts/nfscarbonfont.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Ponter Alt';
+  src: url('~assets/fonts/alt.eot');
+  src: url('~assets/fonts/alt.eot?#iefix') format('embedded-opentype'),
+  url('~assets/fonts/alt.woff2') format('woff2'),
+  url('~assets/fonts/alt.woff') format('woff'),
+  url('~assets/fonts/alt.ttf') format('truetype'),
+  url('~assets/fonts/alt.svg#Ponter Alt') format('svg');
+}

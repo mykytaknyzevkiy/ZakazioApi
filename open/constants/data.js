@@ -1,0 +1,10 @@
+export const TIN_NUMBER = '640901136680'
+export const OGRN_NUMBER = '317784700217920'
+export const PHONE_NUMBER = '8 (965) 765 76 05'
+export const WHATSUP_LINK = '8 (965) 765 76 05'
+export const INSTAGRAM_LINK = 'https://instagram.com/'
+export const VK_LINK = 'https://vk.com/'
+export const SLOGAN = 'Биржа строительных работ'
+export const CONTACTS_LINK = '#'
+export const HELP_LINK = '#'
+export const COPYRIGHT = `© ${new Date().getFullYear()} "Zakazy.online" - ИП Брякин Максим Игоревич`

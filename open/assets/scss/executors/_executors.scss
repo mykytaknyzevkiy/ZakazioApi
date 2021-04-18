@@ -1,0 +1,13 @@
+.executors {
+  background-color: #dedede;
+  padding-top: 100px;
+  @include content;
+}
+.executors__title {
+  @include page-title();
+}
+@include media-breakpoint-down(sm) {
+  .executors {
+    padding-top: 30px;
+  }
+}
