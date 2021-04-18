@@ -16,7 +16,7 @@ RUN npm run build
 EXPOSE 3737
 
 # set app serving to permissive / assigned
-ENV NUXT_HOST=127.0.0.1
+ENV NUXT_HOST=0.0.0.0
 # set app port
 ENV NUXT_PORT=3737
 
