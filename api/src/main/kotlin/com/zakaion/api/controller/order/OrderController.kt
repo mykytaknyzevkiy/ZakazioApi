@@ -454,11 +454,10 @@ class OrderController(private val orderDao: OrderDao,
 
         if (userFactory.myUser.id == order.executor?.id) {
             val executor = userFactory.create(order.executor) as ExecutorInfo
-            if (executor.order.count.declined > 4) {
+            if (executor.order.count.declined >= 4) {
+                order.executor!!.isBlocked = true
                 userDao.save(
-                    executor.user.copy(
-                        isBlocked = true
-                    )
+                    order.executor!!
                 )
             }
         }
