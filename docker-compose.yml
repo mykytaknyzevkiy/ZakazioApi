@@ -38,6 +38,7 @@ services:
   sdk:
     build: sdk
     container_name: sdk
+    network_mode: host
     ports:
       - 8282:8282
 
