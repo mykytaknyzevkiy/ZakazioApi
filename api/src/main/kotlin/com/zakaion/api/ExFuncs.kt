@@ -1,5 +1,6 @@
 package com.zakaion.api
 
+import com.zakaion.api.ExFuncs.toPage
 import com.zakaion.api.entity.user.UserImp
 import kotlinx.coroutines.*
 import org.springframework.core.io.ClassPathResource
@@ -31,7 +32,7 @@ object ExFuncs {
     }
 
     suspend fun <T, U> Page<T>.mapWork(convert: suspend (T) -> U): Page<U> {
-        return this
+        val list = this
             .toList()
             .map {
                 GlobalScope.async(Dispatchers.IO) {
@@ -40,7 +41,8 @@ object ExFuncs {
             }
             .toList()
             .awaitAll()
-            .toPage(this.pageable)
+
+        return PageImpl(list, pageable, this.totalElements)
     }
 
 }

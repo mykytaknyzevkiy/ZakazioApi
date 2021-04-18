@@ -25,18 +25,19 @@ class _RatingBarWidget extends State<RatingBarWidget> {
   Widget build(BuildContext context) => SizedBox(
     width: double.infinity,
     child: Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.start,
       mainAxisSize: MainAxisSize.max,
       children: List.generate
         (5,
               (index) => Padding(
-                padding: EdgeInsets.only(left: 4, right: 4),
-                child: IconButton(
+                padding: EdgeInsets.only(left: index > 0 ? 4 : 0, right: 4),
+                child: isEnable
+                  ? IconButton(
                     icon: Icon(
                       Icons.star_rate,
                       color: (_rate >= (index + 1))
-                        ? primaryColor
-                        : Colors.grey,
+                          ? primaryColor
+                          : Colors.grey,
                       size: 32,
                     ),
                     onPressed: () {
@@ -48,6 +49,13 @@ class _RatingBarWidget extends State<RatingBarWidget> {
                       }
                     }
                 )
+                  : Icon(
+                Icons.star_rate,
+                color: (_rate >= (index + 1))
+                    ? primaryColor
+                    : Colors.grey,
+                size: 32,
+              )
               )
       )
     )

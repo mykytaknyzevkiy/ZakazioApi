@@ -34,30 +34,40 @@ class _Desktop extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                UserAvatar(user: item.user, size: 55),
+                UserAvatar(user: item.user, size: 75),
                 VerticalDivider(
                   width: 25,
                   color: Colors.transparent,
                 ),
                 Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    RatingBarWidget(rate: item.stars),
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                            "${item.user.firstName} ${item.user.lastName}\n${item.user.middleName}",
+                            style: const TextStyle(
+                                fontSize: 18
+                            )
+                        ),
+                        Divider(
+                          height: 5,
+                          color: Colors.transparent,
+                        ),
+                        Text(item.comment)
+                      ],
+                    ),
                     Divider(
-                      height: 15,
+                      height: 5,
                       color: Colors.transparent,
                     ),
-                    Text(
-                        "${item.user.firstName} ${item.user.lastName}\n${item.user.middleName}",
-                        style: const TextStyle(
-                            fontSize: 18
-                        )
+                    SizedBox(
+                        width: 300,
+                        child: RatingBarWidget(rate: item.stars, isEnable: false)
                     ),
-                    Divider(
-                      height: 10,
-                      color: Colors.transparent,
-                    ),
-                    Text(item.comment)
                   ],
                 )
               ]
