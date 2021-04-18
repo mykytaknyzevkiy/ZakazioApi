@@ -38,8 +38,13 @@ services:
   sdk:
     build: sdk
     container_name: sdk
+    volumes:
+      - './sdk:/app'
+      - '/app/node_modules'
     ports:
       - 8282:8282
+    environment:
+      - CHOKIDAR_USEPOLLING=true
 
     #Nginx Service
   webserver:
