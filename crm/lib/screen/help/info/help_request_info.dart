@@ -6,6 +6,7 @@ import 'package:zakazy_crm_v2/screen/HomeScreen.dart';
 import 'package:zakazy_crm_v2/screen/ZakazyViewModel.dart';
 import 'package:zakazy_crm_v2/screen/order/info/OrderClientInfoCard.dart';
 import 'package:zakazy_crm_v2/widget/MaterialButton.dart';
+import 'package:zakazy_crm_v2/widget/order/OrderFileViewHolder.dart';
 
 class HelpRequestInfoScreen extends StatefulWidget {
   final int id;
@@ -72,6 +73,22 @@ class _HelpRequestInfoState
                             style: TextStyle(fontSize: 16),
                           ),
                           Divider(
+                            height: 10,
+                            color: Colors.transparent,
+                          ),
+                          SizedBox(
+                            width: double.infinity,
+                            child: Wrap(
+                              spacing: 10,
+                              runSpacing: 10,
+                              children: List.generate(snapShot.requireData!.files.length,
+                                      (index) => OrderFileViewHolde(
+                                        fileName: snapShot.requireData!.files[index]
+                                      )
+                              )
+                            )
+                          ),
+                          Divider(
                             height: 25,
                             color: Colors.transparent,
                           ),
@@ -91,12 +108,14 @@ class _HelpRequestInfoState
 
   Widget buildBtn(HelpRequestModel item) => MyButton(
       title: (item.status == "OPEN") ? "Начать работу" : "Завершить",
-      onPressed: () {
+      onPressed: () async {
         if (item.status == "OPEN")
-          viewModel().process(id);
+          await viewModel().process(id);
         else
-          viewModel().closeN(id);
-        setState(() {});
+          await viewModel().closeN(id);
+        setState(() {
+
+        });
       },
       isEnable: true);
 }

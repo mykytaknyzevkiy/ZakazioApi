@@ -7,6 +7,8 @@ class HelpRest extends ZakazioRest {
   final route = "/help";
 
   Future<DataResponse<Null?>> add(String message, List<String> files) async {
+    print("files size ${files.length}");
+
     final json =
         await post("$route/add", {}, {"message": message, "files": files});
 

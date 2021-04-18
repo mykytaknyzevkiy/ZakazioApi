@@ -20,12 +20,15 @@ class PostHelpViewModel extends ZakazyViewModel {
 
     final fileUrls = List<String>.of({});
 
-    files.forEach((element) async {
+    for (final element in files) {
       final url = await _fileResponse.uploadFile(element);
       if (url != null) {
+        print("file add");
         fileUrls.add(url);
+      } else {
+        print("file not add");
       }
-    });
+    }
 
     _helpRest.add(message, fileUrls);
 

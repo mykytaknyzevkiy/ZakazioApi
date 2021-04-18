@@ -1,6 +1,9 @@
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'dart:html' as html;
+
+import 'package:zakazy_crm_v2/conts.dart';
 
 class OrderFileViewHolde extends StatelessWidget {
   final PlatformFile? file;
@@ -8,14 +11,25 @@ class OrderFileViewHolde extends StatelessWidget {
 
   final Function(PlatformFile)? onDelete;
   final Function(String)? onDeleteViaName;
-  final Function(String)? onDownload;
+  Function(String)? onDownload;
 
-  const OrderFileViewHolde(
+  OrderFileViewHolde(
       {this.file,
       this.fileName,
       this.onDelete,
       this.onDownload,
-      this.onDeleteViaName});
+      this.onDeleteViaName}) {
+
+    if (onDownload == null && onDelete == null && onDeleteViaName == null) {
+      onDownload = (fileName) {
+        html.AnchorElement anchorElement = html.AnchorElement();
+        anchorElement.href = fileUrl(fileName);
+        anchorElement.download = fileName;
+        anchorElement.click();
+      };
+    }
+
+  }
 
   @override
   Widget build(BuildContext context) => GestureDetector(
