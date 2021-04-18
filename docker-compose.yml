@@ -47,7 +47,7 @@ services:
       - ./etc/letsencrypt:/etc/letsencrypt
       - ./etc/nginx/conf.d:/etc/nginx/conf.d
       - ./crm/build/web:/site/crm
-      - ./sdk/dist:/site/sdk
+      - ./sdk/build:/site/sdk
       - /home/storage:/home/storage
     depends_on:
       - api
