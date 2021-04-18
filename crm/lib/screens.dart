@@ -196,7 +196,7 @@ class ZUrlController extends UrlStrategy {
   @override
   ui.VoidCallback addPopStateListener(html.EventListener fn) {
     _platformLocation.addPopStateListener(fn);
-    return () => _platformLocation.removePopStateListener(fn);
+    return () => {};
   }
 }
 
