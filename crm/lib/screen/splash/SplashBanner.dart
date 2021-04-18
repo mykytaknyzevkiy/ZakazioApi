@@ -27,7 +27,7 @@ class SplashBanner extends StatelessWidget {
   }
 
   _titleW() => Text(
-        appName,
+        "Zakazy - ПАРТНЕРСТВО ЗА % С ДОГОВОРА",
         style: TextStyle(
             fontWeight: FontWeight.bold, fontSize: 42, color: accentColor),
       );
@@ -37,7 +37,6 @@ class SplashBanner extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "ПАРТНЕРСТВО ЗА % С ДОГОВОРА\n"+
                 "CRM и ERP Система контроля\n"+
                 "заказов и исполнителей в 127\n"
                     "нишах услуг в РФ и СНГ",
