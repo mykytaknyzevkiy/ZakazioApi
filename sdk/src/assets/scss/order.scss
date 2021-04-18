@@ -1,0 +1,210 @@
+@font-face {
+    font-family: 'Ponter Alt';
+    src: url('~@/assets/fonts/alt.eot');
+    src: url('~@/assets/fonts/alt.eot?#iefix') format('embedded-opentype'),
+    url('~@/assets/fonts/alt.woff2') format('woff2'),
+    url('~@/assets/fonts/alt.woff') format('woff'),
+    url('~@/assets/fonts/alt.ttf') format('truetype'),
+    url('~@/assets/fonts/alt.svg#Ponter Alt') format('svg');
+}
+
+@mixin btn {
+    background-color: #000;
+    color: #fff;
+    border: none;
+    font-size: 15px;
+    height: 35px;
+    margin-right: 42px;
+    padding: 0 30px;
+    border-radius: 70px;
+    font-weight: bold;
+    text-transform: uppercase;
+    box-shadow: 0 5px 9.1px 0.9px rgba(0, 0, 0, 0.4);
+}
+@mixin placeholder {
+    ::-webkit-input-placeholder {@content}
+    :-moz-placeholder           {@content}
+    ::-moz-placeholder          {@content}
+    :-ms-input-placeholder      {@content}
+}
+
+
+$alt: 'Ponter Alt';
+
+#app {
+    background-color: #dbdbdb;
+    min-height: 100vh;
+    padding-top: 50px;
+}
+
+.title {
+    color: #7d5458;
+    text-transform: uppercase;
+    font-family: $alt;
+    margin-bottom: 18px;
+}
+
+.order {
+    background-color: #fff;
+    padding: 40px 60px;
+}
+
+.order__title {
+    font-family: $alt;
+    color: #7d5458;
+    margin-bottom: 20px;
+&_finish {
+     margin-bottom: 0;
+     font-size: 25px;
+     text-align: center;
+ }
+}
+
+.autocomplete {
+    height: 70px;
+    position: relative;
+    background-color: #dedede;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+&:after {
+     position: absolute;
+     right: 20px;
+     margin-left: auto;
+     margin-right: 0;
+     content: '';
+     display: block;
+     width: 10px;
+     height: 10px;
+     margin-top: 10px;
+     border: 10px solid transparent; /* Прозрачные границы */
+     border-top: 10px solid #000; /* Добавляем треугольник */
+ }
+}
+.autocomplete__search {
+    display: block;
+    height: 100%;
+    border: none;
+    width: 100%;
+    background-color: #dedede;
+    line-height: 100%;
+    padding: 0 40px 0 20px;
+    font-family: $alt;
+&:focus {
+     background-color: #fff;
+     outline: none;
+     border-top: 2px solid #000;
+     border-left: 2px solid #000;
+     border-right: 2px solid #000;
+ }
+}
+.autocomplete__list {
+    display: none;
+    position: absolute;
+    width: 100%;
+    top: calc(100%);
+    background-color: #dedede;
+    max-height: 200px;
+    overflow-y: scroll;
+    border-bottom: 2px solid #000;
+    border-left: 2px solid #000;
+    border-right: 2px solid #000;
+}
+.autocomplete__list_active {
+    display: block;
+    background-color: #dedede;
+}
+.autocomplete__item {
+    width: 100%;
+    border: none;
+    padding: 20px;
+    text-transform: uppercase;
+    font-weight: bold;
+&:hover {
+     background-color: #000;
+     color: #fff;
+ }
+}
+
+.order__select {
+    background-color: #dedede;
+    font-family: $alt;
+    height: 70px;
+    width: 100%;
+    font-size: 14.5px;
+    padding: 0 33px;
+    border: none;
+    outline: none;
+    margin-bottom: 30px;
+}
+
+.order__category {
+    @include btn;
+    margin-bottom: 20px;
+&_active {
+     background-color: lighten(#000, 30%);
+ }
+}
+
+.order__next {
+    height: 45px;
+    margin-top: 20px;
+    border: 2px solid #000;
+    font-family: $alt;
+    color: #000;
+    padding: 0 25px;
+&:disabled {
+     border: 2px solid lighten(#000, 70%);
+     color: lighten(#000, 70%);
+ }
+}
+.order__input {
+    background-color: #dedede;
+    border: none;
+    height: 70px;
+    padding: 20px;
+    width: 100%;
+    margin-bottom: 20px;
+@include placeholder {
+    font-family: $alt;
+}
+
+&_textarea {
+     min-height: 190px;
+ }
+}
+
+@include placeholder {
+    font-family: $alt;
+}
+
+.order__hr {
+    height: 4px !important;
+    background-color: #ffcd00;
+    opacity: 1;
+}
+
+.order__add-file {
+    @include btn;
+    display: flex;
+    align-items: center;
+&:before {
+     height: 15px;
+     width: 15px;
+     background-color: transparent;
+     display: block;
+     content: '';
+     max-width: 100%;
+     background-size: contain;
+     background-repeat: no-repeat;
+     background-position: center;
+     margin-right: 10px;
+     background-image: url("data:image/svg+xml,%3Csvg fill='%23ffffff' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' version='1.1' id='Capa_1' x='0px' y='0px' viewBox='0 0 477.863 477.863' style='enable-background:new 0 0 477.863 477.863;' xml:space='preserve'%3E%3Cg%3E%3Cg%3E%3Cpath d='M409.598,153.596h-85.333c-9.426,0-17.067,7.641-17.067,17.067s7.641,17.067,17.067,17.067h85.333 c9.426,0,17.067,7.641,17.067,17.067v221.867c0,9.426-7.641,17.067-17.067,17.067H68.265c-9.426,0-17.067-7.641-17.067-17.067 V204.796c0-9.426,7.641-17.067,17.067-17.067h85.333c9.426,0,17.067-7.641,17.067-17.067s-7.641-17.067-17.067-17.067H68.265 c-28.277,0-51.2,22.923-51.2,51.2v221.867c0,28.277,22.923,51.2,51.2,51.2h341.333c28.277,0,51.2-22.923,51.2-51.2V204.796 C460.798,176.519,437.875,153.596,409.598,153.596z'/%3E%3C/g%3E%3C/g%3E%3Cg%3E%3Cg%3E%3Cpath d='M336.331,90.33L250.998,4.997c-6.664-6.663-17.468-6.663-24.132,0L141.532,90.33c-6.548,6.78-6.36,17.584,0.42,24.132 c6.614,6.388,17.099,6.388,23.713,0l56.201-56.201V341.33c0,9.426,7.641,17.067,17.067,17.067s17.067-7.641,17.067-17.067V58.262 l56.201,56.201c6.78,6.548,17.584,6.36,24.132-0.42C342.719,107.429,342.719,96.944,336.331,90.33z'/%3E%3C/g%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3Cg%3E%3C/g%3E%3C/svg%3E");
+ }
+}
+
+@media (max-width: 520px) {
+    .order {
+        padding: 30px;
+    }
+}
