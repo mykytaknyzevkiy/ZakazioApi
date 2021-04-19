@@ -23,8 +23,8 @@ class DashboardViewModel extends ZakazyViewModel {
     if (selectedDates.value!.key == DateType.CUSTOM) {
       dateInto = selectedDates.value!.value;
     } else if (selectedDates.value!.key == DateType.WEEK) {
-      dateInto = DateInto(DateTime.now().add(Duration(days: -1)),
-          DateTime.now().add(Duration(days: 7)));
+      dateInto = DateInto(DateTime.now().add(Duration(days: -7)),
+          DateTime.now().add(Duration(days: 1)));
     } else if (selectedDates.value!.key == DateType.MONTH) {
       dateInto = DateInto(
           DateTime(DateTime.now().year, DateTime.now().month, 1),
