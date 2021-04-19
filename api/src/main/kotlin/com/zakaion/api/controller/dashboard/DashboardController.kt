@@ -459,7 +459,7 @@ class DashboardController(private val orderDao: OrderDao,
     }
 
     @GetMapping("/analytic")
-    suspend fun category(@RequestParam(name = "start_date")
+    suspend fun analytic(@RequestParam(name = "start_date")
                          @DateTimeFormat(pattern = "yyyy-MM-dd") startDate: Date,
                          @RequestParam(name = "end_date")
                          @DateTimeFormat(pattern = "yyyy-MM-dd") endDate: Date) = withContext(Dispatchers.IO) {

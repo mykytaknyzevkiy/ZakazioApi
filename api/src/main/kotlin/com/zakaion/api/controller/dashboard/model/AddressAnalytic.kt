@@ -21,11 +21,29 @@ data class AddressAnalytic(
         }
         data
     },
-    override var orderCount: Int = 0,
+    override var orderCount: Int = run {
+        var count = 0
+        cityList.forEach {
+            count += it.orderCount
+        }
+        count
+    },
     override var executorCount: Int = executors.size,
     override var partnerCount: Int = partners.size,
-    override var orderTotalPrice: Float = 0f,
-    override var systemTotalPrice: Float = 0f,
+    override var orderTotalPrice: Float = run {
+        var count = 0f
+        cityList.forEach {
+            count += it.orderTotalPrice
+        }
+        count
+    },
+    override var systemTotalPrice: Float = run {
+        var count = 0f
+        cityList.forEach {
+            count += it.systemTotalPrice
+        }
+        count
+    }
 ): SampleAnalytic(executors, partners, orderCount, executorCount, partnerCount, orderTotalPrice, systemTotalPrice)
 
 data class CityAnalytic(
