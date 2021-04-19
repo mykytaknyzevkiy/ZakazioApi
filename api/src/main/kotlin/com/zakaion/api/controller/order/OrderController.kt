@@ -20,6 +20,7 @@ import com.zakaion.api.factor.OrderFactor
 import com.zakaion.api.factor.UserFull
 import com.zakaion.api.factor.user.UserFactory
 import com.zakaion.api.model.*
+import com.zakaion.api.roleControllers.CanSuperAdmin
 import com.zakaion.api.service.*
 import com.zakaion.api.unit.ImportExcellService
 import kotlinx.coroutines.*
@@ -579,6 +580,13 @@ class OrderController(private val orderDao: OrderDao,
         }
 
         return DataResponse.ok(uid)
+    }
+
+    @PostMapping("/reset")
+    @CanSuperAdmin
+    fun reset(): DataResponse<Nothing?> {
+        orderDao.deleteAll()
+        return DataResponse.ok(null)
     }
 
 }

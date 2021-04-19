@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:zakazy_crm_v2/model/user/RoleType.dart';
+import 'package:zakazy_crm_v2/unit/RussianPhoneNumberFormater.dart';
 import 'package:zakazy_crm_v2/widget/MaterialButton.dart';
 import 'package:zakazy_crm_v2/widget/ZTextField.dart';
 import 'package:zakazy_crm_v2/unit/Expensions.dart';
@@ -20,7 +21,9 @@ class CreateUserScreen extends StatelessWidget {
 
   final _clientEmail = ZTextField(hint: "Email");
 
-  final _clientPhone = ZTextField(hint: "Номер телефона");
+  final _clientPhone = ZTextField(hint: "Номер телефона", inputFormatters: [
+    RussianPhoneNumberFormat()
+  ],);
 
   final _clientPassword = ZTextField(hint: "Пароль");
 
