@@ -45,4 +45,13 @@ object ExFuncs {
         return PageImpl(list, pageable, this.totalElements)
     }
 
+    suspend fun <T> Page<T>.filterWork(filter: (T) -> Boolean): Page<T> {
+        val list = this
+            .toList()
+            .filter(filter)
+            .toList()
+
+        return PageImpl(list, pageable, this.totalElements)
+    }
+
 }

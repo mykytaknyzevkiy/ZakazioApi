@@ -135,11 +135,10 @@ abstract class RoleUserController(private val userDao: UserDao,
                         && masterOperator(it)
             }
             .toList()
-            .toPage(pageable)
-            .mapWork { userFactory.createWork(it, myUser)!! }
+            .map { userFactory.createWork(it, myUser)!! }
             .filter {
                     it.status == status || status == null
-                }
+            }
             .sortedByDescending {
                 if (it is ExecutorInfo)
                     return@sortedByDescending it.rate.toLong()
