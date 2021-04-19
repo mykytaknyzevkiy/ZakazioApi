@@ -62,7 +62,7 @@ export default {
       {
         hid: 'description',
         name: 'description',
-        content: 'Биржа строительных работ',
+        content: 'ПАРТНЕРСТВО ЗА % С ДОГОВОРА',
       },
     ],
   },

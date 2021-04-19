@@ -24,7 +24,7 @@ class MyProfileViewModel extends UserProfileViewModel<UserInfoModel> {
       helpMessageData.add(HelpMessageBubble("Советуем вам подтвердить вашу Email", MapEntry("подтвердить", () => {
         onEmailVertificate()
       })));
-    } else if (!user.passportActive && [RoleType.PARTNER, RoleType.EXECUTOR].contains(user.roleInfo())) {
+    } else if (!user.passportActive && !user.passportInProgress && [RoleType.PARTNER, RoleType.EXECUTOR].contains(user.roleInfo())) {
       helpMessageData.add(HelpMessageBubble("Советуем вам загрузить паспортные данные", MapEntry("загрузить", () => {
         onPasportVerificate()
       })));

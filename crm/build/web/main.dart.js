@@ -79362,7 +79362,7 @@ case 3:p=q.ch.e.a
 p.toString
 if(p.Q==null)q.a.k(0,new E.ke("\u0421\u043e\u0432\u0435\u0442\u0443\u0435\u043c \u0432\u0430\u043c \u0443\u0441\u0442\u0430\u043d\u043e\u0432\u0438\u0442\u044c \u0430\u0434\u0440\u0435\u0441 \u0440\u0430\u0431\u043e\u0442\u044b \u0447\u0442\u043e\u0431\u044b \u043f\u0440\u043e\u0434\u043e\u043b\u0436\u0438\u0442\u044c \u0441 \u043d\u0430\u043c\u0438 \u0440\u0430\u0431\u043e\u0430\u0442\u044c",new P.aw("\u0443\u0441\u0442\u0430\u043d\u043e\u0432\u0438\u0442\u044c",new G.a9f(q),t.Ov)))
 else if(!p.x&&C.b.A(H.a([C.aa,C.ab],t.fs),A.bB(p.ch)))q.a.k(0,new E.ke("\u0421\u043e\u0432\u0435\u0442\u0443\u0435\u043c \u0432\u0430\u043c \u043f\u043e\u0434\u0442\u0432\u0435\u0440\u0434\u0438\u0442\u044c \u0432\u0430\u0448\u0443 Email",new P.aw("\u043f\u043e\u0434\u0442\u0432\u0435\u0440\u0434\u0438\u0442\u044c",new G.a9g(q),t.Ov)))
-else if(!p.y&&C.b.A(H.a([C.aa,C.ab],t.fs),A.bB(p.ch)))q.a.k(0,new E.ke("\u0421\u043e\u0432\u0435\u0442\u0443\u0435\u043c \u0432\u0430\u043c \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044c \u043f\u0430\u0441\u043f\u043e\u0440\u0442\u043d\u044b\u0435 \u0434\u0430\u043d\u043d\u044b\u0435",new P.aw("\u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044c",new G.a9h(q),t.Ov)))
+else if(!p.y&&!p.cy&&C.b.A(H.a([C.aa,C.ab],t.fs),A.bB(p.ch)))q.a.k(0,new E.ke("\u0421\u043e\u0432\u0435\u0442\u0443\u0435\u043c \u0432\u0430\u043c \u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044c \u043f\u0430\u0441\u043f\u043e\u0440\u0442\u043d\u044b\u0435 \u0434\u0430\u043d\u043d\u044b\u0435",new P.aw("\u0437\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044c",new G.a9h(q),t.Ov)))
 return P.l(null,r)}})
 return P.m($async$dC,r)},
 AU:function(a,b){return this.arx(a,b)},
@@ -80417,7 +80417,7 @@ while(true)switch(s){case 0:return P.l(null,r)}})
 return P.m($async$C1,r)}}
 T.C2.prototype={
 t:function(a,b){var s=null,r=X.a1Z(C.bg,new L.rT("assets/image/background.jpg"),s),q=P.ai(C.k.aV(76.5),0,0,0),p=t.p
-return M.J(s,M.J(s,new T.Z(new V.S(32,32,32,32),T.G(H.a([L.o("Zakazy-CRM V2.71",s,s,s,A.I(s,s,C.r,s,s,s,s,s,s,s,s,42,s,C.z,s,s,!0,s,s,s,s,s,s,s),s,s),T.cB(T.G(H.a([L.o("\u041f\u0410\u0420\u0422\u041d\u0415\u0420\u0421\u0422\u0412\u041e \u0417\u0410 % \u0421 \u0414\u041e\u0413\u041e\u0412\u041e\u0420\u0410\nCRM \u0438 ERP \u0421\u0438\u0441\u0442\u0435\u043c\u0430 \u043a\u043e\u043d\u0442\u0440\u043e\u043b\u044f\n\u0437\u0430\u043a\u0430\u0437\u043e\u0432 \u0438 \u0438\u0441\u043f\u043e\u043b\u043d\u0438\u0442\u0435\u043b\u0435\u0439 \u0432 127\n\u043d\u0438\u0448\u0430\u0445 \u0443\u0441\u043b\u0443\u0433 \u0432 \u0420\u0424 \u0438 \u0421\u041d\u0413",s,s,s,A.I(s,s,C.r,s,s,s,s,s,s,s,s,48,s,s,s,s,!0,s,s,s,s,s,s,s),s,s),Z.p(C.d,40),L.o("*\u0422\u0420\u0410\u0424\u0418\u041a \u0445 \u0417\u0410\u042f\u0412\u041a\u0418 = \u0421\u0414\u0415\u041b\u041a\u0418*\n\u0421\u041e\u0417\u0414\u0410\u0419, \u0421\u0412\u041e\u042e \u041d\u0415\u0419\u0420\u041e\u0421\u0415\u0422\u042c...",s,s,s,A.I(s,s,C.r,s,s,s,s,s,s,s,s,32,s,s,s,s,!0,s,s,s,s,s,s,s),s,s)],p),C.l,C.ap,C.e,C.h),9)],p),C.l,C.f,C.e,C.h),s),C.i,s,s,new S.bD(q,s,s,s,s,s,C.F),s,s,s,s,s,s,s),C.i,s,s,new S.bD(s,r,s,s,s,s,C.F),s,s,s,s,s,s,s)}}
+return M.J(s,M.J(s,new T.Z(new V.S(32,32,32,32),T.G(H.a([L.o("Zakazy - \u041f\u0410\u0420\u0422\u041d\u0415\u0420\u0421\u0422\u0412\u041e \u0417\u0410 % \u0421 \u0414\u041e\u0413\u041e\u0412\u041e\u0420\u0410",s,s,s,A.I(s,s,C.r,s,s,s,s,s,s,s,s,42,s,C.z,s,s,!0,s,s,s,s,s,s,s),s,s),T.cB(T.G(H.a([L.o("CRM \u0438 ERP \u0421\u0438\u0441\u0442\u0435\u043c\u0430 \u043a\u043e\u043d\u0442\u0440\u043e\u043b\u044f\n\u0437\u0430\u043a\u0430\u0437\u043e\u0432 \u0438 \u0438\u0441\u043f\u043e\u043b\u043d\u0438\u0442\u0435\u043b\u0435\u0439 \u0432 127\n\u043d\u0438\u0448\u0430\u0445 \u0443\u0441\u043b\u0443\u0433 \u0432 \u0420\u0424 \u0438 \u0421\u041d\u0413",s,s,s,A.I(s,s,C.r,s,s,s,s,s,s,s,s,48,s,s,s,s,!0,s,s,s,s,s,s,s),s,s),Z.p(C.d,40),L.o("*\u0422\u0420\u0410\u0424\u0418\u041a \u0445 \u0417\u0410\u042f\u0412\u041a\u0418 = \u0421\u0414\u0415\u041b\u041a\u0418*\n\u0421\u041e\u0417\u0414\u0410\u0419, \u0421\u0412\u041e\u042e \u041d\u0415\u0419\u0420\u041e\u0421\u0415\u0422\u042c...",s,s,s,A.I(s,s,C.r,s,s,s,s,s,s,s,s,32,s,s,s,s,!0,s,s,s,s,s,s,s),s,s)],p),C.l,C.ap,C.e,C.h),9)],p),C.l,C.f,C.e,C.h),s),C.i,s,s,new S.bD(q,s,s,s,s,s,C.F),s,s,s,s,s,s,s),C.i,s,s,new S.bD(s,r,s,s,s,s,C.F),s,s,s,s,s,s,s)}}
 F.azo.prototype={
 $1:function(a){return new T.nP(null)},
 $S:653}
@@ -81359,7 +81359,7 @@ V.ako.prototype={
 $2:function(a,b){var s,r,q,p=null
 if(b.b==null)return M.J(p,p,C.i,p,p,p,p,p,p,p,p,p,p)
 s=t.w
-r=a.B(s).f.a.a>=500?new T.Z(new V.S(24,32,24,14),L.o("Zakazy-CRM V2.71",p,p,p,A.I(p,p,p,p,p,p,p,p,p,p,p,24,p,C.z,p,p,!0,p,p,p,p,p,p,p),p,p),p):M.J(p,p,C.i,p,p,p,p,p,p,p,p,p,p)
+r=a.B(s).f.a.a>=500?new T.Z(new V.S(24,32,24,14),L.o("Zakazy-CRM V2.72",p,p,p,A.I(p,p,p,p,p,p,p,p,p,p,p,24,p,C.z,p,p,!0,p,p,p,p,p,p,p),p,p),p):M.J(p,p,C.i,p,p,p,p,p,p,p,p,p,p)
 if(a.B(s).f.a.a>=500){s=b.gJ()
 s=new T.Z(new V.S(24,24,24,24),M.J(p,T.G(H.a([new L.cI(s,120,p),Z.p(C.d,15),L.o(H.c(s.d)+" "+H.c(s.e)+" "+H.c(s.f),p,p,p,A.I(p,p,p,p,p,p,p,p,p,p,p,18,p,C.I,p,p,!0,p,p,p,p,p,p,p),p,p),Z.p(C.d,5),L.o(A.aez(A.bB(s.ch)),p,p,p,p,p,p)],t.p),C.q,C.ap,C.e,C.h),C.i,p,new S.aD(0,200,0,1/0),p,p,p,p,p,p,p,p),p)}else s=M.J(p,p,C.i,p,p,p,p,p,p,p,p,p,p)
 q=t.p
