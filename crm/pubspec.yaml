@@ -44,6 +44,8 @@ dependencies:
 
   flutter_multi_formatter: any
 
+  syncfusion_flutter_charts: ^19.1.56
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

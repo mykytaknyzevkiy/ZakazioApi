@@ -58,7 +58,7 @@ class ZDateField extends StatelessWidget {
     if (newDate == null) return null;
     final DateFormat formatter = DateFormat('MM/dd/yyyy');
 
-    return formatter.format(newDate);
+    return formatter.format(newDate!);
   }
 
   setError(String error) {

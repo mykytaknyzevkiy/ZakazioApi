@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:zakazy_crm_v2/conts.dart';
+import 'package:zakazy_crm_v2/model/DashBoardAnalyticModel.dart';
 import 'package:zakazy_crm_v2/model/dashboard/DashboardModel.dart';
 import 'package:zakazy_crm_v2/model/dashboard/ExecutorDashModel.dart';
 import 'package:zakazy_crm_v2/model/order/OrderStatus.dart';
@@ -8,6 +9,7 @@ import 'package:zakazy_crm_v2/model/user/UserInfoModel.dart';
 import 'package:zakazy_crm_v2/model/user/admin/AdminModel.dart';
 import 'package:zakazy_crm_v2/repository/PaymentRepository.dart';
 import 'package:zakazy_crm_v2/screen/HomeScreen.dart';
+import 'package:zakazy_crm_v2/screen/dashboard/DashboardChartsWidget.dart';
 import 'package:zakazy_crm_v2/screen/dashboard/DashboardViewModel.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:fl_chart/fl_chart.dart';
@@ -143,8 +145,23 @@ class _NewDashboardScreenState
 
         return SizedBox(
             width: double.infinity,
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              MediaQuery.of(context).size.width > phoneSize
+              ? FutureBuilder<DashBoardAnalytic>(
+                  future: _viewModel.analytic(),
+                  builder: (_, snapShot) {
+                    if (!snapShot.hasData) {
+                      return Center(
+                          child: CircularProgressIndicator()
+                      );
+                    }
+                    return DashboardChartsWidget(snapShot.requireData);
+                  }
+              )
+              : Container(),
+              SizedBox(
+                height: 25,
+              ),
               FinanceBlockWidget(data),
               SizedBox(
                 height: 25,
@@ -344,7 +361,24 @@ String formatNumber(int num) {
     return num.toString();
   }
 
-  final formatter = NumberFormat('#,##,000');
+  NumberFormat formatter;
 
-  return formatter.format(num);
+  if (num <= 9999)
+    formatter = NumberFormat('#,###');
+  else if (num <= 99999)
+    formatter = NumberFormat('##,###');
+  else if (num <= 999999)
+    formatter = NumberFormat('###,###');
+  else if (num <= 9999999)
+    formatter = NumberFormat('#,###,###');
+  else if (num <= 99999999)
+    formatter = NumberFormat('##,###,###');
+  else if (num <= 999999999)
+    formatter = NumberFormat('###,###,###');
+  else if (num <= 9999999999)
+    formatter = NumberFormat('#,###,###,###');
+  else
+    formatter = NumberFormat.currency(locale: 'rub');
+
+  return formatter.format(num).replaceAll(",", " ");
 }

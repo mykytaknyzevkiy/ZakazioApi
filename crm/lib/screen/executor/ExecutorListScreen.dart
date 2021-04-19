@@ -83,9 +83,9 @@ class _ExecutorListScreenState
           : Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              list(),
+              filters(),
               SizedBox(height: 25),
-              filters()
+              list()
             ],
           )
         ],

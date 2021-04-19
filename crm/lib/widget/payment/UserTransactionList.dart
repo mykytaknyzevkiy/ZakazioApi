@@ -90,7 +90,12 @@ class _Desktop extends StatelessWidget {
             DataCell(
                 Text(e.dateStr())
             )
-          ]
+          ],
+          onSelectChanged: (_) {
+            if (e.order != null) {
+              ZakazioNavigator.pushWParams("order/info", {"id": e.order!.id});
+            }
+          }
       )
   ).toList();
 
@@ -98,8 +103,9 @@ class _Desktop extends StatelessWidget {
   Widget build(BuildContext context) => SizedBox(
     width: double.infinity,
     child: DataTable(
+        showCheckboxColumn: false,
         columns: _tableColumns(),
-        rows: _tableRows()
+        rows: _tableRows(),
     ),
   );
 }

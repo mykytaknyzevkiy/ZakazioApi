@@ -77,46 +77,42 @@ class _Mobile extends StatelessWidget {
   Widget build(BuildContext context) => Card(
       elevation: 4,
       child: Padding(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.all(8),
           child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                    width: 35,
-                    height: 35,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(17.5),
-                        border: Border.all(
-                            color: primaryColor,
-                            width: 2
-                        )
-                    ),
-                    child: Center(
-                        child: Text(
-                          item.stars.toString(),
-                          style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: primaryColor
-                          ),
-                        )
-                    )
+                UserAvatar(
+                  user: item.user,
+                  size: 55,
                 ),
                 VerticalDivider(
-                  width: 10,
+                  width: 5,
                   color: Colors.transparent,
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                        "${item.user.firstName} ${item.user.lastName}\n${item.user.middleName}",
-                        style: const TextStyle(
-                            fontSize: 18
-                        )
+                    SizedBox(
+                      width: 100,
+                      child: Text(
+                          "${item.user.firstName} ${item.user.lastName} ${item.user.middleName}",
+                          style: const TextStyle(
+                              fontSize: 18
+                          )
+                      ),
                     ),
-                    Text(item.comment)
+                    SizedBox(
+                      width: 100,
+                      child: Text(item.comment),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    SizedBox(
+                        width: 130,
+                        child: RatingBarWidget(rate: item.stars, isEnable: false, size: 16)
+                    )
                   ],
                 )
               ]

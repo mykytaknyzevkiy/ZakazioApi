@@ -5,11 +5,12 @@ class RatingBarWidget extends StatefulWidget {
   final int rate;
   int _currentRate = 1;
   bool isEnable;
+  final double? size;
 
-  RatingBarWidget({Key? key, required this.rate, this.isEnable = true}) : super(key: key);
+  RatingBarWidget({Key? key, required this.rate, this.isEnable = true, this.size}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _RatingBarWidget(rate, (n) => _currentRate = n, isEnable);
+  State<StatefulWidget> createState() => _RatingBarWidget(rate, (n) => _currentRate = n, isEnable, size ?? 32);
 
   int getRate() => _currentRate;
 }
@@ -18,8 +19,9 @@ class _RatingBarWidget extends State<RatingBarWidget> {
   int _rate;
   Function(int) _onRate;
   final bool isEnable;
+  final double size;
 
-  _RatingBarWidget(this._rate, this._onRate, this.isEnable);
+  _RatingBarWidget(this._rate, this._onRate, this.isEnable, this.size);
 
   @override
   Widget build(BuildContext context) => SizedBox(
@@ -38,7 +40,7 @@ class _RatingBarWidget extends State<RatingBarWidget> {
                       color: (_rate >= (index + 1))
                           ? primaryColor
                           : Colors.grey,
-                      size: 32,
+                      size: size,
                     ),
                     onPressed: () {
                       if (isEnable) {
@@ -54,7 +56,7 @@ class _RatingBarWidget extends State<RatingBarWidget> {
                 color: (_rate >= (index + 1))
                     ? primaryColor
                     : Colors.grey,
-                size: 32,
+                size: size,
               )
               )
       )
