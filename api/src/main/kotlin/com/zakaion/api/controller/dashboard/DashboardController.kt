@@ -538,12 +538,9 @@ class DashboardController(private val orderDao: OrderDao,
 
         val orderDateAnalytic: Deferred<ArrayList<DateAnalytic>> = async {
             val list = arrayListOf<DateAnalytic>()
-            repeat(11) {
+            repeat(12) {
                 list.add(DateAnalytic(it))
             }
-
-            if ( startDate.month != 0 || endDate.month != 12 || startDate.year != endDate.year )
-                return@async list
 
             orders.await().forEach { order ->
                 val date = list.find { it.date == order.creationDateTime.month }!!
