@@ -492,6 +492,8 @@ class DashboardController(private val orderDao: OrderDao,
                 cCategory.calculate(order, transactionsIn.await())
             }
 
+            categoryList.forEach { it.run() }
+
             return@async categoryList
         }
 
@@ -514,6 +516,8 @@ class DashboardController(private val orderDao: OrderDao,
 
                 city.calculate(order, transactionsIn.await())
             }
+
+            addressList.forEach { it.run() }
 
             return@async addressList
         }

@@ -7,20 +7,8 @@ import com.zakaion.api.entity.user.UserEntity
 data class AddressAnalytic(
     val info: RegionEntity,
     val cityList: ArrayList<CityAnalytic> = arrayListOf(),
-    override val executors: LinkedHashSet<UserEntity> = run {
-        val data = LinkedHashSet<UserEntity>()
-        cityList.forEach {
-            data.addAll(it.executors)
-        }
-        data
-    },
-    override val partners: LinkedHashSet<UserEntity> = run {
-        val data = LinkedHashSet<UserEntity>()
-        cityList.forEach {
-            data.addAll(it.partners)
-        }
-        data
-    },
+    override var executors: LinkedHashSet<UserEntity> = linkedSetOf(),
+    override var partners: LinkedHashSet<UserEntity> = linkedSetOf(),
     override var orderCount: Int = run {
         var count = 0
         cityList.forEach {
@@ -28,23 +16,53 @@ data class AddressAnalytic(
         }
         count
     },
-    override var executorCount: Int = executors.size,
-    override var partnerCount: Int = partners.size,
-    override var orderTotalPrice: Float = run {
-        var count = 0f
-        cityList.forEach {
-            count += it.orderTotalPrice
+    override var executorCount: Int = 0,
+    override var partnerCount: Int = 0,
+    override var orderTotalPrice: Float = 0f,
+    override var systemTotalPrice: Float = 0f
+): SampleAnalytic(executors, partners, orderCount, executorCount, partnerCount, orderTotalPrice, systemTotalPrice) {
+
+    fun run() {
+        executors = run {
+            val data = LinkedHashSet<UserEntity>()
+            cityList.forEach {
+                data.addAll(it.executors)
+            }
+            data
         }
-        count
-    },
-    override var systemTotalPrice: Float = run {
-        var count = 0f
-        cityList.forEach {
-            count += it.systemTotalPrice
+        partners = run {
+            val data = LinkedHashSet<UserEntity>()
+            cityList.forEach {
+                data.addAll(it.partners)
+            }
+            data
         }
-        count
+        orderCount = run {
+            var count = 0
+            cityList.forEach {
+                count += it.orderCount
+            }
+            count
+        }
+        executorCount = executors.size
+        partnerCount = partners.size
+        orderTotalPrice = run {
+            var count = 0f
+            cityList.forEach {
+                count += it.orderTotalPrice
+            }
+            count
+        }
+        systemTotalPrice = run {
+            var count = 0f
+            cityList.forEach {
+                count += it.systemTotalPrice
+            }
+            count
+        }
     }
-): SampleAnalytic(executors, partners, orderCount, executorCount, partnerCount, orderTotalPrice, systemTotalPrice)
+
+}
 
 data class CityAnalytic(
     val info: CityEntity,
