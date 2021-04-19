@@ -17,6 +17,8 @@ import org.apache.poi.ss.usermodel.*
 import org.springframework.stereotype.Service
 import java.io.InputStream
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
+import org.springframework.format.datetime.DateFormatter
+import java.util.*
 
 @Service
 class ImportExcellService(private val orderDao: OrderDao,
@@ -86,6 +88,16 @@ class ImportExcellService(private val orderDao: OrderDao,
                 clientPhone
             }
             val clientEmail = row.getCell(clientEmailCellIndex(mainCells)).stringCellValue
+
+            val creatingDate = run {
+                val dateStr = row.getCell(creatingDateCellIndex(mainCells)).stringCellValue
+                try {
+                    DateFormatter("dd.MM.yyyy").parse(dateStr, Locale.ROOT)
+                } catch (e: Exception) {
+                    println(e)
+                    return@run Date()
+                }
+            }
 
             if (title.isNullOrEmpty()) {
                 brokers.add(Pair(index, "title is empty"))
@@ -270,7 +282,7 @@ class ImportExcellService(private val orderDao: OrderDao,
                 city = city,
                 dateLine = dateLine,
                 files = emptyList(),
-                // creationDateTime = creatingDate,
+                creationDateTime = creatingDate,
                 childCategory = childCategory,
                 partner = partner
             )
@@ -480,5 +492,7 @@ class ImportExcellService(private val orderDao: OrderDao,
     private fun clientPhoneCellIndex(cells: List<Cell>): Int = findCellIndex("<CLIENT_PHONE>", cells)
 
     private fun clientEmailCellIndex(cells: List<Cell>): Int = findCellIndex("<CLIENT_EMAIL>", cells)
+
+    private fun creatingDateCellIndex(cells: List<Cell>): Int = findCellIndex("<DATE_CREATE>", cells)
 
 }
