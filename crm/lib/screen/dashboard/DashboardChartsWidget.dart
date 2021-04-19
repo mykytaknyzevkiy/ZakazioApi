@@ -83,7 +83,7 @@ class DashboardChartsWidget extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(8),
                 child: Text(
-                    formatNumber( (seriesIdx == 0 ? value.systemTotalPrice : value.orderTotalPrice).toInt() ),
+                    formatNumber( (seriesIdx == 1 ? value.systemTotalPrice : value.orderTotalPrice).toInt() ),
                     style: TextStyle(
                       color: accentColor
                     )

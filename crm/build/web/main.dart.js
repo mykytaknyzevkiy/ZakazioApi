@@ -94819,7 +94819,7 @@ $S:632}
 L.a7C.prototype={
 $5:function(a,b,c,d,e){var s=null
 t.j6.a(a)
-return V.aV(new T.a6(C.bf,L.q(S.h6(J.eO(e===0?a.e:a.d)),s,s,s,A.z(s,s,C.m,s,s,s,s,s,s,s,s,s,s,s,s,s,!0,s,s,s,s,s,s,s),s,s,s),s),s,C.M,s,s)},
+return V.aV(new T.a6(C.bf,L.q(S.h6(J.eO(e===1?a.e:a.d)),s,s,s,A.z(s,s,C.m,s,s,s,s,s,s,s,s,s,s,s,s,s,!0,s,s,s,s,s,s,s),s,s,s),s),s,C.M,s,s)},
 $C:"$5",
 $R:5,
 $S:633}
@@ -99668,7 +99668,7 @@ V.ark.prototype={
 $2:function(a,b){var s,r,q,p=null
 if(b.b==null)return M.F(p,p,C.i,p,p,p,p,p,p,p,p,p,p,p)
 s=t.w
-r=a.G(s).f.a.a>=500?new T.a6(new V.T(24,32,24,14),L.q("Zakazy-CRM V2.73",p,p,p,A.z(p,p,p,p,p,p,p,p,p,p,p,24,p,C.x,p,p,!0,p,p,p,p,p,p,p),p,p,p),p):M.F(p,p,C.i,p,p,p,p,p,p,p,p,p,p,p)
+r=a.G(s).f.a.a>=500?new T.a6(new V.T(24,32,24,14),L.q("Zakazy-CRM V2.74",p,p,p,A.z(p,p,p,p,p,p,p,p,p,p,p,24,p,C.x,p,p,!0,p,p,p,p,p,p,p),p,p,p),p):M.F(p,p,C.i,p,p,p,p,p,p,p,p,p,p,p)
 if(a.G(s).f.a.a>=500){s=b.gW()
 s=new T.a6(new V.T(24,24,24,24),M.F(p,T.N(H.c([new L.d0(s,120,p),Z.u(C.d,15),L.q(H.e(s.d)+" "+H.e(s.e)+" "+H.e(s.f),p,p,p,A.z(p,p,p,p,p,p,p,p,p,p,p,18,p,C.G,p,p,!0,p,p,p,p,p,p,p),p,p,p),Z.u(C.d,5),L.q(A.akW(A.bQ(s.ch)),p,p,p,p,p,p,p)],t.p),C.r,C.av,C.h,C.k),C.i,p,new S.aJ(0,200,0,1/0),p,p,p,p,p,p,p,p,p),p)}else s=M.F(p,p,C.i,p,p,p,p,p,p,p,p,p,p,p)
 q=t.p
