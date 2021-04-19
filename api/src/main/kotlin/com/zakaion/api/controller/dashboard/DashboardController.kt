@@ -1,5 +1,7 @@
 package com.zakaion.api.controller.dashboard
 
+import com.fasterxml.jackson.annotation.JsonInclude
+import com.zakaion.api.controller.dashboard.model.*
 import com.zakaion.api.dao.OrderDao
 import com.zakaion.api.dao.TransactionInDao
 import com.zakaion.api.dao.TransactionOutDao
@@ -7,8 +9,12 @@ import com.zakaion.api.dao.UserDao
 import com.zakaion.api.entity.order.AppEntity
 import com.zakaion.api.entity.order.OrderEntity
 import com.zakaion.api.entity.order.OrderStatus
+import com.zakaion.api.entity.order.category.CategoryEntity
 import com.zakaion.api.entity.order.category.ChildCategoryEntity
+import com.zakaion.api.entity.region.CityEntity
+import com.zakaion.api.entity.region.RegionEntity
 import com.zakaion.api.entity.transaction.TransactionImp
+import com.zakaion.api.entity.transaction.TransactionInEntity
 import com.zakaion.api.entity.transaction.creationCalendar
 import com.zakaion.api.entity.user.RoleType
 import com.zakaion.api.entity.user.UserEntity
@@ -23,6 +29,7 @@ import java.util.concurrent.TimeUnit
 import javax.servlet.http.Part
 import kotlin.collections.ArrayList
 import kotlin.collections.LinkedHashMap
+import kotlin.collections.LinkedHashSet
 
 @RestController
 @CrossOrigin
@@ -450,6 +457,127 @@ class DashboardController(private val orderDao: OrderDao,
 
         return@withContext DataResponse.ok(data.await())
     }
+
+    @GetMapping("/analytic")
+    suspend fun category(@RequestParam(name = "start_date")
+                         @DateTimeFormat(pattern = "yyyy-MM-dd") startDate: Date,
+                         @RequestParam(name = "end_date")
+                         @DateTimeFormat(pattern = "yyyy-MM-dd") endDate: Date) = withContext(Dispatchers.IO) {
+        val orders = async(Dispatchers.IO) {orderDao.findAll(startDate, endDate)}
+
+        val transactionsIn = async(Dispatchers.IO) {
+            transactionInDao.findAll(startDate, endDate)
+        }
+        val transactionsOut = async(Dispatchers.IO) {
+            transactionOutDao.findAll(startDate, endDate)
+        }
+
+        val categoryAnalyticWork: Deferred<ArrayList<CategoryAnalytic>> = async {
+            val categoryList = arrayListOf<CategoryAnalytic>()
+
+            orders.await().forEach { order ->
+                var category = categoryList.find { it.info.id == order.category.id }
+
+                if (category == null) {
+                    category = CategoryAnalytic(order.category)
+                    categoryList.add(category)
+                }
+
+                var cCategory = category.childList.find { it.info.id == order.childCategory.id }
+                if (cCategory == null) {
+                    cCategory = ChildCategoryAnalytic(order.childCategory)
+                    category.childList.add(cCategory)
+                }
+
+                cCategory.calculate(order, transactionsIn.await())
+            }
+
+            return@async categoryList
+        }
+
+        val addressAnalyticWork: Deferred<ArrayList<AddressAnalytic>> = async {
+            val addressList = arrayListOf<AddressAnalytic>()
+
+            orders.await().forEach { order ->
+                var address = addressList.find { it.info.id == order.city.region.id }
+
+                if (address == null) {
+                    address = AddressAnalytic(order.city.region)
+                    addressList.add(address)
+                }
+
+                var city = address.cityList.find { it.info.id == order.city.id }
+                if (city == null) {
+                    city = CityAnalytic(order.city)
+                    address.cityList.add(city)
+                }
+
+                city.calculate(order, transactionsIn.await())
+            }
+
+            return@async addressList
+        }
+
+        val orderStatusAnalytic: Deferred<ArrayList<OrderStatusAnalytic>> = async {
+            val statusList = arrayListOf<OrderStatusAnalytic>()
+            OrderStatus.values().forEach {
+                statusList.add(OrderStatusAnalytic(it))
+            }
+
+            orders.await().forEach { order ->
+                val analytic = statusList.find { it.info == order.status }!!
+                analytic.orderCount += 1
+            }
+
+            return@async statusList
+        }
+
+        val orderDateAnalytic: Deferred<ArrayList<DateAnalytic>> = async {
+            val list = arrayListOf<DateAnalytic>()
+            repeat(11) {
+                list.add(DateAnalytic(it))
+            }
+
+            if ( startDate.month != 0 || endDate.month != 12 || startDate.year != endDate.year )
+                return@async list
+
+            orders.await().forEach { order ->
+                val date = list.find { it.date == order.creationDateTime.month }!!
+                date.value += 1f
+            }
+
+            return@async list
+        }
+
+        val systemTransactionInDateAnalytic: Deferred<ArrayList<DateAnalytic>> = async {
+            val list = arrayListOf<DateAnalytic>()
+            repeat(11) {
+                list.add(DateAnalytic(it))
+            }
+
+            if ( startDate.month != 0 || endDate.month != 12 || startDate.year != endDate.year )
+                return@async list
+
+            transactionsIn.await().forEach { transaction ->
+                if (transaction.user.role == RoleType.SUPER_ADMIN) {
+                    val date = list.find { it.date == transaction.creationDateTime.month }!!
+                    date.value += transaction.amount
+                }
+            }
+
+            return@async list
+        }
+
+        return@withContext DataResponse.ok(
+            DashBoardAnalytic(
+                category = categoryAnalyticWork.await(),
+                address = addressAnalyticWork.await(),
+                orderStatus = orderStatusAnalytic.await(),
+                orderDate = orderDateAnalytic.await(),
+                systemTransactionInDate = systemTransactionInDateAnalytic.await()
+            )
+        )
+    }
 }
 
 data class DashBoardExecutor(
@@ -470,4 +598,12 @@ data class DashBoardExecutor(
     val partnerAmount: Float,
 
     val systemAmount: Float
+)
+
+data class DashBoardAnalytic(
+    val category: List<CategoryAnalytic>,
+    val address: List<AddressAnalytic>,
+    val orderStatus: List<OrderStatusAnalytic>,
+    val orderDate: List<DateAnalytic>,
+    val systemTransactionInDate: List<DateAnalytic>
 )
