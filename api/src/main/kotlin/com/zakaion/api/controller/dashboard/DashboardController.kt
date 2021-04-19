@@ -6,6 +6,7 @@ import com.zakaion.api.dao.OrderDao
 import com.zakaion.api.dao.TransactionInDao
 import com.zakaion.api.dao.TransactionOutDao
 import com.zakaion.api.dao.UserDao
+import com.zakaion.api.dao.history.OrderHistoryDao
 import com.zakaion.api.entity.order.AppEntity
 import com.zakaion.api.entity.order.OrderEntity
 import com.zakaion.api.entity.order.OrderStatus
@@ -37,6 +38,7 @@ import kotlin.collections.LinkedHashSet
 class DashboardController(private val orderDao: OrderDao,
                           private val userFactory: UserFactory,
                           private val userDao: UserDao,
+                          private val orderHistoryDao: OrderHistoryDao,
                           private val transactionInDao: TransactionInDao,
                           private val transactionOutDao: TransactionOutDao) {
 
@@ -324,7 +326,32 @@ class DashboardController(private val orderDao: OrderDao,
                   @DateTimeFormat(pattern = "yyyy-MM-dd") startDate: Date,
                   @RequestParam(name = "end_date")
                   @DateTimeFormat(pattern = "yyyy-MM-dd") endDate: Date): DataResponse<List<DashBoardExecutor>> = withContext(Dispatchers.IO) {
-        val orders = async(Dispatchers.IO) {orderDao.findAll(startDate, endDate)}
+        val transactionsIn = async(Dispatchers.IO) {
+            transactionInDao.findAll(startDate, endDate)
+        }
+        val transactionsOut = async(Dispatchers.IO) {
+            transactionOutDao.findAll(startDate, endDate)
+        }
+        val orderHistory = async(Dispatchers.IO) {orderHistoryDao.findAll(startDate, endDate)}
+
+        val orders = async(Dispatchers.IO) {
+            val data = linkedSetOf<OrderEntity>()
+
+            transactionsIn.await().forEach {
+                if (it.order != null)
+                    data.add(it.order)
+            }
+            transactionsOut.await().forEach {
+                if (it.order != null)
+                    data.add(it.order)
+            }
+
+            orderHistory.await().forEach {
+                data.add(it.order)
+            }
+
+            data
+        }
 
         val executors = async(Dispatchers.IO) {
             val list = arrayListOf<UserEntity>()
@@ -463,13 +490,31 @@ class DashboardController(private val orderDao: OrderDao,
                          @DateTimeFormat(pattern = "yyyy-MM-dd") startDate: Date,
                          @RequestParam(name = "end_date")
                          @DateTimeFormat(pattern = "yyyy-MM-dd") endDate: Date) = withContext(Dispatchers.IO) {
-        val orders = async(Dispatchers.IO) {orderDao.findAll(startDate, endDate)}
-
         val transactionsIn = async(Dispatchers.IO) {
             transactionInDao.findAll(startDate, endDate)
         }
         val transactionsOut = async(Dispatchers.IO) {
             transactionOutDao.findAll(startDate, endDate)
+        }
+        val orderHistory = async(Dispatchers.IO) {orderHistoryDao.findAll(startDate, endDate)}
+
+        val orders = async(Dispatchers.IO) {
+            val data = linkedSetOf<OrderEntity>()
+
+            transactionsIn.await().forEach {
+                if (it.order != null)
+                    data.add(it.order)
+            }
+            transactionsOut.await().forEach {
+                if (it.order != null)
+                    data.add(it.order)
+            }
+
+            orderHistory.await().forEach {
+                data.add(it.order)
+            }
+
+            data
         }
 
         val categoryAnalyticWork: Deferred<ArrayList<CategoryAnalytic>> = async {

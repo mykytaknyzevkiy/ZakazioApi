@@ -5,6 +5,7 @@ import 'package:zakazy_crm_v2/repository/UserRepository.dart';
 import 'package:zakazy_crm_v2/screen/HomeScreen.dart';
 import 'package:zakazy_crm_v2/screen/create_order/create_order_main.dart';
 import 'package:zakazy_crm_v2/screen/create_order/create_order_vm.dart';
+import 'package:zakazy_crm_v2/unit/RussianPhoneNumberFormater.dart';
 import 'package:zakazy_crm_v2/widget/ZTextField.dart';
 import 'package:zakazy_crm_v2/unit/Expensions.dart';
 
@@ -20,7 +21,7 @@ class FillOrderClientInfo extends CreateOrderStateScreen {
 
   final _clientEmail = ZTextField(hint: "Email");
 
-  final _clientPhone = ZTextField(hint: "Номер телефона");
+  final _clientPhone = ZTextField(hint: "Номер телефона", inputFormatters: [RussianPhoneNumberFormat()],);
 
   FillOrderClientInfo(Function() onNext)
       : super(CreateOrderState.INFORMATION, "Данные заказчика", onNext) {
