@@ -719,7 +719,7 @@ class DashboardController(private val orderDao: OrderDao,
 
             orders.await().forEach {
                 if (it.executor != null)
-                    list.add(it.executor)
+                    list.add(it.executor!!)
             }
 
             list
