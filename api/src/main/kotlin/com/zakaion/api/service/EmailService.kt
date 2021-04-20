@@ -18,7 +18,7 @@ class EmailService(private val emailSender: JavaMailSender,
         message.setTo(email)
         message.setSubject("Zakazy")
         message.setText(msg)
-        emailSender.send(message)
+        //emailSender.send(message)
 
     }
 
@@ -33,7 +33,7 @@ class EmailService(private val emailSender: JavaMailSender,
         message.setTo(email)
         message.setText(html, true)
 
-        emailSender.send(mimeMessage)
+       // emailSender.send(mimeMessage)
     }
 
     fun sendImportDone(email: String, max: Int, brokers: List<Pair<Int, String>>) {
@@ -63,7 +63,7 @@ class EmailService(private val emailSender: JavaMailSender,
         message.setTo(email)
         message.setText(html, true)
 
-        emailSender.send(mimeMessage)
+        //emailSender.send(mimeMessage)
     }
 
     private fun htmlTemplate(name: String?): String {
