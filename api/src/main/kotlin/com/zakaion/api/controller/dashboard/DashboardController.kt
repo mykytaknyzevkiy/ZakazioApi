@@ -718,7 +718,8 @@ class DashboardController(private val orderDao: OrderDao,
             val list = linkedSetOf<UserEntity>()
 
             orders.await().forEach {
-                list.add(it.client)
+                if (it.executor != null)
+                    list.add(it.executor)
             }
 
             list

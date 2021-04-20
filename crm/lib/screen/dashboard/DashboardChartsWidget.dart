@@ -60,7 +60,7 @@ class DashboardChartsWidget extends StatelessWidget {
                   children: [
                     infoText("Всего", formatNumber(data.orderCount)),
                     SizedBox(
-                      width: 25,
+                      width: 48,
                     ),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
