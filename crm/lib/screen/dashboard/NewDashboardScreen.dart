@@ -131,7 +131,8 @@ class _NewDashboardScreenState
   @override
   Widget body() => StreamBuilder(
     stream: _viewModel.selectedDates,
-    builder: (_, __) => SizedBox(
+    builder: (_, snapshot) => snapshot.hasData
+      ? SizedBox(
         width: double.infinity,
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           MediaQuery.of(context).size.width > phoneSize
@@ -153,7 +154,11 @@ class _NewDashboardScreenState
           MediaQuery.of(context).size.width > phoneSize
               ? _executorDashTable()
               : Container()
-        ]))
+        ])
+    )
+    : Center(
+      child: CircularProgressIndicator()
+    )
   );
 
   _executorDashTable() => Card(
