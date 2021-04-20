@@ -615,13 +615,81 @@ class DashboardController(private val orderDao: OrderDao,
             return@async list
         }
 
+        val systemTransactionOutDateAnalytic: Deferred<ArrayList<DateAnalytic>> = async {
+            val list = arrayListOf<DateAnalytic>()
+            repeat(11) {
+                list.add(DateAnalytic(it))
+            }
+
+            if ( startDate.month != 0 || endDate.month != 12 || startDate.year != endDate.year )
+                return@async list
+
+            transactionsOut.await().forEach { transaction ->
+                val date = list.find { it.date == transaction.creationDateTime.month }!!
+                date.value += transaction.amount
+            }
+
+            return@async list
+        }
+
+        val partnerTransactionInDateAnalytic: Deferred<ArrayList<DateAnalytic>> = async {
+            val list = arrayListOf<DateAnalytic>()
+            repeat(11) {
+                list.add(DateAnalytic(it))
+            }
+
+            if ( startDate.month != 0 || endDate.month != 12 || startDate.year != endDate.year )
+                return@async list
+
+            transactionsIn.await().forEach { transaction ->
+                if (transaction.user.role == RoleType.PARTNER) {
+                    val date = list.find { it.date == transaction.creationDateTime.month }!!
+                    date.value += transaction.amount
+                }
+            }
+
+            return@async list
+        }
+
+        val systemInAmount = async {
+            var amount = 0f
+            transactionsIn.await().forEach {
+                if (it.user.role == RoleType.SUPER_ADMIN)
+                    amount += it.amount
+            }
+            amount
+        }
+
+        val systemOutAmount = async {
+            var amount = 0f
+            transactionsOut.await().forEach {
+                amount += it.amount
+            }
+            amount
+        }
+
+        val partnerInAmount = async {
+            var amount = 0f
+            transactionsIn.await().forEach {
+                if (it.user.role == RoleType.PARTNER)
+                    amount += it.amount
+            }
+            amount
+        }
+
         return@withContext DataResponse.ok(
             DashBoardAnalytic(
                 category = categoryAnalyticWork.await(),
                 address = addressAnalyticWork.await(),
                 orderStatus = orderStatusAnalytic.await(),
                 orderDate = orderDateAnalytic.await(),
-                systemTransactionInDate = systemTransactionInDateAnalytic.await()
+                systemTransactionInDate = systemTransactionInDateAnalytic.await(),
+                systemTransactionOutDateAnalytic = systemTransactionOutDateAnalytic.await(),
+                partnerTransactionInDateAnalytic = partnerTransactionInDateAnalytic.await(),
+                orderCount = orders.await().toList().size,
+                systemInAmount = systemInAmount.await(),
+                systemOutAmount = systemOutAmount.await(),
+                partnerInAmount = partnerInAmount.await()
             )
         )
     }
@@ -652,5 +720,11 @@ data class DashBoardAnalytic(
     val address: List<AddressAnalytic>,
     val orderStatus: List<OrderStatusAnalytic>,
     val orderDate: List<DateAnalytic>,
-    val systemTransactionInDate: List<DateAnalytic>
+    val systemTransactionInDate: List<DateAnalytic>,
+    val systemTransactionOutDateAnalytic: List<DateAnalytic>,
+    val partnerTransactionInDateAnalytic: List<DateAnalytic>,
+    val orderCount: Int,
+    val systemInAmount: Float,
+    val systemOutAmount: Float,
+    val partnerInAmount: Float
 )

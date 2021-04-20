@@ -18,6 +18,42 @@ class DashboardViewModel extends ZakazyViewModel {
   systemLoad() async {
     systemDashboard.add(null);
 
+    DateInto? dateInto = selectedDate();
+
+    final data =
+        await _dashboardRest.system(dateInto.startStr(), dateInto.endStr());
+    systemDashboard.add(data.data);
+  }
+
+  setDate(DateType type, DateInto? info) {
+    selectedDates.add(MapEntry(type, info));
+    systemLoad();
+  }
+
+  Future<List<ExecutorDashModel>> executorsTableData() async {
+    DateInto? dateInto = selectedDate();
+
+    final data =
+        await _dashboardRest.executors(dateInto!.startStr(), dateInto.endStr());
+
+    return data.data!;
+  }
+
+  Future<DashBoardAnalytic> analytic() async {
+    DateInto? dateInto = selectedDate();
+
+    final data = await _dashboardRest.analytic(dateInto!.startStr(), dateInto.endStr());
+
+    return data.data!;
+  }
+
+  @override
+  close() {
+    systemDashboard.close();
+    selectedDates.close();
+  }
+
+  DateInto selectedDate() {
     DateInto? dateInto;
 
     if (selectedDates.value!.key == DateType.CUSTOM) {
@@ -36,67 +72,7 @@ class DashboardViewModel extends ZakazyViewModel {
           DateTime(DateTime.now().year + 1, 1, 1));
     }
 
-    if (dateInto == null) return;
-
-    final data =
-        await _dashboardRest.system(dateInto.startStr(), dateInto.endStr());
-    systemDashboard.add(data.data);
-  }
-
-  setDate(DateType type, DateInto? info) {
-    selectedDates.add(MapEntry(type, info));
-    systemLoad();
-  }
-
-  Future<List<ExecutorDashModel>> executorsTableData() async {
-    DateInto? dateInto;
-
-    if (selectedDates.value!.key == DateType.CUSTOM) {
-      dateInto = selectedDates.value!.value;
-    } else if (selectedDates.value!.key == DateType.WEEK) {
-      dateInto =
-          DateInto(DateTime.now(), DateTime.now().add(Duration(days: 7)));
-    } else if (selectedDates.value!.key == DateType.MONTH) {
-      dateInto = DateInto(
-          DateTime(DateTime.now().year, DateTime.now().month, 1),
-          DateTime(DateTime.now().year, DateTime.now().month + 1, 1));
-    } else if (selectedDates.value!.key == DateType.YEAR) {
-      dateInto = DateInto(DateTime(DateTime.now().year, 1, 1),
-          DateTime(DateTime.now().year + 1, 1, 1));
-    }
-
-    final data =
-        await _dashboardRest.executors(dateInto!.startStr(), dateInto.endStr());
-
-    return data.data!;
-  }
-
-  Future<DashBoardAnalytic> analytic() async {
-    DateInto? dateInto;
-
-    if (selectedDates.value!.key == DateType.CUSTOM) {
-      dateInto = selectedDates.value!.value;
-    } else if (selectedDates.value!.key == DateType.WEEK) {
-      dateInto =
-          DateInto(DateTime.now(), DateTime.now().add(Duration(days: 7)));
-    } else if (selectedDates.value!.key == DateType.MONTH) {
-      dateInto = DateInto(
-          DateTime(DateTime.now().year, DateTime.now().month, 1),
-          DateTime(DateTime.now().year, DateTime.now().month + 1, 1));
-    } else if (selectedDates.value!.key == DateType.YEAR) {
-      dateInto = DateInto(DateTime(DateTime.now().year, 1, 1),
-          DateTime(DateTime.now().year + 1, 1, 1));
-    }
-
-    final data = await _dashboardRest.analytic(dateInto!.startStr(), dateInto.endStr());
-
-    return data.data!;
-  }
-
-  @override
-  close() {
-    systemDashboard.close();
-    selectedDates.close();
+    return dateInto!;
   }
 }
 
