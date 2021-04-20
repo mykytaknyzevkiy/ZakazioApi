@@ -18,7 +18,7 @@ abstract class SampleAnalytic(
     open var systemTotalPrice: Float
 )
 
-fun SampleAnalytic.calculate(order: OrderEntity, transactionsIn: Iterable<TransactionInEntity>): SampleAnalytic {
+suspend fun SampleAnalytic.calculate(order: OrderEntity, transactionsIn: Iterable<TransactionInEntity>): SampleAnalytic {
     return this.apply {
         orderCount += 1
 

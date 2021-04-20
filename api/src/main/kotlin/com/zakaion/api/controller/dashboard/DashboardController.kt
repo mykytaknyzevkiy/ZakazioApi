@@ -499,22 +499,7 @@ class DashboardController(private val orderDao: OrderDao,
         val orderHistory = async(Dispatchers.IO) {orderHistoryDao.findAll(startDate, endDate)}
 
         val orders = async(Dispatchers.IO) {
-            val data = linkedSetOf<OrderEntity>()
-
-            transactionsIn.await().forEach {
-                if (it.order != null)
-                    data.add(it.order)
-            }
-            transactionsOut.await().forEach {
-                if (it.order != null)
-                    data.add(it.order)
-            }
-
-            orderHistory.await().forEach {
-                data.add(it.order)
-            }
-
-            data
+            orderDao.findAll(startDate, endDate)
         }
 
         val categoryAnalyticWork: Deferred<ArrayList<CategoryAnalytic>> = async {
@@ -534,7 +519,16 @@ class DashboardController(private val orderDao: OrderDao,
                     category.childList.add(cCategory)
                 }
 
-                cCategory.calculate(order, transactionsIn.await())
+                cCategory.calculate(
+                    order, transactionsIn.await()
+                )
+
+                transactionsIn.await().forEach {
+                    if (it.order?.childCategory?.id == cCategory.info.id) {
+                        if (it.user.role == RoleType.SUPER_ADMIN)
+                            cCategory.systemTotalPrice += it.amount
+                    }
+                }
             }
 
             categoryList.forEach { it.run() }
@@ -560,6 +554,13 @@ class DashboardController(private val orderDao: OrderDao,
                 }
 
                 city.calculate(order, transactionsIn.await())
+
+                transactionsIn.await().forEach {
+                    if (it.order?.city?.id == city.info.id) {
+                        if (it.user.role == RoleType.SUPER_ADMIN)
+                            city.systemTotalPrice += it.amount
+                    }
+                }
             }
 
             addressList.forEach { it.run() }
