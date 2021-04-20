@@ -120,29 +120,44 @@ class DashboardChartsWidget extends StatelessWidget {
     ),
   );
 
-  categoryOrderCount() => SfCartesianChart(
-      primaryXAxis: CategoryAxis(majorGridLines: MajorGridLines(width: 0)),
-      primaryYAxis: NumericAxis(
-          axisLine: AxisLine(width: 0),
-          majorGridLines: MajorGridLines(width: 0),
-          majorTickLines: MajorTickLines(size: 0)
-      ),
-      plotAreaBorderWidth: 0,
-      legend: Legend(isVisible: false),
-      series: <ColumnSeries<CategoryAnalytic, String>>[
-        ColumnSeries<CategoryAnalytic, String>(
-            name: "Кол-во заказов",
-            isTrackVisible: true,
-            trackColor: const Color.fromRGBO(198, 201, 207, 1),
-            color: primaryColor,
-            borderRadius: BorderRadius.circular(15),
-            dataSource: data.category,
-            xValueMapper: (e, __) => e.info.name,
-            yValueMapper: (e, __) => e.orderCount,
-            dataLabelSettings: DataLabelSettings(isVisible: true, color: primaryColor, textStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: accentColor))
+  categoryOrderCount() {
+    final scrollController = ScrollController();
+
+    return Scrollbar(
+      controller: scrollController,
+      isAlwaysShown: true,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        controller: scrollController,
+        child: SizedBox(
+          width: data.category.length * 150,
+          child: SfCartesianChart(
+              primaryXAxis: CategoryAxis(majorGridLines: MajorGridLines(width: 0)),
+              primaryYAxis: NumericAxis(
+                  axisLine: AxisLine(width: 0),
+                  majorGridLines: MajorGridLines(width: 0),
+                  majorTickLines: MajorTickLines(size: 0)
+              ),
+              plotAreaBorderWidth: 0,
+              legend: Legend(isVisible: false),
+              series: <ColumnSeries<CategoryAnalytic, String>>[
+                ColumnSeries<CategoryAnalytic, String>(
+                    name: "Кол-во заказов",
+                    isTrackVisible: true,
+                    trackColor: const Color.fromRGBO(198, 201, 207, 1),
+                    color: primaryColor,
+                    borderRadius: BorderRadius.circular(15),
+                    dataSource: data.category,
+                    xValueMapper: (e, __) => e.info.name,
+                    yValueMapper: (e, __) => e.orderCount,
+                    dataLabelSettings: DataLabelSettings(isVisible: true, color: primaryColor, textStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: accentColor))
+                ),
+              ]
           ),
-      ]
-  );
+        ),
+      ),
+    );
+  }
 
   categoryOrderTotalPrice() => SfCartesianChart(
       primaryXAxis: CategoryAxis(
@@ -200,30 +215,43 @@ class DashboardChartsWidget extends StatelessWidget {
       ]
   );
 
-
-  addressOrderCount() => SfCartesianChart(
-      primaryXAxis: CategoryAxis(majorGridLines: MajorGridLines(width: 0)),
-      primaryYAxis: NumericAxis(
-          axisLine: AxisLine(width: 0),
-          majorGridLines: MajorGridLines(width: 0),
-          majorTickLines: MajorTickLines(size: 0)
-      ),
-      plotAreaBorderWidth: 0,
-      legend: Legend(isVisible: false),
-      series: <ColumnSeries<AddressAnalytic, String>>[
-        ColumnSeries<AddressAnalytic, String>(
-            name: "Кол-во заказов",
-            isTrackVisible: true,
-            trackColor: const Color.fromRGBO(198, 201, 207, 1),
-            color: primaryColor,
-            borderRadius: BorderRadius.circular(15),
-            dataSource: data.address.length > 10 ? data.address.sublist(0, 10) : data.address,
-            xValueMapper: (e, __) => e.info.name,
-            yValueMapper: (e, __) => e.orderCount,
-            dataLabelSettings: DataLabelSettings(isVisible: true, color: primaryColor, textStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: accentColor))
+  addressOrderCount() {
+    final scrollController = ScrollController();
+    return Scrollbar(
+      isAlwaysShown: true,
+      controller: scrollController,
+      child: SingleChildScrollView(
+        controller: scrollController,
+        scrollDirection: Axis.horizontal,
+        child: SizedBox(
+          width: data.address.length * 150,
+          child: SfCartesianChart(
+              primaryXAxis: CategoryAxis(majorGridLines: MajorGridLines(width: 0)),
+              primaryYAxis: NumericAxis(
+                  axisLine: AxisLine(width: 0),
+                  majorGridLines: MajorGridLines(width: 0),
+                  majorTickLines: MajorTickLines(size: 0)
+              ),
+              plotAreaBorderWidth: 0,
+              legend: Legend(isVisible: false),
+              series: <ColumnSeries<AddressAnalytic, String>>[
+                ColumnSeries<AddressAnalytic, String>(
+                    name: "Кол-во заказов",
+                    isTrackVisible: true,
+                    trackColor: const Color.fromRGBO(198, 201, 207, 1),
+                    color: primaryColor,
+                    borderRadius: BorderRadius.circular(15),
+                    dataSource: data.address,
+                    xValueMapper: (e, __) => e.info.name,
+                    yValueMapper: (e, __) => e.orderCount,
+                    dataLabelSettings: DataLabelSettings(isVisible: true, color: primaryColor, textStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: accentColor))
+                ),
+              ]
+          ),
         ),
-      ]
-  );
+      )
+    );
+  }
 
   addressOrderTotalPrice() => SfCartesianChart(
       primaryXAxis: CategoryAxis(

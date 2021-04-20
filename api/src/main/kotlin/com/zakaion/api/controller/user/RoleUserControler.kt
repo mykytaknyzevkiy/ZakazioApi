@@ -1,5 +1,6 @@
 package com.zakaion.api.controller.user
 
+import com.zakaion.api.ExFuncs.filterWork
 import com.zakaion.api.ExFuncs.mapWork
 import com.zakaion.api.ExFuncs.toPage
 import com.zakaion.api.dao.UserDao
@@ -137,6 +138,9 @@ abstract class RoleUserController(private val userDao: UserDao,
             .toList()
             .toPage(pageable)
             .mapWork { userFactory.createWork(it, myUser)!! }
+            .filterWork {
+                it.status == status || status == null
+            }
 
         return DataResponse.ok(
             list
