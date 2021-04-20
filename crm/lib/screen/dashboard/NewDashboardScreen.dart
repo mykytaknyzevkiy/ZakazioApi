@@ -129,68 +129,32 @@ class _NewDashboardScreenState
   }
 
   @override
-  Widget body() => StreamBuilder<DashboardModel>(
-      stream: _viewModel.systemDashboard,
-      builder: (context, snapShot) {
-        if (!snapShot.hasData) {
-          return Center(
-              child: SizedBox(
-            width: 50,
-            height: 50,
-            child: CircularProgressIndicator(),
-          ));
-        }
-
-        final data = snapShot.requireData;
-
-        return SizedBox(
-            width: double.infinity,
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              MediaQuery.of(context).size.width > phoneSize
+  Widget body() => StreamBuilder(
+    stream: _viewModel.selectedDates,
+    builder: (_, __) => SizedBox(
+        width: double.infinity,
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          MediaQuery.of(context).size.width > phoneSize
               ? FutureBuilder<DashBoardAnalytic>(
-                  future: _viewModel.analytic(),
-                  builder: (_, snapShot) {
-                    if (!snapShot.hasData) {
-                      return Center(
-                          child: CircularProgressIndicator()
-                      );
-                    }
-                    return DashboardChartsWidget(snapShot.requireData);
-                  }
-              )
+              future: _viewModel.analytic(),
+              builder: (_, snapShot) {
+                if (!snapShot.hasData) {
+                  return Center(
+                      child: CircularProgressIndicator()
+                  );
+                }
+                return DashboardChartsWidget(snapShot.requireData);
+              }
+          )
               : Container(),
-              SizedBox(
-                height: 25,
-              ),
-              FinanceBlockWidget(data),
-              SizedBox(
-                height: 25,
-              ),
-              UserInfoBlockWidget(data.user),
-              SizedBox(
-                height: 25,
-              ),
-              OrderCountBlockWidget(data.oder.statuses),
-              SizedBox(
-                height: 25,
-              ),
-              MediaQuery.of(context).size.width > phoneSize
-                  ? _topPartner(data.oder.partners)
-                  : Container(),
-              SizedBox(
-                height: 25,
-              ),
-              MediaQuery.of(context).size.width > phoneSize
-                  ? _topExecutor(data.oder.executors)
-                  : Container(),
-              SizedBox(
-                height: 25,
-              ),
-              MediaQuery.of(context).size.width > phoneSize
-                  ? _executorDashTable()
-                  : Container()
-            ]));
-      });
+          SizedBox(
+            height: 25,
+          ),
+          MediaQuery.of(context).size.width > phoneSize
+              ? _executorDashTable()
+              : Container()
+        ]))
+  );
 
   _executorDashTable() => Card(
         elevation: 4,

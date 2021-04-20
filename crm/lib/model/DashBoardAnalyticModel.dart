@@ -15,8 +15,9 @@ class DashBoardAnalytic {
   final int totalOrderAppCount;
   final int totalOrderClientCount;
   final int totalOrderExecutorCount;
+  final double totalOrderSum;
 
-  DashBoardAnalytic(this.category, this.address, this.orderStatus, this.orderCount, this.totalOrderPartnerCount, this.totalOrderAppCount, this.totalOrderClientCount, this.totalOrderExecutorCount);
+  DashBoardAnalytic(this.category, this.address, this.orderStatus, this.orderCount, this.totalOrderPartnerCount, this.totalOrderAppCount, this.totalOrderClientCount, this.totalOrderExecutorCount, this.totalOrderSum);
 
   DashBoardAnalytic.fromJson(Map<String, dynamic> json):
         category = (json["category"] as List).map((e) => CategoryAnalytic.fromJson(e)).toList(),
@@ -26,8 +27,8 @@ class DashBoardAnalytic {
         totalOrderAppCount = json["totalOrderAppCount"],
         totalOrderClientCount = json["totalOrderClientCount"],
         totalOrderPartnerCount = json["totalOrderPartnerCount"],
-        totalOrderExecutorCount = json["totalOrderExecutorCount"]
-  ;
+        totalOrderExecutorCount = json["totalOrderExecutorCount"],
+        totalOrderSum = json["totalOrderSum"];
 
   int maxCategoryOrderCount() {
     int max = 0;

@@ -1,9 +1,12 @@
+import 'dart:html';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:zakazy_crm_v2/conts.dart';
 import 'package:zakazy_crm_v2/model/DashBoardAnalyticModel.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:zakazy_crm_v2/screen/dashboard/NewDashboardScreen.dart';
+import 'package:zakazy_crm_v2/screen/order/info/OrderLogsList.dart';
 import 'package:zakazy_crm_v2/unit/Expensions.dart';
 
 class DashboardChartsWidget extends StatelessWidget {
@@ -61,9 +64,9 @@ class DashboardChartsWidget extends StatelessWidget {
                     Column(
                       children: [
                         infoText("Всего", formatNumber(data.orderCount)),
-                        infoText("Общая сумма", formatNumber(data.tot)),
+                        infoText("Общая сумма", formatNumber(data.totalOrderSum.toInt())),
                       ],
-                    )
+                    ),
                     SizedBox(
                       width: 48,
                     ),
@@ -91,6 +94,26 @@ class DashboardChartsWidget extends StatelessWidget {
               ),
               Expanded(child: orderStatus())
             ],
+          ),
+          Padding(
+            padding: const EdgeInsets.all(24),
+            child: SizedBox(
+              width: double.infinity,
+              child: DataTable(
+                columns: List.generate(
+                    data.orderStatus.length,
+                        (index) => BaseColumn(data.orderStatus[index].statusInfo().name())
+                ),
+                rows: [
+                  DataRow(
+                      cells: List.generate(
+                          data.orderStatus.length,
+                          (index) => DataCell(Text(formatNumber(data.orderStatus[index].orderCount)))
+                      )
+                  )
+                ],
+              ),
+            )
           )
         ],
       ),
