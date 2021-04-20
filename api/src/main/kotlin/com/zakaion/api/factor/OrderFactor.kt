@@ -103,7 +103,7 @@ class OrderFactor(private val userFactory: UserFactory,
             mOrder.commentEnable = myUser.id in arrayOf(order.client.id, order.partner?.id, order.executor?.id)
         }
 
-        mOrder.cancelEnable = (mOrder.status == OrderStatus.PROCESS && (myUser.role in adminsRole || myUser.id in arrayOf(order.client.id, order.partner?.id)))
+        mOrder.cancelEnable = (mOrder.status == OrderStatus.PROCESS && myUser.role in adminsRole)
 
         return mOrder
     }
