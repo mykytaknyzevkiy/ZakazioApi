@@ -741,7 +741,8 @@ class DashboardController(private val orderDao: OrderDao,
                 totalOrderPartnerCount = totalOrderPartner.await().size,
                 totalOrderAppCount = totalOrderApp.await().size,
                 totalOrderClientCount = totalOrderClient.await().size,
-                totalOrderExecutorCount = totalOrderExecutor.await().size
+                totalOrderExecutorCount = totalOrderExecutor.await().size,
+                totalOrderSum = totalOrderSum.await()
             )
         )
     }
@@ -782,5 +783,6 @@ data class DashBoardAnalytic(
     val totalOrderPartnerCount: Int,
     val totalOrderAppCount: Int,
     val totalOrderClientCount: Int,
-    val totalOrderExecutorCount: Int
+    val totalOrderExecutorCount: Int,
+    val totalOrderSum: Float
 )

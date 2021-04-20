@@ -58,7 +58,12 @@ class DashboardChartsWidget extends StatelessWidget {
                 child: Row(
                   //crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    infoText("Всего", formatNumber(data.orderCount)),
+                    Column(
+                      children: [
+                        infoText("Всего", formatNumber(data.orderCount)),
+                        infoText("Общая сумма", formatNumber(data.tot)),
+                      ],
+                    )
                     SizedBox(
                       width: 48,
                     ),
