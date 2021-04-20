@@ -100,7 +100,7 @@ abstract class RoleUserController(private val userDao: UserDao,
              @RequestParam("region_id", required = false, defaultValue = "-1") regionID: Long = -1L,
              @RequestParam("city_id", required = false, defaultValue = "-1") cityID: Long = -1L,
              @RequestParam("status", required = false) status: UserStatus? = null,
-             @RequestParam("masterID", required = false, defaultValue = "-1") masterID: Long = -1L): DataResponse<Page<UserImp?>> {
+             @RequestParam("masterID", required = false, defaultValue = "-1") masterID: Long = -1L): DataResponse<Page<UserFullImp>> {
         val searchOperator: (UserEntity) -> Boolean = {
             it.id.toString().contains(search)
                     || it.firstName.contains(search)
@@ -121,7 +121,7 @@ abstract class RoleUserController(private val userDao: UserDao,
 
         val myUser = userFactory.myUser
 
-        val list: List<UserFullImp> = (
+        val list: Page<UserFullImp> = (
                 if (myUser.role == RoleType.PARTNER)
                     userDao.findByRole(roleType.ordinal, userFactory.myUser.id)
                 else
@@ -135,19 +135,11 @@ abstract class RoleUserController(private val userDao: UserDao,
                         && masterOperator(it)
             }
             .toList()
-            .map { userFactory.createWork(it, myUser)!! }
-            .filter {
-                    it.status == status || status == null
-            }
-            .sortedByDescending {
-                if (it is ExecutorInfo)
-                    return@sortedByDescending it.rate.toLong()
-                else
-                    it.id
-            }
+            .toPage(pageable)
+            .mapWork { userFactory.createWork(it, myUser)!! }
 
         return DataResponse.ok(
-            list.toPage(pageable)
+            list
         )
     }
 
