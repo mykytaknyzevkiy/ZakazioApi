@@ -677,6 +677,53 @@ class DashboardController(private val orderDao: OrderDao,
             amount
         }
 
+        val totalOrderSum = async {
+            var sum = 0f
+            orders.await().forEach {
+                sum += it.price
+            }
+            sum
+        }
+
+        val totalOrderPartner = async {
+            val list = linkedSetOf<UserEntity>()
+
+            orders.await().forEach {
+                if (it.partner != null)
+                    list.add(it.partner)
+            }
+
+            list
+        }
+        val totalOrderApp = async {
+            val list = linkedSetOf<AppEntity>()
+
+            orders.await().forEach {
+                if (it.app != null)
+                    list.add(it.app)
+            }
+
+            list
+        }
+        val totalOrderClient = async {
+            val list = linkedSetOf<UserEntity>()
+
+            orders.await().forEach {
+                list.add(it.client)
+            }
+
+            list
+        }
+        val totalOrderExecutor = async {
+            val list = linkedSetOf<UserEntity>()
+
+            orders.await().forEach {
+                list.add(it.client)
+            }
+
+            list
+        }
+
         return@withContext DataResponse.ok(
             DashBoardAnalytic(
                 category = categoryAnalyticWork.await(),
@@ -689,7 +736,11 @@ class DashboardController(private val orderDao: OrderDao,
                 orderCount = orders.await().toList().size,
                 systemInAmount = systemInAmount.await(),
                 systemOutAmount = systemOutAmount.await(),
-                partnerInAmount = partnerInAmount.await()
+                partnerInAmount = partnerInAmount.await(),
+                totalOrderPartnerCount = totalOrderPartner.await().size,
+                totalOrderAppCount = totalOrderApp.await().size,
+                totalOrderClientCount = totalOrderClient.await().size,
+                totalOrderExecutorCount = totalOrderExecutor.await().size
             )
         )
     }
@@ -726,5 +777,9 @@ data class DashBoardAnalytic(
     val orderCount: Int,
     val systemInAmount: Float,
     val systemOutAmount: Float,
-    val partnerInAmount: Float
+    val partnerInAmount: Float,
+    val totalOrderPartnerCount: Int,
+    val totalOrderAppCount: Int,
+    val totalOrderClientCount: Int,
+    val totalOrderExecutorCount: Int
 )

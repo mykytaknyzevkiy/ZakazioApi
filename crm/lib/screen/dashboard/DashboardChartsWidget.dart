@@ -12,28 +12,84 @@ class DashboardChartsWidget extends StatelessWidget {
   DashboardChartsWidget(this.data);
 
   @override
-  Widget build(BuildContext context) => Card(
+  Widget build(BuildContext context) => Column(
+    children: [
+      newOrderAnalytic()
+    ],
+  );
+
+  newOrderAnalytic() => Card(
     elevation: 4,
     child: Padding(
       padding: const EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          cardTitle("Новые заказы"),
+          SizedBox(
+            height: 25
+          ),
           Text(
-            "Аналитика",
+              "Категории",
+              style: TextStyle(fontSize: 18),
+          ),
+          SizedBox(
+              height: 15
+          ),
+          categoryOrderCount(),
+          SizedBox(
+            height: 15,
+          ),
+          Text(
+            "Регионы",
             style: TextStyle(fontSize: 18),
           ),
-          SizedBox(height: 25),
-          categoryOrderCount(),
-          SizedBox(height: 15),
-          categoryOrderTotalPrice(),
-          SizedBox(height: 15),
+          SizedBox(
+              height: 15
+          ),
           addressOrderCount(),
-          SizedBox(height: 15),
-          orderStatus()
+          SizedBox(
+            height: 20,
+          ),
+          Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(24),
+                child: Row(
+                  //crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    infoText("Всего", formatNumber(data.orderCount)),
+                    SizedBox(
+                      width: 25,
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        infoText("Партнеры", formatNumber(data.totalOrderPartnerCount)),
+                        SizedBox(
+                          height: 15,
+                        ),
+                        infoText("Приложении", formatNumber(data.totalOrderAppCount)),
+                        SizedBox(
+                          height: 15,
+                        ),
+                        infoText("Исполнители", formatNumber(data.totalOrderExecutorCount)),
+                        SizedBox(
+                          height: 15,
+                        ),
+                        infoText("Клиенты", formatNumber(data.totalOrderClientCount))
+                      ],
+                    )
+                  ],
+                )
+              ),
+              Expanded(child: orderStatus())
+            ],
+          )
         ],
       ),
-    )
+    ),
   );
 
   categoryOrderCount() => SfCartesianChart(
@@ -43,7 +99,6 @@ class DashboardChartsWidget extends StatelessWidget {
           majorGridLines: MajorGridLines(width: 0),
           majorTickLines: MajorTickLines(size: 0)
       ),
-      title: ChartTitle(text: "Категории заказы", alignment: ChartAlignment.near),
       plotAreaBorderWidth: 0,
       legend: Legend(isVisible: false),
       series: <ColumnSeries<CategoryAnalytic, String>>[
@@ -125,7 +180,6 @@ class DashboardChartsWidget extends StatelessWidget {
           majorGridLines: MajorGridLines(width: 0),
           majorTickLines: MajorTickLines(size: 0)
       ),
-      title: ChartTitle(text: "Заказы по регионам", alignment: ChartAlignment.near),
       plotAreaBorderWidth: 0,
       legend: Legend(isVisible: false),
       series: <ColumnSeries<AddressAnalytic, String>>[
@@ -199,32 +253,53 @@ class DashboardChartsWidget extends StatelessWidget {
       ]
   );
 
-  orderStatus() {
-    int totalOrderCount = 0;
-    data.orderStatus.forEach((element) {
-      totalOrderCount += element.orderCount;
-    });
+  orderStatus() => SfCircularChart(
+    legend: Legend(
+        isVisible: true, overflowMode: LegendItemOverflowMode.wrap),
+    series: <PieSeries<OrderStatusAnalytic, String>>[
+      PieSeries<OrderStatusAnalytic, String>(
+          dataSource: data.orderStatus,
+          xValueMapper: (OrderStatusAnalytic v, _) => v.statusInfo().name(),
+          yValueMapper: (OrderStatusAnalytic v, _) => v.orderCount,
+          dataLabelMapper: (OrderStatusAnalytic v, _) => v.statusInfo().name(),
+          pointColorMapper: (OrderStatusAnalytic v, _) => v.statusInfo().color(),
+          startAngle: 100,
+          endAngle: 100,
+          pointRadiusMapper: (OrderStatusAnalytic v, _) => "${v.orderCount * 100 / data.orderCount}%" ,
+          dataLabelSettings: DataLabelSettings(
+              isVisible: true, labelPosition: ChartDataLabelPosition.outside))
+    ],
+    tooltipBehavior: TooltipBehavior(enable: true),
+  );
 
-    return SfCircularChart(
-      title: ChartTitle(
-          text: 'Статусы по заказам'
+  cardTitle(String title) => Text(
+    title,
+    style: TextStyle(
+      fontSize: 24,
+      fontWeight: FontWeight.bold
+    ),
+  );
+
+  infoText(String label, String data) => RichText(
+    text: TextSpan(
+      style: TextStyle(
+        color: Colors.black,
+        fontSize: 32,
+        fontWeight: FontWeight.bold
       ),
-      legend: Legend(
-          isVisible: true, overflowMode: LegendItemOverflowMode.wrap),
-      series: <PieSeries<OrderStatusAnalytic, String>>[
-        PieSeries<OrderStatusAnalytic, String>(
-            dataSource: data.orderStatus,
-            xValueMapper: (OrderStatusAnalytic v, _) => v.statusInfo().name(),
-            yValueMapper: (OrderStatusAnalytic v, _) => v.orderCount,
-            dataLabelMapper: (OrderStatusAnalytic v, _) => v.statusInfo().name(),
-            startAngle: 100,
-            endAngle: 100,
-            pointRadiusMapper: (OrderStatusAnalytic v, _) => "${v.orderCount * 100 / totalOrderCount}%" ,
-            dataLabelSettings: DataLabelSettings(
-                isVisible: true, labelPosition: ChartDataLabelPosition.outside))
-      ],
-      tooltipBehavior: TooltipBehavior(enable: true),
-    );
-  }
-
+      children: [
+        TextSpan(
+          text: "$label:",
+          style: TextStyle(
+            color: Colors.grey,
+            fontSize: 18,
+            fontWeight: FontWeight.normal
+          )
+        ),
+        TextSpan(
+          text: "\n$data",
+        )
+      ]
+    ),
+  );
 }
