@@ -30,16 +30,31 @@ class PartnerRest extends BaseUserTypeRest {
     }
   }
 
+  //@override
+  Future<DataResponse<PagedListModel<PartnerModel>>> listFull(
+      String quary, int pageNum, int size, int regionID, int cityID, String? status) async {
+    final json = await get(route + "list", {},
+        {"size": size.toString(), "page": pageNum.toString(), "search": quary, "region_id": regionID.toString(), "city_id": cityID.toString(), "status": status ?? ""});
+
+    try {
+      return DataResponse.fromJson(
+          json,
+          (pageJson) => PagedListModel.fromJson(
+              pageJson, (adminJson) => PartnerModel.fromJson(adminJson)));
+    } catch (e) {
+      return DataResponse(success: true, data: null);
+    }
+  }
+
   @override
-  Future<DataResponse<PagedListModel<PartnerModel>>> list(
-      String quary, int pageNum, int size) async {
+  Future<DataResponse<PagedListModel<PartnerModel>>> list(String quary, int pageNum, int size) async {
     final json = await get(route + "list", {},
         {"size": size.toString(), "page": pageNum.toString(), "search": quary});
 
     try {
       return DataResponse.fromJson(
           json,
-          (pageJson) => PagedListModel.fromJson(
+              (pageJson) => PagedListModel.fromJson(
               pageJson, (adminJson) => PartnerModel.fromJson(adminJson)));
     } catch (e) {
       return DataResponse(success: true, data: null);

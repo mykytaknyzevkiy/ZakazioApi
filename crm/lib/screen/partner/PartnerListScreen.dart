@@ -3,6 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:zakazy_crm_v2/conts.dart';
 import 'package:zakazy_crm_v2/model/address/CityModel.dart';
+import 'package:zakazy_crm_v2/model/address/RegionModel.dart';
 import 'package:zakazy_crm_v2/model/user/partner/PartnerModel.dart';
 import 'package:zakazy_crm_v2/model/user/RoleType.dart';
 import 'package:zakazy_crm_v2/screen/HomeScreen.dart';
@@ -12,6 +13,7 @@ import 'package:zakazy_crm_v2/screens.dart';
 import 'package:zakazy_crm_v2/widget/CityAutoTextFieldFixed.dart';
 import 'package:zakazy_crm_v2/widget/MaterialButton.dart';
 import 'package:zakazy_crm_v2/widget/PagesWidget.dart';
+import 'package:zakazy_crm_v2/widget/RegionAutoTextFieldFixed.dart';
 import 'package:zakazy_crm_v2/widget/UserStatusSelectWidget.dart';
 import 'package:zakazy_crm_v2/widget/user/UserAvater.dart';
 import 'package:zakazy_crm_v2/widget/user/createUser/CreateUserScreen.dart';
@@ -32,6 +34,8 @@ class _PartnerListScreenState
   String? _currentStatus;
 
   CityModel? _currentCity;
+
+  RegionModel? _currentRegion;
 
   _PartnerListScreenState() {
     _searchFieldController.addListener(() {
@@ -70,13 +74,18 @@ class _PartnerListScreenState
         children: [
           _createAdminButton(),
           Divider(height: 30, color: Colors.transparent),
-          _searchWidget(),
-          Divider(height: 30, color: Colors.transparent),
           MediaQuery.of(context).size.width > phoneSize
               ? Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(child: list()),
+              Expanded(
+                  child: SizedBox(
+                    height: MediaQuery.of(context).size.height,
+                    child: SingleChildScrollView(
+                      child: list()
+                    ),
+                  )
+              ),
               SizedBox(width: 25),
               filters()
             ],
@@ -108,18 +117,14 @@ class _PartnerListScreenState
     );
   }
 
-  _searchWidget() => Padding(
-        padding: EdgeInsets.only(right: 8),
-        child: SizedBox(
-          width: 500,
-          child: TextFormField(
-              controller: _searchFieldController,
-              decoration: InputDecoration(
-                  icon: Icon(Icons.search),
-                  labelText: 'Поиск',
-                  border: OutlineInputBorder())),
-        ),
-      );
+  _searchWidget() => SizedBox(
+    width: 300,
+    child: TextFormField(
+        controller: _searchFieldController,
+        decoration: InputDecoration(
+            labelText: 'Поиск',
+            border: OutlineInputBorder())),
+  );
 
   _createAdminButton() => MyButton(
         title: "Добавить партнера",
@@ -131,7 +136,7 @@ class _PartnerListScreenState
   PartnerViewModel viewModelInstancer() => PartnerViewModel();
 
   doLoad() {
-    _viewModel.load(_searchFieldController.text, _currentPage, 20, _currentStatus);
+    _viewModel.load(_searchFieldController.text, _currentPage, 20, _currentRegion, _currentCity, _currentStatus);
   }
 
   filters() => Card(
@@ -146,13 +151,32 @@ class _PartnerListScreenState
               height: 25,
             ),
             SizedBox(
+              height: 15,
+            ),
+            _searchWidget(),
+            SizedBox(
+              height: 15,
+            ),
+            SizedBox(
+              width: 300,
+              child: RegionAutoTextFieldFixed(
+                      (city) {
+                        _currentRegion = city;
+                    _currentPage = 0;
+                    doLoad();
+                  }),
+            ),
+            SizedBox(
+              height: 15,
+            ),
+            SizedBox(
               width: 300,
               child: CityAutoTextFieldFixed(
                       (city) {
                     _currentCity = city;
                     _currentPage = 0;
                     doLoad();
-                  }),
+                  }, onSelectedRegion: () => _currentRegion),
             ),
             SizedBox(
               height: 15,
@@ -212,7 +236,8 @@ class _Desktop extends StatelessWidget {
           }
           return Center(child: CircularProgressIndicator());
         },
-      ));
+      )
+  );
 
   _tables(List<PartnerModel> data) =>  SizedBox(
     width: double.infinity,

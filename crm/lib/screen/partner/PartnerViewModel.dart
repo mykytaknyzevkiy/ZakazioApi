@@ -1,5 +1,7 @@
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:rxdart/subjects.dart';
+import 'package:zakazy_crm_v2/model/address/CityModel.dart';
+import 'package:zakazy_crm_v2/model/address/RegionModel.dart';
 import 'package:zakazy_crm_v2/model/user/partner/PartnerModel.dart';
 import 'package:zakazy_crm_v2/rest/partner/PartnerRest.dart';
 import 'package:zakazy_crm_v2/screen/ZakazyViewModel.dart';
@@ -14,24 +16,13 @@ class PartnerViewModel extends ZakazyViewModel {
 
   final rest = PartnerRest();
 
-  load(String quary, int pageNum, int size, String? status) async {
-    final data = await rest.list(quary, pageNum, size);
+  load(String quary, int pageNum, int size, RegionModel? region, CityModel? city, String? status) async {
+    final data = await rest.listFull(quary, pageNum, size, region?.id??-1, city?.id??-1, status);
 
     if (data.success && data.data != null) {
       pageCount.add(data.data!.totalPages);
 
-      final newData = List<PartnerModel>.of({});
-
-      if (status == null) {
-        newData.addAll(data.data!.content!);
-      } else {
-        data.data!.content!.forEach((element) {
-          if (element.status == status)
-            newData.add(element);
-        });
-      }
-
-      list.add(newData);
+      list.add(data.data!.content);
     }
   }
 
