@@ -4,26 +4,30 @@ import 'package:flutter/rendering.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:zakazy_crm_v2/conts.dart';
 import 'package:zakazy_crm_v2/model/address/CityModel.dart';
+import 'package:zakazy_crm_v2/model/address/RegionModel.dart';
 import 'package:zakazy_crm_v2/repository/AddressResponse.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:zakazy_crm_v2/rest/AddressRest.dart';
 import 'package:zakazy_crm_v2/widget/ZTextField.dart';
 
 class CityAutoTextFieldFixed extends StatefulWidget {
   final Function(CityModel? cityModel) onSelect;
   CityModel? selectedCity;
+  RegionModel? Function()? onSelectedRegion;
 
-  CityAutoTextFieldFixed(this.onSelect);
+  CityAutoTextFieldFixed(this.onSelect, {this.onSelectedRegion});
 
   @override
   State<StatefulWidget> createState() =>
-      _CityAutoTextFieldFixed(onSelect, selectedCity);
+      _CityAutoTextFieldFixed(onSelect, selectedCity, onSelectedRegion);
 }
 
 class _CityAutoTextFieldFixed extends State<CityAutoTextFieldFixed>
     with WidgetsBindingObserver {
   final Function(CityModel? cityModel) onSelect;
   CityModel? selectedCity;
+  RegionModel? Function()? onSelectedRegion;
 
   final _addressRepository = AddressResponse();
 
@@ -39,15 +43,21 @@ class _CityAutoTextFieldFixed extends State<CityAutoTextFieldFixed>
       txt: selectedCity?.name,
       onEdit: (txt) async {
         _list.add(null);
-        final data = await _addressRepository.citySearch(txt);
-        _list.add(data);
+        if (onSelectedRegion?.call() == null) {
+          final data = await _addressRepository.citySearch(txt);
+          _list.add(data);
+        }
+        else {
+          final data = await AddressRest().citySearchOfRegion(onSelectedRegion!.call()!.id, txt);
+          _list.add(data.data!.content);
+        }
       });
 
   OverlayEntry? _overlayEntry;
 
   bool _isOpenList = false;
 
-  _CityAutoTextFieldFixed(this.onSelect, this.selectedCity);
+  _CityAutoTextFieldFixed(this.onSelect, this.selectedCity, this.onSelectedRegion);
 
   @override
   void initState() {

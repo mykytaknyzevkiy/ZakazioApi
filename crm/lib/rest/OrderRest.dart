@@ -19,14 +19,15 @@ class OrderRest extends ZakazioRest {
   }
 
   Future<DataResponse<PagedListModel<OrderModel>>> openOrders(
-      int pageNum, String search, int cityID, int categoryID, String? status) async {
+      int pageNum, String search, int cityID, int categoryID, int regionID, String? status) async {
     final json = await get("/order/list", {}, {
       "search": search,
       "page": pageNum.toString(),
       "size": "10",
       "city_id": cityID.toString(),
       "category_id": categoryID.toString(),
-      "status": status ?? ""
+      "status": status ?? "",
+      "region_id": regionID.toString()
     });
 
     try {

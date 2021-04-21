@@ -18,6 +18,19 @@ class AddressRest extends ZakazioRest {
     }
   }
 
+  Future<DataResponse<PagedListModel<RegionModel>>> regionsSearch(String query) async {
+    final json = await get("/region/search", {}, {"query": query});
+
+    try {
+      return DataResponse.fromJson(
+          json,
+              (jsonN) => PagedListModel.fromJson(
+              jsonN, (jsonM) => RegionModel.fromJson(jsonM)));
+    } catch (e) {
+      return DataResponse(success: false);
+    }
+  }
+
   Future<DataResponse<dynamic>> addRegion(String name, int zipCode) async {
     final json =
         await post("/region/add", {}, {"name": name, "postCode": zipCode});
@@ -88,6 +101,20 @@ class AddressRest extends ZakazioRest {
       return DataResponse.fromJson(
           json,
           (jsonN) => PagedListModel.fromJson(
+              jsonN, (jsonM) => CityModel.fromJson(jsonM)));
+    } catch (e) {
+      return DataResponse(success: false);
+    }
+  }
+
+  Future<DataResponse<PagedListModel<CityModel>>> citySearchOfRegion(int regionID,
+      String query) async {
+    final json = await get("/region/$regionID/city/search", {}, {"query": query});
+
+    try {
+      return DataResponse.fromJson(
+          json,
+              (jsonN) => PagedListModel.fromJson(
               jsonN, (jsonM) => CityModel.fromJson(jsonM)));
     } catch (e) {
       return DataResponse(success: false);

@@ -38,8 +38,9 @@ class OrderRepository {
       String search,
       int cityID, 
       int categoryID,
+      int regionID,
       OrderStatus? orderStatus) async {
-    final data = await _orderRest.openOrders(pageNum, search, cityID, categoryID, orderStatus?.toZString());
+    final data = await _orderRest.openOrders(pageNum, search, cityID, categoryID, regionID, orderStatus?.toZString());
 
     if (data.data == null) return PagedListModel(List.empty(), 0);
 

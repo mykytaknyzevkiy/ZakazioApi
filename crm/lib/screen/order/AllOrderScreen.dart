@@ -17,6 +17,7 @@ import 'package:zakazy_crm_v2/widget/CityAutoTextFieldFixed.dart';
 import 'package:zakazy_crm_v2/widget/MaterialButton.dart';
 import 'package:zakazy_crm_v2/widget/OrderStatusAutoTextFieldFixed.dart';
 import 'package:zakazy_crm_v2/widget/PagesWidget.dart';
+import 'package:zakazy_crm_v2/widget/RegionAutoTextFieldFixed.dart';
 import 'package:zakazy_crm_v2/widget/order/OrderNewViewHolder.dart';
 import 'package:zakazy_crm_v2/widget/order/OrderViewHolder.dart';
 
@@ -64,8 +65,19 @@ class _AllOrderState extends HomeScreen<AllOrderScreen, OrderViewModel> {
                 ),
                 SizedBox(
                   width: 300,
+                  child: RegionAutoTextFieldFixed(
+                          (city) => _viewModel.setRegion(city)
+                  ),
+                ),
+                SizedBox(
+                  height: 15,
+                ),
+                SizedBox(
+                  width: 300,
                   child: CityAutoTextFieldFixed(
-                      (city) => _viewModel.setCity(city)),
+                      (city) => _viewModel.setCity(city),
+                      onSelectedRegion: () => _viewModel.selectedRegion
+                  ),
                 ),
                 SizedBox(
                   height: 15,
