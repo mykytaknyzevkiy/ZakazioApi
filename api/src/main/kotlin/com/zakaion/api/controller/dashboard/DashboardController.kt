@@ -598,12 +598,9 @@ class DashboardController(private val orderDao: OrderDao,
 
         val systemTransactionInDateAnalytic: Deferred<ArrayList<DateAnalytic>> = async {
             val list = arrayListOf<DateAnalytic>()
-            repeat(11) {
+            repeat(12) {
                 list.add(DateAnalytic(it))
             }
-
-            if ( startDate.month != 0 || endDate.month != 12 || startDate.year != endDate.year )
-                return@async list
 
             transactionsIn.await().forEach { transaction ->
                 if (transaction.user.role == RoleType.SUPER_ADMIN) {
@@ -617,12 +614,9 @@ class DashboardController(private val orderDao: OrderDao,
 
         val systemTransactionOutDateAnalytic: Deferred<ArrayList<DateAnalytic>> = async {
             val list = arrayListOf<DateAnalytic>()
-            repeat(11) {
+            repeat(12) {
                 list.add(DateAnalytic(it))
             }
-
-            if ( startDate.month != 0 || endDate.month != 12 || startDate.year != endDate.year )
-                return@async list
 
             transactionsOut.await().forEach { transaction ->
                 val date = list.find { it.date == transaction.creationDateTime.month }!!
@@ -634,12 +628,9 @@ class DashboardController(private val orderDao: OrderDao,
 
         val partnerTransactionInDateAnalytic: Deferred<ArrayList<DateAnalytic>> = async {
             val list = arrayListOf<DateAnalytic>()
-            repeat(11) {
+            repeat(12) {
                 list.add(DateAnalytic(it))
             }
-
-            if ( startDate.month != 0 || endDate.month != 12 || startDate.year != endDate.year )
-                return@async list
 
             transactionsIn.await().forEach { transaction ->
                 if (transaction.user.role == RoleType.PARTNER) {

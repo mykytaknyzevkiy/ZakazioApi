@@ -17,7 +17,8 @@ class DashboardChartsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Column(
     children: [
-      newOrderAnalytic()
+      newOrderAnalytic(),
+      financeAnalytic()
     ],
   );
 
@@ -114,7 +115,53 @@ class DashboardChartsWidget extends StatelessWidget {
                 ],
               ),
             )
-          )
+          ),
+          SizedBox(
+            height: 15,
+          ),
+          orderDate()
+        ],
+      ),
+    ),
+  );
+
+  financeAnalytic() => Card(
+    elevation: 4,
+    child: Padding(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          cardTitle("Финансы"),
+          SizedBox(
+              height: 25
+          ),
+          Text(
+            "Транзакции по категориям",
+            style: TextStyle(fontSize: 18),
+          ),
+          SizedBox(
+              height: 15
+          ),
+          categoryOrderTotalPrice(),
+          SizedBox(
+            height: 20,
+          ),
+          Padding(
+              padding: const EdgeInsets.all(24),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  infoText("Заработала система", formatNumber(data.systemInAmount.toInt()) + " руб."),
+                  infoText("Партнеры", formatNumber(data.partnerInAmount.toInt()) + " руб."),
+                  infoText("Выведено из системы", formatNumber(data.systemOutAmount.toInt()) + " руб.")
+                ],
+              )
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          financeDate()
         ],
       ),
     ),
@@ -159,6 +206,60 @@ class DashboardChartsWidget extends StatelessWidget {
     );
   }
 
+  orderDate() =>  SfCartesianChart(
+      plotAreaBorderWidth: 0,
+      legend: Legend(isVisible: false),
+      series: <ChartSeries<DateAnalytic, int>>[
+        SplineAreaSeries<DateAnalytic, int>(
+            name: "Кол-во заказов",
+            color: const Color.fromRGBO(75, 135, 185, 0.6),
+            borderColor: const Color.fromRGBO(75, 135, 185, 1),
+            borderWidth: 2,
+            dataSource: data.orderDate,
+            xValueMapper: (e, __) => e.date + 1,
+            yValueMapper: (e, __) => e.value,
+            dataLabelSettings: DataLabelSettings(isVisible: true, color: primaryColor, textStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: accentColor))
+        ),
+      ]
+  );
+
+  financeDate() =>  SfCartesianChart(
+      plotAreaBorderWidth: 0,
+      legend: Legend(isVisible: false),
+      series: <ChartSeries<DateAnalytic, int>>[
+        SplineAreaSeries<DateAnalytic, int>(
+            name: "Заработала система",
+            color: Colors.green,
+            borderColor: Colors.green,
+            borderWidth: 2,
+            dataSource: data.systemTransactionInDate,
+            xValueMapper: (e, __) => e.date + 1,
+            yValueMapper: (e, __) => e.value,
+            dataLabelSettings: DataLabelSettings(isVisible: true, color: primaryColor, textStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: accentColor))
+        ),
+        /*SplineAreaSeries<DateAnalytic, int>(
+            name: "Заработали партнеры",
+            color: primaryColor,
+            borderColor: primaryColor,
+            borderWidth: 2,
+            dataSource: data.partnerTransactionInDateAnalytic,
+            xValueMapper: (e, __) => e.date + 1,
+            yValueMapper: (e, __) => e.value,
+            dataLabelSettings: DataLabelSettings(isVisible: true, color: primaryColor, textStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: accentColor))
+        ),
+        SplineAreaSeries<DateAnalytic, int>(
+            name: "Вывод из системы",
+            color: Colors.red,
+            borderColor: Colors.red,
+            borderWidth: 2,
+            dataSource: data.systemTransactionOutDateAnalytic,
+            xValueMapper: (e, __) => e.date + 1,
+            yValueMapper: (e, __) => e.value,
+            dataLabelSettings: DataLabelSettings(isVisible: true, color: primaryColor, textStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: accentColor))
+        ),*/
+      ]
+  );
+
   categoryOrderTotalPrice() => SfCartesianChart(
       primaryXAxis: CategoryAxis(
           majorGridLines: MajorGridLines(width: 0)
@@ -190,11 +291,10 @@ class DashboardChartsWidget extends StatelessWidget {
             );
           }
       ),
-      title: ChartTitle(text: "Категории транзакции", alignment: ChartAlignment.near),
       plotAreaBorderWidth: 0,
       legend: Legend(isVisible: true),
       series: <BarSeries<CategoryAnalytic, String>>[
-        BarSeries<CategoryAnalytic, String>(
+        /*BarSeries<CategoryAnalytic, String>(
             name: "Общая стоимость заказов",
             isTrackVisible: true,
             trackColor: const Color.fromRGBO(198, 201, 207, 1),
@@ -202,12 +302,12 @@ class DashboardChartsWidget extends StatelessWidget {
             dataSource: data.category,
             xValueMapper: (e, __) => e.info.name,
             yValueMapper: (e, __) => e.orderTotalPrice / 10000,
-        ),
+        ),*/
         BarSeries<CategoryAnalytic, String>(
             name: "Заработало система",
             isTrackVisible: true,
             trackColor: const Color.fromRGBO(198, 201, 207, 1),
-            color: Colors.green,
+            color: primaryColor,
             dataSource: data.category,
             xValueMapper: (e, __) => e.info.name,
             yValueMapper: (e, __) => e.systemTotalPrice,

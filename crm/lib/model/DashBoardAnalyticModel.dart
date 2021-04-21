@@ -16,8 +16,31 @@ class DashBoardAnalytic {
   final int totalOrderClientCount;
   final int totalOrderExecutorCount;
   final double totalOrderSum;
+  final List<DateAnalytic> orderDate;
+  final double systemInAmount;
+  final double partnerInAmount;
+  final double systemOutAmount;
+  final List<DateAnalytic> systemTransactionInDate;
+  final List<DateAnalytic> systemTransactionOutDateAnalytic;
+  final List<DateAnalytic> partnerTransactionInDateAnalytic;
 
-  DashBoardAnalytic(this.category, this.address, this.orderStatus, this.orderCount, this.totalOrderPartnerCount, this.totalOrderAppCount, this.totalOrderClientCount, this.totalOrderExecutorCount, this.totalOrderSum);
+  DashBoardAnalytic(
+      this.category,
+      this.address,
+      this.orderStatus,
+      this.orderCount,
+      this.totalOrderPartnerCount,
+      this.totalOrderAppCount,
+      this.totalOrderClientCount,
+      this.totalOrderExecutorCount,
+      this.totalOrderSum,
+      this.orderDate,
+      this.systemInAmount,
+      this.partnerInAmount,
+      this.systemOutAmount,
+      this.systemTransactionInDate,
+      this.systemTransactionOutDateAnalytic,
+      this.partnerTransactionInDateAnalytic);
 
   DashBoardAnalytic.fromJson(Map<String, dynamic> json):
         category = (json["category"] as List).map((e) => CategoryAnalytic.fromJson(e)).toList(),
@@ -28,7 +51,14 @@ class DashBoardAnalytic {
         totalOrderClientCount = json["totalOrderClientCount"],
         totalOrderPartnerCount = json["totalOrderPartnerCount"],
         totalOrderExecutorCount = json["totalOrderExecutorCount"],
-        totalOrderSum = json["totalOrderSum"];
+        totalOrderSum = json["totalOrderSum"],
+        orderDate = (json["orderDate"] as List).map((e) => DateAnalytic.fromJson(e)).toList(),
+        systemInAmount = json["systemInAmount"],
+        partnerInAmount = json["partnerInAmount"],
+        systemOutAmount = json['systemOutAmount'],
+        systemTransactionInDate = (json["systemTransactionInDate"] as List).map((e) => DateAnalytic.fromJson(e)).toList(),
+        systemTransactionOutDateAnalytic = (json["systemTransactionInDate"] as List).map((e) => DateAnalytic.fromJson(e)).toList(),
+        partnerTransactionInDateAnalytic = (json["systemTransactionInDate"] as List).map((e) => DateAnalytic.fromJson(e)).toList();
 
   int maxCategoryOrderCount() {
     int max = 0;
@@ -125,4 +155,15 @@ class OrderStatusAnalytic {
   OrderStatusAnalytic.fromJson(Map<String, dynamic> json):
         info = json['info'],
         orderCount = json['orderCount'];
+}
+
+class DateAnalytic {
+  final int date;
+  final double value;
+
+  DateAnalytic(this.date, this.value);
+
+  DateAnalytic.fromJson(Map<String, dynamic> json) :
+      date = json["date"],
+      value = json["value"];
 }

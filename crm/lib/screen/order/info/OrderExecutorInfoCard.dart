@@ -85,8 +85,11 @@ class OrderExecutorInfoCard extends StatelessWidget {
                 width: 10,
                 color: Colors.transparent,
               ),
-              Text(
-                  "${_executorInfo!.firstName} ${_executorInfo!.lastName}\n${_executorInfo!.middleName}")
+              SizedBox(
+                width: 200,
+                child: Text(
+                    "${_executorInfo!.firstName} ${_executorInfo!.lastName}\n${_executorInfo!.middleName}"),
+              )
             ],
           ),
           Divider(

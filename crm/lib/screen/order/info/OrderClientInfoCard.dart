@@ -37,8 +37,11 @@ class OrderClientInfoCard extends StatelessWidget {
                   width: 10,
                   color: Colors.transparent,
                 ),
-                Text(
-                    "${_clientInfo.firstName} ${_clientInfo.lastName}\n${_clientInfo.middleName}")
+                SizedBox(
+                  width: 200,
+                  child: Text(
+                      "${_clientInfo.firstName} ${_clientInfo.lastName}\n${_clientInfo.middleName}"),
+                )
               ],
             ),
             Divider(
