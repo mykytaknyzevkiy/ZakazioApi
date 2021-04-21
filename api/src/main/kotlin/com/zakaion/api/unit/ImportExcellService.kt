@@ -168,7 +168,7 @@ class ImportExcellService(private val orderDao: OrderDao,
 
             val client = async(Dispatchers.IO) {
                 userDao.findAll().find {
-                    it.phoneNumber == clientPhone && it.role == RoleType.CLIENT
+                    (it.phoneNumber == clientPhone || it.email == clientEmail) && it.role == RoleType.CLIENT
                 } ?: userDao.save(
                     UserEntity(
                         firstName = clientName.split(" ")[0],

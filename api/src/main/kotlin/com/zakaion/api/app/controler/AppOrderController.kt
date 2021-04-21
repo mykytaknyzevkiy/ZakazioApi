@@ -66,8 +66,8 @@ class AppOrderController(
         }
 
         val client = userDao.findAll()
-            .find { it.phoneNumber == addOrderModel.clientPhone ||
-                    it.email == addOrderModel.clientEmail && it.role == RoleType.CLIENT}
+            .find {( it.phoneNumber == addOrderModel.clientPhone ||
+                    it.email == addOrderModel.clientEmail) && it.role == RoleType.CLIENT}
             ?: userDao.save(
                 UserEntity(
                 email = addOrderModel.clientEmail,
@@ -85,6 +85,7 @@ class AppOrderController(
 
         if (!category.parent.isActive)
             throw BadParams()
+
 
         val orderEntity = orderDao.save(
             OrderEntity(

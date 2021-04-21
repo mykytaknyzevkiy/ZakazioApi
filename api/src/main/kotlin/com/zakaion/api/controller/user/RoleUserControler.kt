@@ -82,11 +82,22 @@ abstract class RoleUserController(private val userDao: UserDao,
             }
         }
 
-        val user = userDao.save(body.copy(
-            email = email,
-            role = roleType,
-            isEmailActive = true
-        ))
+        var user = userDao.findByRole(roleType.ordinal).find { it.email == email }
+
+        user = if (user == null) {
+            userDao.save(body.copy(
+                email = email,
+                role = roleType,
+                isEmailActive = true
+            ))
+        } else {
+            userDao.save(body.copy(
+                id = user.id,
+                email = email,
+                role = roleType,
+                isEmailActive = true
+            ))
+        }
 
         return DataResponse.ok(
             TokenModel(
