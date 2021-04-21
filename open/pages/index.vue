@@ -37,7 +37,6 @@
         <!--        <a :href="CONTACTS_LINK" class="cover__link cover__link_contacts"
           >Контакты</a
         >-->
-        <a :href="HELP_LINK" class="cover__link cover__link_help">Помощь</a>
       </div>
     </div>
   </div>
