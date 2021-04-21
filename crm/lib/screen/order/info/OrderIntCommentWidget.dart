@@ -112,10 +112,9 @@ class _Desktop extends StatelessWidget {
   @override
   Widget build(BuildContext context) => SizedBox(
       width: double.infinity,
-      child: DataTable(
-        //dataRowHeight: 200,
-          columns: _tableColumns(),
-          rows: _tableRows(list)
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: list.map((e) => OrderCommentViewHolder(e)).toList(),
       )
   );
 

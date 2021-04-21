@@ -2,6 +2,8 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'dart:html' as html;
+import 'dart:js' as js;
+
 
 import 'package:zakazy_crm_v2/conts.dart';
 
@@ -22,10 +24,11 @@ class OrderFileViewHolde extends StatelessWidget {
 
     if (onDownload == null && onDelete == null && onDeleteViaName == null) {
       onDownload = (fileName) {
+        js.context.callMethod("openInNewTab", [fileUrl(fileName)]);/*
         html.AnchorElement anchorElement = html.AnchorElement();
         anchorElement.href = fileUrl(fileName);
         anchorElement.download = fileName;
-        anchorElement.click();
+        anchorElement.click();*/
       };
     }
 

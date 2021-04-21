@@ -150,7 +150,7 @@
         class="order__input"
         placeholder="Предполагаемая дата завершения"
       />
-      <div class="order__title">Укажите стоитмость в рублях</div>
+      <div class="order__title">Укажите стоимость в рублях</div>
       <input
         v-model="ORDER_FORM.price"
         class="order__input"

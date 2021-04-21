@@ -53,6 +53,7 @@ class WebConfig : WebMvcConfigurer {
         list.add(MediaType.TEXT_HTML)
         list.add(MediaType.APPLICATION_OCTET_STREAM)
         list.add(MediaType.ALL)
+        //list.add(MediaType("text", "javascript"))
         return list
     }
 

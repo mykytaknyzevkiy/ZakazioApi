@@ -134,7 +134,7 @@ class TransactionController(
                     operation = TransactionOperation.MINUS
                 )
             })
-            list.sortBy { it.creationDateTime.time }
+            list.sortByDescending { it.creationDateTime.time }
             list
         }
 

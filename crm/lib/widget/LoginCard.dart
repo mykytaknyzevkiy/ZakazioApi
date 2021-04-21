@@ -99,13 +99,7 @@ class _LoginCardState extends State<LoginCard> {
                     )
                   : Center(
                       child: CircularProgressIndicator(),
-                    )),
-              FreeButton(
-                  title: "Забыли пароль?",
-                  onPressed: () {
-                    _onForgotPassword();
-                  },
-                  isEnable: !_isLoading),
+                    ))
             ],
           ),
           Divider(

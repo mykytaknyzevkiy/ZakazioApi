@@ -37,7 +37,7 @@ abstract class RoleUserController(private val userDao: UserDao,
         if (body.email.isNullOrEmpty())
             throw BadParams()
 
-        if (userDao.findAll().any { it.email == body.email }) {
+        if (userDao.findAll().any { it.email == body.email && it.password.isNotEmpty()}) {
             throw BadParams()
         }
 

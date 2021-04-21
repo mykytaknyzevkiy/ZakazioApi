@@ -356,13 +356,8 @@ class _OrderInfoScreenState
             children: List.generate(
                 order.files.length,
                 (index) => OrderFileViewHolde(
-                    fileName: order.files[index],
-                    onDownload: (fileName) {
-                      html.AnchorElement anchorElement = html.AnchorElement();
-                      anchorElement.href = fileUrl(fileName);
-                      anchorElement.download = fileName;
-                      anchorElement.click();
-                    }))),
+                    fileName: order.files[index])
+            )),
         Divider(
           height: 25,
           color: Colors.transparent,
