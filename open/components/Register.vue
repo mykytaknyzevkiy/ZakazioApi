@@ -3,9 +3,8 @@
     <template v-if="step === 0">
       <button
         class="cover__register-btn cover__register-btn_partner"
-        @click="register('partner')"
-      >
-        Вступить в командку
+        @click="openCrm()">
+        Войти в личный кабинет
       </button>
     </template>
     <div class="register">
