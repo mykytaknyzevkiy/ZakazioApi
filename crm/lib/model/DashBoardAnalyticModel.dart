@@ -57,8 +57,8 @@ class DashBoardAnalytic {
         partnerInAmount = json["partnerInAmount"],
         systemOutAmount = json['systemOutAmount'],
         systemTransactionInDate = (json["systemTransactionInDate"] as List).map((e) => DateAnalytic.fromJson(e)).toList(),
-        systemTransactionOutDateAnalytic = (json["systemTransactionInDate"] as List).map((e) => DateAnalytic.fromJson(e)).toList(),
-        partnerTransactionInDateAnalytic = (json["systemTransactionInDate"] as List).map((e) => DateAnalytic.fromJson(e)).toList();
+        systemTransactionOutDateAnalytic = (json["systemTransactionOutDateAnalytic"] as List).map((e) => DateAnalytic.fromJson(e)).toList(),
+        partnerTransactionInDateAnalytic = (json["partnerTransactionInDateAnalytic"] as List).map((e) => DateAnalytic.fromJson(e)).toList();
 
   int maxCategoryOrderCount() {
     int max = 0;

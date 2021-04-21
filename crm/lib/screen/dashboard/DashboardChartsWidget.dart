@@ -224,39 +224,32 @@ class DashboardChartsWidget extends StatelessWidget {
   );
 
   financeDate() =>  SfCartesianChart(
-      plotAreaBorderWidth: 0,
-      legend: Legend(isVisible: false),
-      series: <ChartSeries<DateAnalytic, int>>[
-        SplineAreaSeries<DateAnalytic, int>(
+      legend: Legend(isVisible: true),
+      series: <LineSeries<DateAnalytic, int>>[
+        LineSeries<DateAnalytic, int>(
             name: "Заработала система",
             color: Colors.green,
-            borderColor: Colors.green,
-            borderWidth: 2,
             dataSource: data.systemTransactionInDate,
             xValueMapper: (e, __) => e.date + 1,
             yValueMapper: (e, __) => e.value,
             dataLabelSettings: DataLabelSettings(isVisible: true, color: primaryColor, textStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: accentColor))
         ),
-        /*SplineAreaSeries<DateAnalytic, int>(
+        LineSeries<DateAnalytic, int>(
             name: "Заработали партнеры",
             color: primaryColor,
-            borderColor: primaryColor,
-            borderWidth: 2,
             dataSource: data.partnerTransactionInDateAnalytic,
             xValueMapper: (e, __) => e.date + 1,
             yValueMapper: (e, __) => e.value,
             dataLabelSettings: DataLabelSettings(isVisible: true, color: primaryColor, textStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: accentColor))
         ),
-        SplineAreaSeries<DateAnalytic, int>(
+        LineSeries<DateAnalytic, int>(
             name: "Вывод из системы",
             color: Colors.red,
-            borderColor: Colors.red,
-            borderWidth: 2,
             dataSource: data.systemTransactionOutDateAnalytic,
             xValueMapper: (e, __) => e.date + 1,
             yValueMapper: (e, __) => e.value,
             dataLabelSettings: DataLabelSettings(isVisible: true, color: primaryColor, textStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: accentColor))
-        ),*/
+        ),
       ]
   );
 

@@ -619,8 +619,10 @@ class DashboardController(private val orderDao: OrderDao,
             }
 
             transactionsOut.await().forEach { transaction ->
-                val date = list.find { it.date == transaction.creationDateTime.month }!!
-                date.value += transaction.amount
+                if (transaction.card != null) {
+                    val date = list.find { it.date == transaction.creationDateTime.month }!!
+                    date.value += transaction.amount
+                }
             }
 
             return@async list
@@ -654,7 +656,8 @@ class DashboardController(private val orderDao: OrderDao,
         val systemOutAmount = async {
             var amount = 0f
             transactionsOut.await().forEach {
-                amount += it.amount
+                if (it.card != null)
+                    amount += it.amount
             }
             amount
         }
