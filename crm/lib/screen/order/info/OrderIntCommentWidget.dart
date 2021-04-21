@@ -87,7 +87,8 @@ class OrderInfoCommentWidget extends StatelessWidget {
                     PagesWidget(
                         pageLength: snapShot.requireData.totalPages,
                         currentPage: snapShot.requireData.number,
-                        onSelect: (_) => {})
+                        onSelect: (page) => _viewModel.loadComments(page)
+                    )
                   ],
                 );
               },

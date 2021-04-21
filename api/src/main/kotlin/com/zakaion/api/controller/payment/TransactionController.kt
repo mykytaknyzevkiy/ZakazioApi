@@ -1,5 +1,6 @@
 package com.zakaion.api.controller.payment
 
+import com.zakaion.api.ExFuncs.toPage
 import com.zakaion.api.dao.TransactionInDao
 import com.zakaion.api.dao.TransactionOutDao
 import com.zakaion.api.entity.transaction.TransactionInEntity
@@ -30,22 +31,72 @@ class TransactionController(
     @GetMapping("/user/{USER_ID}/list")
     fun listUser(pageable: Pageable,
              @PathVariable("USER_ID") userID: Long) : DataResponse<Page<TransactionImpResponse>> {
-        val inList = transactionInDao.find(userID, pageable)
-        val outList = transactionOutDao.find(userID, pageable)
+        val inList = transactionInDao.find(userID)
+        val outList = transactionOutDao.find(userID)
+
+        val fullList = arrayListOf<TransactionImpResponse>()
+        fullList.addAll(inList.toList().map {
+            TransactionImpResponse(
+                id = it.id,
+                amount = it.amount,
+                user = it.user,
+                card = it.card,
+                order = if (it.order != null) orderFactor.create(it.order!!) else null,
+                creationDateTime = it.creationDateTime,
+                operation = TransactionOperation.PLUS
+            )
+        })
+        fullList.addAll(outList.toList().map {
+            TransactionImpResponse(
+                id = it.id,
+                amount = it.amount,
+                user = it.user,
+                card = it.card,
+                order = if (it.order != null) orderFactor.create(it.order!!) else null,
+                creationDateTime = it.creationDateTime,
+                operation = TransactionOperation.MINUS
+            )
+        })
+        fullList.sortBy { it.creationDateTime }
 
         return DataResponse.ok(
-            buildPageData(pageable, inList, outList)
+            fullList.toList().toPage(pageable)
         )
     }
 
     @GetMapping("/order/{ORDER_ID}/list")
     fun listOrder(pageable: Pageable,
                  @PathVariable("ORDER_ID") orderID: Long) : DataResponse<Page<TransactionImpResponse>> {
-        val inList = transactionInDao.findOrder(orderID, pageable)
-        val outList = transactionOutDao.findOrder(orderID, pageable)
+        val inList = transactionInDao.findOrder(orderID)
+        val outList = transactionOutDao.findOrder(orderID)
+
+        val fullList = arrayListOf<TransactionImpResponse>()
+        fullList.addAll(inList.toList().map {
+            TransactionImpResponse(
+                id = it.id,
+                amount = it.amount,
+                user = it.user,
+                card = it.card,
+                order = if (it.order != null) orderFactor.create(it.order!!) else null,
+                creationDateTime = it.creationDateTime,
+                operation = TransactionOperation.PLUS
+            )
+        })
+        fullList.addAll(outList.toList().map {
+            TransactionImpResponse(
+                id = it.id,
+                amount = it.amount,
+                user = it.user,
+                card = it.card,
+                order = if (it.order != null) orderFactor.create(it.order!!) else null,
+                creationDateTime = it.creationDateTime,
+                operation = TransactionOperation.MINUS
+            )
+        })
+        fullList.sortBy { it.creationDateTime }
 
         return DataResponse.ok(
-            buildPageData(pageable, inList, outList)
+            fullList.toList().toPage(pageable)
         )
     }
 
@@ -120,6 +171,7 @@ class TransactionController(
     }
 
     private fun buildPageData(
+        
         pageable: Pageable,
         inList: Page<TransactionInEntity>,
         outList: Page<TransactionOutEntity>): Page<TransactionImpResponse> {
@@ -173,9 +225,10 @@ class TransactionController(
                         operation = TransactionOperation.MINUS
                     )
                 })
-                list.sortBy { it.creationDateTime.time }
 
-                return list.toMutableList()
+                return list.toMutableList().apply {
+                    sortBy { it.creationDateTime.time }
+                }
             }
 
             override fun hasContent(): Boolean = true

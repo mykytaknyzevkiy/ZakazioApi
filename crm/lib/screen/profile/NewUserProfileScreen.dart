@@ -111,20 +111,18 @@ VM extends UserProfileViewModel<USER>> extends HomeScreen<T, VM> {
                   color: Colors.grey,
                 ),
                 MediaQuery.of(context).size.width > phoneSize
-                ? IntrinsicHeight(
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        infoOne(snapShot),
-                        VerticalDivider(
-                          width: 1,
-                          color: Colors.grey,
-                        ),
-                        Flexible(
-                          child: infoTwo(snapShot),
-                        )
-                      ],
+                ? Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    infoOne(snapShot),
+                    VerticalDivider(
+                      width: 1,
+                      color: Colors.grey,
+                    ),
+                    Expanded(
+                      child: infoTwo(snapShot),
                     )
+                  ],
                 )
                 : Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

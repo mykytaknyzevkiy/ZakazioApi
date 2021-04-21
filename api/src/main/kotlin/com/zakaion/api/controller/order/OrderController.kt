@@ -286,7 +286,8 @@ class OrderController(private val orderDao: OrderDao,
              ) status: OrderStatus?): DataResponse<Page<OrderNModel>> {
 
         val searchOperator: (OrderEntity) -> Boolean = {
-            it.title.contains(search)
+            it.id.toString().contains(search)
+                    || it.title.contains(search)
                     || it.content.contains(search)
                     || it.client.firstName.contains(search)
                     || it.client.lastName.contains(search)
