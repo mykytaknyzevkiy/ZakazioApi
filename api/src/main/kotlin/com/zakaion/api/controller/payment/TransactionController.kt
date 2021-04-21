@@ -57,7 +57,7 @@ class TransactionController(
                 operation = TransactionOperation.MINUS
             )
         })
-        fullList.sortBy { it.creationDateTime }
+        fullList.sortByDescending { it.creationDateTime }
 
         return DataResponse.ok(
             fullList.toList().toPage(pageable)
@@ -93,7 +93,7 @@ class TransactionController(
                 operation = TransactionOperation.MINUS
             )
         })
-        fullList.sortBy { it.creationDateTime }
+        fullList.sortByDescending { it.creationDateTime }
 
         return DataResponse.ok(
             fullList.toList().toPage(pageable)
@@ -171,7 +171,7 @@ class TransactionController(
     }
 
     private fun buildPageData(
-        
+
         pageable: Pageable,
         inList: Page<TransactionInEntity>,
         outList: Page<TransactionOutEntity>): Page<TransactionImpResponse> {
