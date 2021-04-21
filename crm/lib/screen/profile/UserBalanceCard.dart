@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:zakazy_crm_v2/screen/dashboard/NewDashboardScreen.dart';
 import 'package:zakazy_crm_v2/screen/profile/UserProfileViewModel.dart';
 import 'package:zakazy_crm_v2/screens.dart';
 import 'package:zakazy_crm_v2/widget/MaterialButton.dart';
@@ -36,7 +37,7 @@ class UserBalanceCard extends StatelessWidget {
                   color: Colors.transparent
               ),
               Text(
-                "${snapShot.requireData} руб.",
+                "${formatNumber(snapShot.requireData.toInt())} руб.",
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               (viewModel.userInfo.value!.canBeEdit())

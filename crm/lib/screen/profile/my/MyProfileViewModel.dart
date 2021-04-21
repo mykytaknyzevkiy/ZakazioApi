@@ -17,7 +17,7 @@ class MyProfileViewModel extends UserProfileViewModel<UserInfoModel> {
     await super.reloadUser();
     final user = userInfo.value!;
     if (user.city == null) {
-      helpMessageData.add(HelpMessageBubble("Советуем вам установить адрес работы чтобы продолжить с нами рабоать", MapEntry("установить", () => {
+      helpMessageData.add(HelpMessageBubble("Советуем вам установить адрес работы, чтобы продолжить с нами работать", MapEntry("установить", () => {
         openEditInfoDialog(userInfo.value!)
       })));
     } else if (!user.emailActive && [RoleType.PARTNER, RoleType.EXECUTOR].contains(user.roleInfo())) {
@@ -92,7 +92,7 @@ class MyProfileViewModel extends UserProfileViewModel<UserInfoModel> {
       reloadUser();
       toEditData.add(null);
     } else {
-      toEditDataError.add("Пользователь с такми паспортными данными уже есть");
+      toEditDataError.add("Пользователь с такими паспортными данными уже есть");
     }
 
     return false;

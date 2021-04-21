@@ -82,7 +82,7 @@ class _ImportScreen extends HomeScreen<ImportScreen, ImportViewModel> {
                                     color: Colors.transparent,
                                   ),
                                   Text(
-                                      "Вы можете закрыть страницу, импорт продолжиться и результат придет вам на почту"),
+                                      "Вы можете закрыть страницу, импорт продолжится и результат придет вам на почту"),
                                   Divider(
                                     height: 20,
                                     color: Colors.transparent,

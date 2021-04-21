@@ -58,6 +58,10 @@ class _AllOrderState extends HomeScreen<AllOrderScreen, OrderViewModel> {
                 SizedBox(
                   height: 25,
                 ),
+                _searchWidget(),
+                SizedBox(
+                  height: 25,
+                ),
                 SizedBox(
                   width: 300,
                   child: CityAutoTextFieldFixed(
@@ -123,7 +127,12 @@ class _AllOrderState extends HomeScreen<AllOrderScreen, OrderViewModel> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
-                child: list(),
+                child: SizedBox(
+                  height: MediaQuery.of(context).size.height,
+                  child: SingleChildScrollView(
+                      child: list()
+                  )
+                ),
               ),
               SizedBox(width: 25),
               filters()
@@ -149,8 +158,7 @@ class _AllOrderState extends HomeScreen<AllOrderScreen, OrderViewModel> {
         Text(
           (isOnlyMy ? "Мои " : "") + "Заказы",
           style: TextStyle(fontWeight: FontWeight.w500, fontSize: 36),
-        ),
-        _searchWidget()
+        )
       ],
     );
   }
@@ -171,18 +179,14 @@ class _AllOrderState extends HomeScreen<AllOrderScreen, OrderViewModel> {
     );
   } */
 
-  _searchWidget() => Padding(
-        padding: EdgeInsets.only(right: 8),
-        child: SizedBox(
-          width: 500,
-          child: TextFormField(
-              controller: _searchFieldController,
-              decoration: InputDecoration(
-                  icon: Icon(Icons.search),
-                  labelText: 'Поиск',
-                  border: OutlineInputBorder())),
-        ),
-      );
+  _searchWidget() => SizedBox(
+    width: 300,
+    child: TextFormField(
+        controller: _searchFieldController,
+        decoration: InputDecoration(
+            labelText: 'Поиск',
+            border: OutlineInputBorder())),
+  );
 
   _createOrderButton() =>
       (_userRespository.myUserLiveData.value! is OrderWorkerModel &&

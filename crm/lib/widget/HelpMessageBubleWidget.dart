@@ -39,7 +39,7 @@ class HelpMessageBubbleWidget extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Ваш помошник",
+                          "Ваш помощник",
                           style: TextStyle(
                               color: accentColor,
                               fontSize: 18

@@ -61,6 +61,8 @@ class ImportExcellService(private val orderDao: OrderDao,
             socketService.importOrderProcess(uuid = uuid, process = it+1, max = rows.size - 1, brokers = brokers)
         }
 
+        val allOrders = orderDao.findAll().toMutableList()
+
         sendProcessSocketMsg.invoke(0)
 
         for (index in 1..rows.lastIndex) {
@@ -100,66 +102,66 @@ class ImportExcellService(private val orderDao: OrderDao,
             }
 
             if (title.isNullOrEmpty()) {
-                brokers.add(Pair(index, "title is empty"))
+                brokers.add(Pair(index, "Отсуствует название заказа"))
                 sendProcessSocketMsg.invoke(index)
                 continue
             }
             else if (content.isNullOrEmpty()) {
-                brokers.add(Pair(index, "content is empty"))
+                brokers.add(Pair(index, "Отсуствует описание заказа"))
                 sendProcessSocketMsg.invoke(index)
                 continue
             }
             else if (price <= 0) {
-                brokers.add(Pair(index, "price less than 0"))
+                brokers.add(Pair(index, "Стоимость заказа меньше 0 или пуста"))
                 sendProcessSocketMsg.invoke(index)
                 continue
             }
             else if (dateLine.isNullOrEmpty()) {
-                brokers.add(Pair(index, "dateline is empty"))
+                brokers.add(Pair(index, "Отсуствует предполагаемая дата заказа"))
                 sendProcessSocketMsg.invoke(index)
                 continue
             }
 
             if (regionName.isNullOrEmpty()) {
-                brokers.add(Pair(index, "region is empty"))
+                brokers.add(Pair(index, "Отсуствует название региона"))
                 sendProcessSocketMsg.invoke(index)
                 continue
             }
             else if (cityName.isNullOrEmpty()) {
-                brokers.add(Pair(index, "city is empty"))
+                brokers.add(Pair(index, "Отсуствует название города"))
                 sendProcessSocketMsg.invoke(index)
                 continue
             }
 
             if (categoryName.isNullOrEmpty()) {
-                brokers.add(Pair(index, "category is empty"))
+                brokers.add(Pair(index, "Отсуствует название категории"))
                 sendProcessSocketMsg.invoke(index)
                 continue
             }
             else if (childCategoryName.isNullOrEmpty()) {
-                brokers.add(Pair(index, "child category is empty is empty"))
+                brokers.add(Pair(index, "Отсуствует название подкатегории"))
                 sendProcessSocketMsg.invoke(index)
                 continue
             }
 
             if (clientName.isNullOrEmpty()) {
-                brokers.add(Pair(index, "client name is empty"))
+                brokers.add(Pair(index, "Отсуствует имя клиента"))
                 sendProcessSocketMsg.invoke(index)
                 continue
             }
             else if (clientEmail.isNullOrEmpty()) {
-                brokers.add(Pair(index, "client email is empty"))
+                brokers.add(Pair(index, "Отсуствует email клиента"))
                 sendProcessSocketMsg.invoke(index)
                 continue
             }
             else if (clientPhone.length <= 2) {
-                brokers.add(Pair(index, "client phone is empty"))
+                brokers.add(Pair(index, "Отсуствует номер телефона клиента"))
                 sendProcessSocketMsg.invoke(index)
                 continue
             }
 
             else if (!clientPhone.startsWith("+7")) {
-                brokers.add(Pair(index, "client phone wrong format (has start with +7)"))
+                brokers.add(Pair(index, "Номер телефона клиента не начинается с +7"))
                 sendProcessSocketMsg.invoke(index)
                 continue
             }
@@ -205,7 +207,7 @@ class ImportExcellService(private val orderDao: OrderDao,
             }
 
             if (region == null) {
-                brokers.add(Pair(index, "Not found region"))
+                brokers.add(Pair(index, "Не найден регион"))
                 sendProcessSocketMsg.invoke(index)
                 continue
             }
@@ -227,7 +229,7 @@ class ImportExcellService(private val orderDao: OrderDao,
             }
 
             if (city == null) {
-                brokers.add(Pair(index, "Not found city"))
+                brokers.add(Pair(index, "Не найден город"))
                 sendProcessSocketMsg.invoke(index)
                 continue
             }
@@ -247,7 +249,7 @@ class ImportExcellService(private val orderDao: OrderDao,
             }
 
             if (category == null) {
-                brokers.add(Pair(index, "Not found category"))
+                brokers.add(Pair(index, "Не найдена категория"))
                 sendProcessSocketMsg.invoke(index)
                 continue
             }
@@ -268,7 +270,17 @@ class ImportExcellService(private val orderDao: OrderDao,
             }
 
             if (childCategory == null) {
-                brokers.add(Pair(index, "Not found child category"))
+                brokers.add(Pair(index, "Не найдена подкатегория"))
+                sendProcessSocketMsg.invoke(index)
+                continue
+            }
+
+            if (allOrders.any {
+                    it.title == title
+                            && it.content == content
+                            && it.client == it.client
+                }) {
+                brokers.add(Pair(index, "Такой заказ уже есть в системе"))
                 sendProcessSocketMsg.invoke(index)
                 continue
             }
@@ -287,7 +299,9 @@ class ImportExcellService(private val orderDao: OrderDao,
                 partner = partner
             )
 
-            orderDao.save(order)
+            val save = orderDao.save(order)
+
+            allOrders.add(save)
 
             sendProcessSocketMsg.invoke(index)
         }

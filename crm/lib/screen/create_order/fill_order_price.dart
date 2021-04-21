@@ -16,7 +16,7 @@ class FillOrderPrice extends CreateOrderStateScreen {
       keyBoardType: TextInputType.number,
       inputFormatters: [WhitelistingTextInputFormatter.digitsOnly]);
 
-  final _dateLineField = ZTextField(hint: "Ожидаемый срок завершение");
+  final _dateLineField = ZTextField(hint: "Ожидаемый срок завершения");
 
   FillOrderPrice(Function() onNext)
       : super(CreateOrderState.INFORMATION, "Бюджет", onNext) {

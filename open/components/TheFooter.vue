@@ -15,12 +15,6 @@
             {{ OGRN_NUMBER }} | ИНН {{ TIN_NUMBER }}
           </div>
         </div>
-        <div class="footer__timetable">
-          <span class="footer__timetable-label">Служба поддержки </span>
-          <span class="footer__timetable-item">Будни: с 10 до 19 </span>
-          <span class="footer__timetable-item">Выходные: с 11 до 18 </span>
-        </div>
-        <div class="footer__email">{{ contacts.email }}</div>
       </div>
       <div class="footer__col">
         <div class="footer__menu">

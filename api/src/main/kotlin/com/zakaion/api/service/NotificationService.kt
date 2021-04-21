@@ -49,7 +49,7 @@ class NotificationService(private val userDao: UserDao,
         val executor = orderEntity.executor!!
 
         val msg = "Вы стали исполнителем заказа №${orderEntity.id}." +
-                "\nУ вас есть ${Preference.executorWaitingTimeToStart} часов чтобы начать работу или заказ отправить " +
+                "\nУ вас есть ${Preference.executorWaitingTimeToStart} часов, чтобы начать работу, иначе заказ с вас снимется и отправится " +
                 "в открытый доступ."
 
         sendGCM(msg, executor)
@@ -84,9 +84,9 @@ class NotificationService(private val userDao: UserDao,
     }
 
     fun finishExecutorWaitingTimeToStart(orderEntity: OrderEntity) {
-        val message = "Ваше время на то чтобы начать исполнение " +
+        val message = "Ваше время на то, чтобы начать исполнение " +
                 "заказа №${orderEntity.id} закончилось." +
-                "\nТеперь заказ снова открыт для других исполнителей"
+                "\nЗаказ с вас снят и снова открыт для других исполнителей"
 
         if (EmailNotificationPermitted.finishExecutorWaitingTimeToStart) {
             emailService.sendMsg(orderEntity.executor?.email?:return, message)

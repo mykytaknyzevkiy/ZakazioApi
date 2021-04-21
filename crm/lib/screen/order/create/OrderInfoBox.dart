@@ -40,7 +40,7 @@ class _OrderInfoBoxState extends State<OrderInfoBox> {
 
   final _content = ZTextField(hint: "Описание", isMultiline: true, maxLength: 255,);
 
-  final _dateLine = ZTextField(hint: "Предпологаемое дата завершение", maxLength: 25);
+  final _dateLine = ZTextField(hint: "Предпологаемая дата завершения", maxLength: 25);
 
   final _price = ZTextField(hint: "Стомиость в руб.");
 

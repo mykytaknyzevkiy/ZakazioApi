@@ -33,7 +33,7 @@ class OrderShareSumScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("Оплатить за заказ",
+                  Text("Оплатить комиссию за заказ",
                       style:
                       TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                   Divider(

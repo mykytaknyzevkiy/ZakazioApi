@@ -17,39 +17,11 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Container(
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height,
-      decoration: BoxDecoration(color: cardBackgroundColor),
-      child: (MediaQuery.of(context).size.width > 800)
-          ? Row(
-              children: [
-                _leftSide(),
-                Padding(
-                  padding: EdgeInsets.all(24),
-                  child: _rightSide(),
-                )
-              ],
-            )
-          : Container(
-              decoration: backgroundImage(context),
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height,
-                decoration: BoxDecoration(color: Colors.black.withOpacity(0.3)),
-                child: Center(
-                  child: SingleChildScrollView(
-                    child: Card(
-                        elevation: 12,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16)),
-                        clipBehavior: Clip.antiAliasWithSaveLayer,
-                        child: _rightSide()),
-                  ),
-                ),
-              ),
-            ),
-    ));
+      backgroundColor: Colors.white,
+      body: Center(
+        child: _rightSide()
+      ),
+    );
   }
 
   _leftSide() => Expanded(

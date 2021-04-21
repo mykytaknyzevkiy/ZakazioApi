@@ -118,7 +118,7 @@ class OrderInfoViewModel extends ZakazyViewModel {
     if (myUser.roleInfo() == RoleType.EXECUTOR && data.data!.executor == null) {
       helpMessageData.add(
           HelpMessageBubble(
-              "До того, как вы станете исполнителем у вас откроется доступ к контактам."
+              "После того, как вы станете исполнителем у вас откроется доступ к контактам."
                   "\nНе стоит брать заказ из любопытства и если он вам не подходит,"
                   "у вас в сутки на начальном этапе всего 4 заказа."
                   "\nДальше этот порог будет увеличен."

@@ -41,7 +41,7 @@ class CreateUserScreen extends StatelessWidget {
                 child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("Доsбавить ${roleType.name()}",
+                Text("Добавить ${roleType.name()}",
                     style:
                         TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                 Divider(
