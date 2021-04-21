@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:zakazy_crm_v2/screen/HomeScreen.dart';
+import 'package:zakazy_crm_v2/screen/dashboard/NewDashboardScreen.dart';
 import 'package:zakazy_crm_v2/screen/order/info/OrderInfoViewModel.dart';
 import 'package:zakazy_crm_v2/screens.dart';
 import 'package:zakazy_crm_v2/widget/MaterialButton.dart';
@@ -44,7 +45,7 @@ class OrderShareSumScreen extends StatelessWidget {
                     color: Colors.transparent,
                     height: 40,
                   ),
-                  Text("Ваш баланс $myBalance руб."),
+                  Text("Ваш баланс ${formatNumber(myBalance.toInt())} руб."),
                   Divider(
                     color: Colors.transparent,
                     height: 15,

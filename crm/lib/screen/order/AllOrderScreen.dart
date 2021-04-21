@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:zakazy_crm_v2/conts.dart';
+import 'package:zakazy_crm_v2/factor/UserFactor.dart';
 import 'package:zakazy_crm_v2/model/order/OrderModel.dart';
 import 'package:zakazy_crm_v2/model/unit/PagedListModel.dart';
 import 'package:zakazy_crm_v2/model/user/OrderWorkerModel.dart';
@@ -73,11 +74,13 @@ class _AllOrderState extends HomeScreen<AllOrderScreen, OrderViewModel> {
                 SizedBox(
                   height: 15,
                 ),
-                SizedBox(
+                UserRepository.instance().myUserLiveData.value!.roleInfo() != RoleType.EXECUTOR
+                ? SizedBox(
                   width: 300,
                   child: OrderStatusAutoTextField(
                           (status) => _viewModel.setStatus(status)),
                 )
+                : Container()
               ],
             )),
       );

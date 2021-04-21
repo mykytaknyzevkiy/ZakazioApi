@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:zakazy_crm_v2/model/unit/PagedListModel.dart';
 import 'package:zakazy_crm_v2/model/user/executor/ExecutorModel.dart';
+import 'package:zakazy_crm_v2/screen/dashboard/NewDashboardScreen.dart';
 import 'package:zakazy_crm_v2/screen/profile/widget/ExecutorShortInfoCard.dart';
 import 'package:zakazy_crm_v2/screens.dart';
 import 'package:zakazy_crm_v2/widget/PagesWidget.dart';
@@ -192,7 +193,7 @@ class _Desktop extends StatelessWidget {
                                 color: Colors.transparent,
                                 height: 10,
                               ),
-                              buildRichTextHorizontal("Баланс", adminModel.balance.toString() + " руб."),
+                              buildRichTextHorizontal("Баланс", formatNumber(adminModel.balance.toInt()) + " руб."),
                             ],
                           ),
                           Column(

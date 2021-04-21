@@ -276,6 +276,13 @@ class UserController(private val userDao: UserDao,
 
             userDao.save(user)
 
+            if (user.email != null) {
+                emailService.sendMsg(
+                    user.email!!,
+                    "Ваш пароль на сервисе Zakazy.online был изменен. Если Вы этого не делали СРОЧНО свяжитесь со службой поддержки."
+                )
+            }
+
             return DataResponse.ok(null)
         }
         else

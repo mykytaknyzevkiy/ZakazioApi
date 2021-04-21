@@ -6,6 +6,7 @@ import 'package:zakazy_crm_v2/model/address/CityModel.dart';
 import 'package:zakazy_crm_v2/model/user/partner/PartnerModel.dart';
 import 'package:zakazy_crm_v2/model/user/RoleType.dart';
 import 'package:zakazy_crm_v2/screen/HomeScreen.dart';
+import 'package:zakazy_crm_v2/screen/dashboard/NewDashboardScreen.dart';
 import 'package:zakazy_crm_v2/screen/partner/PartnerViewModel.dart';
 import 'package:zakazy_crm_v2/screens.dart';
 import 'package:zakazy_crm_v2/widget/CityAutoTextFieldFixed.dart';
@@ -294,7 +295,7 @@ class _Desktop extends StatelessWidget {
                               color: Colors.transparent,
                               height: 10,
                             ),
-                            buildRichTextHorizontal("Баланс", adminModel.balance.toString() + " руб."),
+                            buildRichTextHorizontal("Баланс", formatNumber(adminModel.balance.toInt()) + " руб."),
                           ],
                         ),
                         Column(

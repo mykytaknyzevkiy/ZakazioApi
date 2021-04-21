@@ -1,11 +1,11 @@
 {
-    "name": "zakazy_crm_v2",
-    "short_name": "zakazy_crm_v2",
+    "name": "ZAKAZYO - CRM И ERP для заказов и исполнителей",
+    "short_name": "ZAKAZYO",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "CRM И ERP СИСТЕМА КОНТРОЛЯ\nЗАКАЗОВ И ИСПОЛНИТЕЛЕЙ В 127\nНИШАХ УСЛУГ В РФ И СНГ\n*ТРАФИК х ЗАЯВКИ = СДЕЛКИ*\nСОЗДАЙ, СВОЮ НЕЙРОСЕТЬ...",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [{
