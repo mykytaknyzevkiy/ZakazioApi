@@ -9,7 +9,6 @@
         <a :href="`tel:+${contacts.phoneNumber}`" class="header__phone">{{
           contacts.phoneNumber
         }}</a>
-        <span class="header__city">Санкт-Петербург</span>
       </div>
       <div
         class="header__socials"

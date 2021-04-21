@@ -136,11 +136,12 @@ abstract class RoleUserController(private val userDao: UserDao,
                         && masterOperator(it)
             }
             .toList()
-            .toPage(pageable)
-            .mapWork { userFactory.createWork(it, myUser)!! }
-            .filterWork {
+            //.toPage(pageable)
+            .map { userFactory.createWork(it, myUser)!! }
+            .filter {
                 it.status == status || status == null
             }
+            .toPage(pageable)
 
         return DataResponse.ok(
             list

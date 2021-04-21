@@ -2,22 +2,10 @@
   <div class="cover__register-btns">
     <template v-if="step === 0">
       <button
-        class="cover__register-btn cover__register-btn_client"
-        @click="register('client')"
-      >
-        Как клиент
-      </button>
-      <button
         class="cover__register-btn cover__register-btn_partner"
         @click="register('partner')"
       >
-        Как партнер
-      </button>
-      <button
-        class="cover__register-btn cover__register-btn_executor"
-        @click="register('executor')"
-      >
-        Как исполнитель
+        Вступить в командку
       </button>
     </template>
     <div class="register">
@@ -31,7 +19,7 @@
         <button
           class="register__button"
           :disabled="!enableStepTwo"
-          @click.prevent="registerEmail()"
+          @click.prevent="openCrm()"
         >
           Далее
         </button>
@@ -158,6 +146,9 @@ export default {
     reset() {
       this.form = { ...form }
       this.step = 0
+    },
+    openCrm() {
+      window.open("http://crm.zakazy.online/","_self")
     },
     registerEmail() {
       const { email } = this.form

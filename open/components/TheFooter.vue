@@ -51,7 +51,6 @@
           <a :href="`tel:+${contacts.phoneNumber}`" class="footer__phone">{{
             contacts.phoneNumber
           }}</a>
-          <span class="footer__city">Санкт-Петербург</span>
         </div>
       </div>
       <div class="footer__col">
