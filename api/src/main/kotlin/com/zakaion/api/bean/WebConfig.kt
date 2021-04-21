@@ -52,6 +52,7 @@ class WebConfig : WebMvcConfigurer {
         val list: MutableList<MediaType> = ArrayList()
         list.add(MediaType.TEXT_HTML)
         list.add(MediaType.APPLICATION_OCTET_STREAM)
+        list.add(MediaType.ALL)
         return list
     }
 

@@ -1,6 +1,7 @@
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:rxdart/subjects.dart';
 import 'package:zakazy_crm_v2/model/address/CityModel.dart';
+import 'package:zakazy_crm_v2/model/address/RegionModel.dart';
 import 'package:zakazy_crm_v2/model/unit/PagedListModel.dart';
 import 'package:zakazy_crm_v2/model/user/executor/ExecutorModel.dart';
 import 'package:zakazy_crm_v2/rest/executor/ExecutorRest.dart';
@@ -13,10 +14,10 @@ class ExecutorViewModel extends ZakazyViewModel {
 
   final rest = ExecutorRest();
 
-  load(String quary, int pageNum, String? status, CityModel? city) async {
+  load(String quary, int pageNum, String? status, CityModel? city, RegionModel? region) async {
     list.add(null);
 
-    final data = await rest.listFull(quary, pageNum, city?.id ?? -1, status);
+    final data = await rest.listFull(quary, pageNum, city?.id ?? -1, region?.id ?? -1, status);
 
     if (!data.success || data.data == null) {
       list.add(

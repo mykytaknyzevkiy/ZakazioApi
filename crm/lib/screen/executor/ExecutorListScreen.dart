@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:zakazy_crm_v2/conts.dart';
 import 'package:zakazy_crm_v2/model/address/CityModel.dart';
+import 'package:zakazy_crm_v2/model/address/RegionModel.dart';
 import 'package:zakazy_crm_v2/model/unit/PagedListModel.dart';
 import 'package:zakazy_crm_v2/model/user/RoleType.dart';
 import 'package:zakazy_crm_v2/model/user/executor/ExecutorModel.dart';
@@ -10,6 +11,7 @@ import 'package:zakazy_crm_v2/screens.dart';
 import 'package:zakazy_crm_v2/widget/CityAutoTextFieldFixed.dart';
 import 'package:zakazy_crm_v2/widget/MaterialButton.dart';
 import 'package:zakazy_crm_v2/widget/PagesWidget.dart';
+import 'package:zakazy_crm_v2/widget/RegionAutoTextFieldFixed.dart';
 import 'package:zakazy_crm_v2/widget/UserStatusSelectWidget.dart';
 import 'package:zakazy_crm_v2/widget/user/ExecutorListWidget.dart';
 import 'package:zakazy_crm_v2/widget/user/UserAvater.dart';
@@ -30,6 +32,7 @@ class _ExecutorListScreenState
 
   String? _currentStatus;
   CityModel? _currentCity;
+  RegionModel? _currentRegion;
 
   _ExecutorListScreenState() {
     _searchFieldController.addListener(() {
@@ -69,13 +72,18 @@ class _ExecutorListScreenState
         children: [
           _createAdminButton(),
           Divider(height: 30, color: Colors.transparent),
-          _searchWidget(),
-          Divider(height: 30, color: Colors.transparent),
           MediaQuery.of(context).size.width > phoneSize
           ? Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(child: list()),
+              Expanded(
+                  child: SizedBox(
+                    height: MediaQuery.of(context).size.height,
+                    child: SingleChildScrollView(
+                      child: list(),
+                    ),
+                  )
+              ),
               SizedBox(width: 25),
               filters()
             ],
@@ -107,18 +115,15 @@ class _ExecutorListScreenState
     );
   }
 
-  _searchWidget() => Padding(
-        padding: EdgeInsets.only(right: 8),
-        child: SizedBox(
-          width: double.infinity,
-          child: TextFormField(
-              controller: _searchFieldController,
-              decoration: InputDecoration(
-                  icon: Icon(Icons.search),
-                  labelText: 'Поиск',
-                  border: OutlineInputBorder())),
-        ),
-      );
+  _searchWidget() => SizedBox(
+    width: 300,
+    child: TextFormField(
+        controller: _searchFieldController,
+        decoration: InputDecoration(
+            labelText: 'Поиск',
+            border: OutlineInputBorder())
+    ),
+  );
 
   _createAdminButton() => MyButton(
         title: "Добавить исполнителя",
@@ -130,7 +135,7 @@ class _ExecutorListScreenState
   ExecutorViewModel viewModelInstancer() => ExecutorViewModel();
 
   doLoad() {
-    _viewModel.load(_searchFieldController.text, _currentPage, _currentStatus, _currentCity);
+    _viewModel.load(_searchFieldController.text, _currentPage, _currentStatus, _currentCity, _currentRegion);
   }
 
   filters() => Card(
@@ -145,13 +150,32 @@ class _ExecutorListScreenState
               height: 25,
             ),
             SizedBox(
+              height: 15,
+            ),
+            _searchWidget(),
+            SizedBox(
+              height: 15,
+            ),
+            SizedBox(
+              width: 300,
+              child: RegionAutoTextFieldFixed(
+                      (city) {
+                        _currentRegion = city;
+                    _currentPage = 0;
+                    doLoad();
+                  }),
+            ),
+            SizedBox(
+              height: 15,
+            ),
+            SizedBox(
               width: 300,
               child: CityAutoTextFieldFixed(
                       (city) {
                         _currentCity = city;
                         _currentPage = 0;
                         doLoad();
-                      }),
+                      }, onSelectedRegion: () => _currentRegion,),
             ),
             SizedBox(
               height: 15,

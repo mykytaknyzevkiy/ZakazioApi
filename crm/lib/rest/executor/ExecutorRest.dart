@@ -48,14 +48,15 @@ class ExecutorRest extends BaseUserTypeRest {
 
   @override
   Future<DataResponse<PagedListModel<ExecutorModel>>> listFull(
-      String quary, int pageNum, int cityID, String? status) async {
+      String quary, int pageNum, int cityID, int regionID, String? status) async {
     final json = await get(route + "list", {},
         {
           "size": '10',
           "page": pageNum.toString(),
           "search": quary,
           "status": status ?? "",
-          "city_id": cityID.toString()
+          "city_id": cityID.toString(),
+          "region_id": regionID.toString(),
         });
 
     try {
