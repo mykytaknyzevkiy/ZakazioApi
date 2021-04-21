@@ -85,10 +85,10 @@ class OrderFactor(private val userFactory: UserFactory,
                 myUser.id in arrayOf(order.partner?.id))
 
         mOrder.cancelExecutorEnable = order.status in arrayOf(OrderStatus.PROCESS, OrderStatus.IN_WORK) &&
-                myUser.role in adminsRole && mOrder.toShareSum >= 0
+                myUser.role in adminsRole && mOrder.toShareSum > 0
 
         mOrder.defuseMeExecutorEnable = order.status in arrayOf(OrderStatus.PROCESS, OrderStatus.IN_WORK) &&
-                myUser.id == order.executor?.id && mOrder.toShareSum >= 0
+                myUser.id == order.executor?.id && mOrder.toShareSum > 0
 
         mOrder.inWorkEnable = order.status == OrderStatus.PROCESS && myUser.id == order.executor?.id
 
