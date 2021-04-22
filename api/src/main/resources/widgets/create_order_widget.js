@@ -56,7 +56,6 @@ function initZakazy() {
         "    width: 100%;\n" +
         "    height: 100vh;\n" +
         "    max-height: calc(100vh - 100px);\n" +
-        "    max-width: 1200px;\n" +
         "}";
 
     const styleSheet = document.createElement("style")
