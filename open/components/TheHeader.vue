@@ -25,12 +25,6 @@
         >
           <a
             target="_blank"
-            class="header__social header__social_fb"
-            :href="contacts.facebook"
-            >Zakazio в Facebook</a
-          >
-          <a
-            target="_blank"
             class="header__social header__social_vk"
             :href="contacts.linkedIn"
             >Zakazio в VK</a
@@ -43,9 +37,9 @@
           >
           <a
             target="_blank"
-            class="header__social header__social_twitter"
+            class="header__social header__social_whtsp"
             :href="contacts.twitter"
-            >Zakazio в Twitter</a
+            >Zakazio в WhatsApp</a
           >
         </div>
       </div>

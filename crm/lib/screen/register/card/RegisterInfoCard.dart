@@ -110,7 +110,8 @@ class _RegisterInfoCardState extends RegisterCardWizardState<RegisterInfoCard> {
             controller: _emailController,
             keyboardType: TextInputType.number,
             inputFormatters: [
-              RussianPhoneNumberFormat()
+              RussianPhoneNumberFormat(),
+              WhitelistingTextInputFormatter.digitsOnly
             ],
             decoration: InputDecoration(
                 icon: Icon(Icons.phone),

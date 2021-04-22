@@ -51,12 +51,6 @@
         <div class="footer__socials">
           <a
             target="_blank"
-            class="footer__social footer__social_fb"
-            :href="contacts.facebook"
-            >Zakazio в Facebook</a
-          >
-          <a
-            target="_blank"
             class="footer__social footer__social_vk"
             :href="contacts.linkedIn"
             >Zakazio в VK</a
@@ -69,9 +63,9 @@
           >
           <a
             target="_blank"
-            class="footer__social footer__social_twitter"
+            class="footer__social footer__social_whtsp"
             :href="contacts.twitter"
-            >Zakazio в Twitter</a
+            >Zakazio в Whatsapp</a
           >
         </div>
       </div>
