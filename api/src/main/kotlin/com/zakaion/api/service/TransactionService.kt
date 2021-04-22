@@ -59,7 +59,7 @@ class TransactionService(private val inDao: TransactionInDao,
         )
 
         if (order.partner != null) {
-            val sum = amount * Preference.orderPartnerPercent / 100
+            val sum = order.price * Preference.orderPartnerPercent / 100
 
             inDao.save(
                     TransactionInEntity(
@@ -79,7 +79,7 @@ class TransactionService(private val inDao: TransactionInDao,
                         throw BadParams()
                     }
 
-            val sum = amount * Preference.executorPartnerPercent / 100
+            val sum = order.price * Preference.executorPartnerPercent / 100
 
             inDao.save(
                     TransactionInEntity(
