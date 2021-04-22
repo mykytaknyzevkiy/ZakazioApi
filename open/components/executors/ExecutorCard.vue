@@ -1,6 +1,19 @@
 <template>
   <nuxt-link :to="`executors/${user.id}`" class="executor">
-    <div class="executor__avatar"></div>
+    <div class="executor__avatar" style="
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+">
+
+      <img v-if="user.avatar != null" src="https://file.zakazy.online/${user.avatar}" alt="" style="
+    flex-shrink: 0;
+    min-width: 100%;
+    min-height: 100%
+">
+
+    </div>
     <div class="executor__user">
       <div class="executor__name">
         {{ user.firstName + ' ' + user.lastName }}
