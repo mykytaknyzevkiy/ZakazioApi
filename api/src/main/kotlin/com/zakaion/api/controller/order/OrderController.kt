@@ -551,6 +551,9 @@ class OrderController(private val orderDao: OrderDao,
         if (userFactory.myUser.id != order.executor?.id)
             throw NoPermittedMethod()
 
+        if (amount < order.price)
+            throw BadParams()
+
         val orderFull = orderFactor.create(order)
 
         if (amount > orderFull.toShareSum)
