@@ -7,7 +7,7 @@
     overflow: hidden;
 ">
 
-      <img v-if="user.avatar != null" src="https://file.zakazy.online/{{user.avatar}}" alt="" style="
+      <img v-if="user.avatar != null" :src="'https://file.zakazy.online/' + user.avatar" alt="" style="
     flex-shrink: 0;
     min-width: 100%;
     min-height: 100%
