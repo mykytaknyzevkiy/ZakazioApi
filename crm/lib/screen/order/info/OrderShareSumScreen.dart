@@ -29,6 +29,9 @@ class OrderShareSumScreen extends StatelessWidget {
                 return Center(child: CircularProgressIndicator());
               }
               myBalance = snapShot.requireData;
+
+              payBtn.setEnable(myBalance >= _viewModel.orderData.value!.toShareSum);
+
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -40,7 +43,7 @@ class OrderShareSumScreen extends StatelessWidget {
                     color: Colors.transparent,
                     height: 20,
                   ),
-                  Text("Вам осталось оплать ${_viewModel.orderData.value!.toShareSum} руб.\nМожно оплачивать частями"),
+                  Text("Вам необходимо оплать ${_viewModel.orderData.value!.toShareSum} руб."),
                   Divider(
                     color: Colors.transparent,
                     height: 40,
@@ -56,11 +59,6 @@ class OrderShareSumScreen extends StatelessWidget {
                         ZakazioNavigator.push(context, "user/profile/my")
                       },
                       isEnable: true),
-                  Divider(
-                    color: Colors.transparent,
-                    height: 25,
-                  ),
-                  sumTextField,
                   Divider(
                     color: Colors.transparent,
                     height: 25,
@@ -85,19 +83,6 @@ class OrderShareSumScreen extends StatelessWidget {
   );
 
   _onSaveClick() async {
-    bool isError = false;
-
-    if (!sumTextField.text().isNumeric()) {
-      isError = true;
-      sumTextField.setError("не верный формат");
-    } else if (double.parse(sumTextField.text()) >= myBalance) {
-      isError = true;
-      sumTextField.setError("превышен лимит");
-    }
-
-    if (isError)
-      return;
-
     _viewModel.shareSum(double.parse(sumTextField.text()));
   }
 
@@ -105,17 +90,19 @@ class OrderShareSumScreen extends StatelessWidget {
     _viewModel.rightDialog.add(null);
   }
 
+  late MyButton payBtn = MyButton(
+    title: "Оплатить",
+    onPressed: () => _onSaveClick(),
+    isEnable: true,
+  );
+
   _btnColum() => SizedBox(
     width: 300,
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        MyButton(
-          title: "Оплатить",
-          onPressed: () => _onSaveClick(),
-          isEnable: true,
-        ),
+        payBtn,
         FreeButton(
           title: "Отменить",
           onPressed: () => _onCancelCLick(),

@@ -5,7 +5,7 @@ const accentColor = Colors.white;
 
 const cardBackgroundColor = Colors.white;
 
-const appName = "Zakazy-CRM V2.90";
+const appName = "Zakazy-CRM V2.91";
 
 const appUrl = "https://api.zakazy.online/api/v1";
 
