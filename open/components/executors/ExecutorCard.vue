@@ -7,20 +7,16 @@
     overflow: hidden;
 ">
 
-      <img v-if="user.avatar != null" :src="'https://file.zakazy.online/' + user.avatar" alt="" style="
-    flex-shrink: 0;
-    min-width: 100%;
-    min-height: 100%
-">
+      <img v-if="user.avatar != null" :src="'https://file.zakazy.online/' + user.avatar" alt="" style="flex-shrink: 0;min-width: 100%;min-height: 100%">
 
     </div>
+
     <div class="executor__user">
       <div class="executor__name">
         {{ user.firstName + ' ' + user.lastName }}
       </div>
       <div class="executor__rate"><Rate :value="user.rate" /></div>
     </div>
-
     <div class="executor__map">
       Россия, <br />
       Москва
