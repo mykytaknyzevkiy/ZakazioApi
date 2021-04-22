@@ -44,7 +44,7 @@ class FullOrderClientFactor(user: UserEntity,
                     var num = 0
                     myFeedbacks.forEach { num += it.stars }
                     val stars = num
-                    (stars / allFeedbacks.size).toFloat()
+                    (stars / myFeedbacks.size).toFloat()
                 },
                 order = UserOrder.create(orders = orders).apply {
                    this.count.declined = run {

@@ -9,37 +9,37 @@ import 'package:zakazy_crm_v2/widget/user/UserAvater.dart';
 import 'package:zakazy_crm_v2/unit/Expensions.dart';
 
 class _ZDrawerItem {
-  static final dashBoard = _ZDrawerItemType(0, "Dashboard", Icons.analytics,
+  static final dashBoard = ZDrawerItemType(0, "Dashboard", Icons.analytics,
       List.of({RoleType.ADMIN, RoleType.EDITOR, RoleType.SUPER_ADMIN}));
 
-  static final allOrder = _ZDrawerItemType(
+  static final allOrder = ZDrawerItemType(
       1,
       "Все заказы",
       Icons.border_all_rounded,
       List.of({RoleType.ADMIN, RoleType.EDITOR, RoleType.SUPER_ADMIN}));
 
-  static final freeOrder = _ZDrawerItemType(1, "Открытые заказы",
+  static final freeOrder = ZDrawerItemType(1, "Открытые заказы",
       Icons.border_all_rounded, List.of({RoleType.EXECUTOR, RoleType.PARTNER}));
 
-  static final myOrder = _ZDrawerItemType(
+  static final myOrder = ZDrawerItemType(
       17,
       "Мои заказы",
       Icons.border_all_rounded,
       List.of({RoleType.EXECUTOR, RoleType.PARTNER, RoleType.CLIENT}));
 
-  static final adminUsers = _ZDrawerItemType(
+  static final adminUsers = ZDrawerItemType(
       2, "Админы", Icons.admin_panel_settings, List.of({RoleType.SUPER_ADMIN}));
 
-  static final editorUsers = _ZDrawerItemType(3, "Модераторы", Icons.edit_road,
+  static final editorUsers = ZDrawerItemType(3, "Модераторы", Icons.edit_road,
       List.of({RoleType.SUPER_ADMIN, RoleType.ADMIN}));
 
-  static final partnerUsers = _ZDrawerItemType(
+  static final partnerUsers = ZDrawerItemType(
       4,
       "Партнеры",
       Icons.account_balance,
       List.of({RoleType.SUPER_ADMIN, RoleType.ADMIN, RoleType.EDITOR}));
 
-  static final executorUsers = _ZDrawerItemType(
+  static final executorUsers = ZDrawerItemType(
       5,
       "Исполнители",
       Icons.handyman_sharp,
@@ -50,10 +50,10 @@ class _ZDrawerItem {
         RoleType.PARTNER
       }));
 
-  static final clientUser = _ZDrawerItemType(6, "Заказчики", Icons.account_box,
+  static final clientUser = ZDrawerItemType(6, "Заказчики", Icons.account_box,
       List.of({RoleType.ADMIN, RoleType.EDITOR, RoleType.SUPER_ADMIN}));
 
-  static final myProfileAction = _ZDrawerItemType(
+  static final myProfileAction = ZDrawerItemType(
       12,
       "Мой профиль",
       Icons.account_circle_rounded,
@@ -66,7 +66,7 @@ class _ZDrawerItem {
         RoleType.CLIENT
       }));
 
-  static final appsAction = _ZDrawerItemType(
+  static final appsAction = ZDrawerItemType(
       8,
       "Приложение",
       Icons.touch_app_outlined,
@@ -77,37 +77,37 @@ class _ZDrawerItem {
         RoleType.PARTNER
       }));
 
-  static final categoryAction = _ZDrawerItemType(9, "Категории", Icons.category,
+  static final categoryAction = ZDrawerItemType(9, "Категории", Icons.category,
       List.of({RoleType.ADMIN, RoleType.SUPER_ADMIN}));
 
-  static final addressAction = _ZDrawerItemType(
+  static final addressAction = ZDrawerItemType(
       10,
       "Адреса",
       Icons.location_on_rounded,
       List.of({RoleType.ADMIN, RoleType.SUPER_ADMIN}));
 
-  static final passportRequestAction = _ZDrawerItemType(
+  static final passportRequestAction = ZDrawerItemType(
       14,
       "Запросы на паспорт",
       Icons.domain_verification,
       List.of({RoleType.ADMIN, RoleType.EDITOR, RoleType.SUPER_ADMIN}));
 
-  static final importAction = _ZDrawerItemType(15, "Импорт",
+  static final importAction = ZDrawerItemType(15, "Импорт",
       Icons.import_export, List.of({RoleType.SUPER_ADMIN, RoleType.PARTNER}));
 
-  static final myBankCardAction = _ZDrawerItemType(
+  static final myBankCardAction = ZDrawerItemType(
       16,
       "Мои карты",
       Icons.credit_card_rounded,
       List.of({RoleType.PARTNER, RoleType.EXECUTOR}));
 
-  static final settingsAction = _ZDrawerItemType(
+  static final settingsAction = ZDrawerItemType(
       11, "Настройки", Icons.settings, List.of({RoleType.SUPER_ADMIN}));
 
-  static final postHelpAction = _ZDrawerItemType(18, "Помошь", Icons.help,
+  static final postHelpAction = ZDrawerItemType(18, "Помошь", Icons.help,
       List.of({RoleType.CLIENT, RoleType.EXECUTOR, RoleType.PARTNER}));
 
-  static final listHelpAction = _ZDrawerItemType(
+  static final listHelpAction = ZDrawerItemType(
       19,
       "Запросы на помошь",
       Icons.help,
@@ -118,7 +118,7 @@ class _ZDrawerItem {
         RoleType.PARTNER
       }));
 
-  static final exitAction = _ZDrawerItemType(
+  static final exitAction = ZDrawerItemType(
       13,
       "Выход",
       Icons.exit_to_app,
@@ -131,17 +131,17 @@ class _ZDrawerItem {
         RoleType.CLIENT
       }));
 
-  static final blogAction = _ZDrawerItemType(20, "Блог", Icons.message,
+  static final blogAction = ZDrawerItemType(20, "Блог", Icons.message,
       List.of({RoleType.EDITOR, RoleType.ADMIN, RoleType.SUPER_ADMIN}));
 
-  static final smsAdminAction = _ZDrawerItemType(
+  static final smsAdminAction = ZDrawerItemType(
       21, "Смс админ", Icons.smartphone_sharp, List.of({RoleType.SUPER_ADMIN}));
 }
 
 class ZDrawer extends StatelessWidget {
   final _userRepository = UserRepository.instance();
 
-  final itemsNew = [
+  static final itemsNew = [
     MapEntry("Данные", [
       _ZDrawerItem.myProfileAction,
       _ZDrawerItem.appsAction,
@@ -181,7 +181,7 @@ class ZDrawer extends StatelessWidget {
     final user = _userRepository.myUserLiveData.value!;
 
     itemsNew.forEach((element) {
-      final menues = List<_ZDrawerItemType>.of({});
+      final menues = List<ZDrawerItemType>.of({});
 
       element.value.forEach((zItem) {
         if (MediaQuery.of(context).size.width <= phoneSize &&
@@ -267,7 +267,7 @@ class ZDrawer extends StatelessWidget {
         ),
       );
 
-  createItem(BuildContext context, _ZDrawerItemType itemType, int selectedID) {
+  createItem(BuildContext context, ZDrawerItemType itemType, int selectedID) {
     return GestureDetector(
       child: DrawerItem(itemType.title, itemType.icon,
           itemType.index == selectedID, context, phoneSize),
@@ -317,7 +317,7 @@ class ZDrawer extends StatelessWidget {
       );
 }
 
-class _ZDrawerItemType {
+class ZDrawerItemType {
   final int index;
 
   final String title;
@@ -326,5 +326,5 @@ class _ZDrawerItemType {
 
   final List<RoleType> roles;
 
-  _ZDrawerItemType(this.index, this.title, this.icon, this.roles);
+  ZDrawerItemType(this.index, this.title, this.icon, this.roles);
 }

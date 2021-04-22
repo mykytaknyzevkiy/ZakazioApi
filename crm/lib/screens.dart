@@ -37,6 +37,7 @@ import 'package:zakazy_crm_v2/screen/settings/SettingsFullScreen.dart';
 import 'dart:js' as js;
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:zakazy_crm_v2/screen/sms/SmsAdminScreen.dart';
+import 'package:zakazy_crm_v2/widget/home/ZDrawer.dart';
 
 final zakazioScreens = [
   ZakazioScreens(route: "login", builder: (_) => LoginScreen(), drawerID: -2),
@@ -235,6 +236,26 @@ class ZakazioNavigator {
   }
 
   static runScreen(ZakazioScreens screen) async {
+    ZDrawerItemType? drawerItem;
+
+    ZDrawer.itemsNew.forEach((element) {
+      final list= element.value;
+      list.forEach((item) {
+        if (item.index == screen.drawerID) {
+          drawerItem = item;
+        }
+      });
+    });
+
+    final myUser = UserRepository.instance().myUserLiveData.value;
+
+    if (drawerItem == null)
+      return;
+
+    if (!(drawerItem!.roles.contains(myUser.roleInfo()))) {
+      return;
+    }
+
     final String search = await js.context.callMethod("currentSearch");
 
     print(search);

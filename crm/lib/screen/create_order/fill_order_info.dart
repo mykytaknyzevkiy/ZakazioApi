@@ -13,12 +13,12 @@ class FillOrderInfo extends CreateOrderStateScreen {
   final _viewModel = ViewModelProvider<CreateOrderNewViewModel>()
       .build(() => CreateOrderNewViewModel());
 
-  final _title = ZTextField(hint: "Название", maxLength: 50);
+  final _title = ZTextField(hint: "Название", maxLength: 250);
 
   final _content = ZTextField(
     hint: "Описание",
     isMultiline: true,
-    maxLength: 255,
+    maxLength: 5000,
   );
 
   final _selectedFiles =
