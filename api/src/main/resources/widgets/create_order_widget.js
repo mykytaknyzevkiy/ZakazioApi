@@ -32,6 +32,7 @@ function initZakazy() {
         "    justify-content: center;\n" +
         "}\n" +
         ".modal__content {\n" +
+        "    width: 100%;\n" +
         "    background-color: #fff;\n" +
         "    max-height: calc(100vh - 100px);\n" +
         "    max-width: calc(100vw - 100px);\n" +
@@ -52,7 +53,7 @@ function initZakazy() {
         "}\n" +
         ".modal__iframe,\n" +
         ".modal iframe {\n" +
-        "    width: 100vw;\n" +
+        "    width: 100%;\n" +
         "    height: 100vh;\n" +
         "    max-height: calc(100vh - 100px);\n" +
         "    max-width: 1200px;\n" +
