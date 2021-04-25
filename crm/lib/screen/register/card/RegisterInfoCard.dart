@@ -156,11 +156,11 @@ class _RegisterInfoCardState extends RegisterCardWizardState<RegisterInfoCard> {
           SizedBox(
               width: 15
           ),
-          Text("Я ознокомился с "),
+          Text("я ознакомился с "),
           GestureDetector(
             onTap: () => js.context.callMethod("openInNewTab", ["https://file.zakazy.online/document/%D0%A3%D1%81%D0%BB%D0%BE%D0%B2%D0%B8%D1%8F%20%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D1%8F%20(%D0%9E%D1%84%D0%B5%D1%80%D1%82%D0%B0).pdf"]),
             child: Text(
-                "офертом",
+                "офертой",
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   color: primaryColor,
@@ -241,7 +241,7 @@ class _RegisterInfoCardState extends RegisterCardWizardState<RegisterInfoCard> {
 
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
-      title: Text("Ознокомтесь в офертом"),
+      title: Text("Изучите и примите оферту"),
       content: Text(""),
       actions: [
         cancelButton
