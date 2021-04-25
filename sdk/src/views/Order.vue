@@ -195,6 +195,8 @@
           v-model="ORDER_FORM.client_phone"
           class="order__input"
           placeholder="Телефон"
+          inputmode="tel"
+          v-mask="'+7 ##########'"
           type="text"
         />
       </div>

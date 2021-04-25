@@ -227,10 +227,10 @@ class ZDrawer extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      (MediaQuery.of(context).size.width >= 500)
+                      (MediaQuery.of(context).size.width >= phoneSize)
                           ? _title()
                           : Container(),
-                      (MediaQuery.of(context).size.width >= 500)
+                      (MediaQuery.of(context).size.width >= phoneSize)
                           ? _userData(snapshot.requireData)
                           : Container(),
                       StreamBuilder<ZakazioScreens>(

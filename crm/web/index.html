@@ -2,18 +2,7 @@
 <html>
 
 <head>
-    <!--
-    If you are serving your web app in a path other than the root, change the
-    href value below to reflect the base path you are serving from.
-
-    The path provided below has to start and end with a slash "/" in order for
-    it to work correctly.
-
-    Fore more details:
-    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
-  -->
     <base href="/">
-
     <meta charset="UTF-8">
     <meta content="IE=Edge" http-equiv="X-UA-Compatible">
     <meta name="description" content="CRM И ERP СИСТЕМА КОНТРОЛЯ
@@ -25,45 +14,16 @@
     <META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
     <META HTTP-EQUIV="EXPIRES" CONTENT="Mon, 22 Jul 2002 11:12:01 GMT">
     <meta name="title" content="ZAKAZYO - CRM И ERP">
-
-    <!-- iOS meta tags & icons -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-title" content="zakazy_crm_v2">
     <link rel="apple-touch-icon" href="icons/Icon-192.png">
-
-    <!-- Favicon -->
     <link rel="icon" type="image/png" href="favicon.png" />
-
     <title>zakazy_crm_v2</title>
     <link rel="manifest" href="manifest.json">
-
-    <!--<script src="https://www.gstatic.com/firebasejs/8.2.7/firebase-app.js"></script>-->
-    <!--<script src="https://www.gstatic.com/firebasejs/8.2.7/firebase-analytics.js"></script>-->
-    <!--<script src="https://www.gstatic.com/firebasejs/8.2.7/firebase-messaging.js"></script>-->
-
     <script src="js/navigation.js" type="application/javascript"></script>
     <script src="js/extra.js" type="application/javascript"></script>
-
-    <script>
-        /*var firebaseConfig = {
-                                                                                                                                                                    apiKey: "AIzaSyB3oEdhcmf18rBVs0hPuv4FxpONIYATFJ0",
-                                                                                                                                                                    authDomain: "zakazio-56c70.firebaseapp.com",
-                                                                                                                                                                    databaseURL: "https://zakazio-56c70.firebaseio.com",
-                                                                                                                                                                    projectId: "zakazio-56c70",
-                                                                                                                                                                    storageBucket: "zakazio-56c70.appspot.com",
-                                                                                                                                                                    messagingSenderId: "548924249412",
-                                                                                                                                                                    appId: "1:548924249412:web:273f60270282052670b311",
-                                                                                                                                                                    measurementId: "G-9S1JZQW4CN"
-                                                                                                                                                                };
-                                                                                                                                                                // Initialize Firebase
-                                                                                                                                                                firebase.initializeApp(firebaseConfig);
-                                                                                                                                                                firebase.analytics();
-                                                                                                                                                                firebase.messaging(); */
-    </script>
-
     <script src="https://widget.cloudpayments.ru/bundles/checkout"></script>
-
 </head>
 
 <body>
@@ -81,8 +41,6 @@
             visibility: hidden;
         }
     </style>
-
-
     <form style="visibility: hidden;" id="paymentFormSample" autocomplete="off">
         <input id="cp_card_num" type="text" data-cp="cardNumber">
         <input id="cp_card_exp_mount" type="text" data-cp="expDateMonth">
@@ -91,9 +49,7 @@
         <input id="cp_card_name" type="text" data-cp="name">
         <button type="submit">Оплатить 100 р.</button>
     </form>
-
     <script src="js/cloud_payment.js" type="application/javascript"></script>
-
 </body>
 
 </html>

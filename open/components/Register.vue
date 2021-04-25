@@ -147,7 +147,7 @@ export default {
       this.step = 0
     },
     openCrm() {
-      window.open("http://crm.zakazy.online/","_self")
+      window.open("https://crm.zakazy.online/","_self")
     },
     registerEmail() {
       const { email } = this.form

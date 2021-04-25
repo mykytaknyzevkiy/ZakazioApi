@@ -5,13 +5,13 @@ const accentColor = Colors.white;
 
 const cardBackgroundColor = Colors.white;
 
-const appName = "Zakazy-CRM V2.91";
+const appName = "Zakazy-CRM V2.92";
 
 const appUrl = "https://api.zakazy.online/api/v1";
 
 const socketUrl = "wss://socket.zakazy.online/out/websocket";
 
-const phoneSize = 500;
+const phoneSize = 900;
 
 //+ch""b>p"s3A_np,n
 

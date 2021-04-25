@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:link/link.dart';
+import 'package:zakazy_crm_v2/conts.dart';
 import 'package:zakazy_crm_v2/repository/UserRepository.dart';
 import 'package:zakazy_crm_v2/screen/register/card/RegisterCardWizard.dart';
 import 'package:zakazy_crm_v2/screens.dart';
 import 'package:zakazy_crm_v2/unit/Expensions.dart';
 import 'package:zakazy_crm_v2/unit/RussianPhoneNumberFormater.dart';
+import 'dart:js' as js;
 
 // ignore: must_be_immutable
 class RegisterInfoCard extends RegisterCardWizard {
@@ -136,9 +139,41 @@ class _RegisterInfoCardState extends RegisterCardWizardState<RegisterInfoCard> {
                 labelText: 'Пароль',
                 border: OutlineInputBorder(),
                 errorText: isPasswordEmpty ? "Заполните поле" : null)),
+      ),
+      Divider(
+        height: 30,
+      ),
+      Row(
+        children: [
+          Checkbox(
+              value: _offerChecked,
+              onChanged: (value) {
+                setState(() {
+                  _offerChecked = value ?? false;
+                });
+              }
+          ),
+          SizedBox(
+              width: 15
+          ),
+          Text("Я ознокомился с "),
+          GestureDetector(
+            onTap: () => js.context.callMethod("openInNewTab", ["https://file.zakazy.online/document/%D0%A3%D1%81%D0%BB%D0%BE%D0%B2%D0%B8%D1%8F%20%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D1%8F%20(%D0%9E%D1%84%D0%B5%D1%80%D1%82%D0%B0).pdf"]),
+            child: Text(
+                "офертом",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: primaryColor,
+                  decoration: TextDecoration.underline
+                ),
+            ),
+          )
+        ],
       )
     ];
   }
+
+  bool _offerChecked = false;
 
   @override
   String description() => "Создайте аккаунт";
@@ -175,6 +210,11 @@ class _RegisterInfoCardState extends RegisterCardWizardState<RegisterInfoCard> {
       return;
     }
 
+    if (!_offerChecked) {
+      showAlertDialog(context);
+      return;
+    }
+
     final isOK = await viewModel.registerStep3(
         _firstNameController.text,
         _lastNameController.text,
@@ -189,5 +229,31 @@ class _RegisterInfoCardState extends RegisterCardWizardState<RegisterInfoCard> {
         isEmailError = true;
       });
     }
+  }
+
+  showAlertDialog(BuildContext context) {
+
+    // set up the buttons
+    Widget cancelButton = FlatButton(
+      child: Text("Закрыть"),
+      onPressed:  () => Navigator.of(context).pop()
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("Ознокомтесь в офертом"),
+      content: Text(""),
+      actions: [
+        cancelButton
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
   }
 }

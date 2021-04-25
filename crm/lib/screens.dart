@@ -236,7 +236,7 @@ class ZakazioNavigator {
   }
 
   static runScreen(ZakazioScreens screen) async {
-    ZDrawerItemType? drawerItem;
+    /*ZDrawerItemType? drawerItem;
 
     ZDrawer.itemsNew.forEach((element) {
       final list= element.value;
@@ -254,7 +254,7 @@ class ZakazioNavigator {
 
     if (!(drawerItem!.roles.contains(myUser.roleInfo()))) {
       return;
-    }
+    }*/
 
     final String search = await js.context.callMethod("currentSearch");
 
