@@ -48,7 +48,7 @@ class _CreateOrderState
       isEnable: true
   );
 
-  Widget buildBackButton() => _currentState == CreateOrderState.CATEGORY
+  Widget buildBackButton() => _currentState == CreateOrderState.CATEGORY || _currentState == CreateOrderState.DONE
       ? Container()
       : FreeButton(
           title: "Назад",
