@@ -120,7 +120,13 @@ class _Mobile extends StatelessWidget {
     width: double.infinity,
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: list.map((e) => Column(
+      children: list.map((e) => GestureDetector(
+        onTap: () {
+          if (e.order != null) {
+            ZakazioNavigator.pushWParams("order/info", {"id": e.order!.id});
+          }
+        },
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
@@ -150,7 +156,8 @@ class _Mobile extends StatelessWidget {
             color: Colors.grey,
           )
         ],
-      )).toList(),
+      )),
+      ).toList(),
     )
   );
 }
