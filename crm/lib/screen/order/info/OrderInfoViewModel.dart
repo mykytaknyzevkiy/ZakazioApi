@@ -398,7 +398,7 @@ class OrderInfoViewModel extends ZakazyViewModel {
     return await _paymentRepository.userBalance(userID);
   }
 
-  shareSum(double amount) async {
+  shareSum() async {
     if (!orderData.hasValue) {
       return;
     }
@@ -410,7 +410,7 @@ class OrderInfoViewModel extends ZakazyViewModel {
     exLoading.add(true);
 
     final data =
-        await _orderRepository.getOrderRest().shareSum(orderID, amount);
+        await _orderRepository.getOrderRest().shareSum(orderID, orderData.value!.toShareSum);
 
     exLoading.add(false);
 

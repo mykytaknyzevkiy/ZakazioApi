@@ -83,7 +83,7 @@ class OrderShareSumScreen extends StatelessWidget {
   );
 
   _onSaveClick() async {
-    _viewModel.shareSum(double.parse(sumTextField.text()));
+    _viewModel.shareSum();
   }
 
   _onCancelCLick() {
