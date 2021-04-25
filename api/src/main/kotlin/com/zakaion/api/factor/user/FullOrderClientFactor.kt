@@ -49,7 +49,7 @@ class FullOrderClientFactor(user: UserEntity,
                 order = UserOrder.create(orders = orders).apply {
                    this.count.declined = run {
                        val findAll = orderHistoryDao.findAll(id)
-                       val orderIds = findAll.filter { it.type == OrderHistoryType.BE_EXECUTOR }.map { it.order.id }
+                       val orderIds = findAll.map { it.order.id }
                        findAll.filter {
                            orderIds.contains(it.order.id) && it.type == OrderHistoryType.CANCEL_EXECUTOR
                        }.size
