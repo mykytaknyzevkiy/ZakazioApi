@@ -100031,7 +100031,7 @@ r.by(r.c,new B.bh(new S.azN(s)),!1)},
 az:function(){this.aN()
 this.f.sba(0,"super_admin@zakazy.online")
 this.r.sba(0,"eiucvojkochoer")},
-v:function(a,b){var s,r,q,p,o=this,n=null,m=L.u("\u0410\u0432\u0442\u043e\u0440\u0438\u0437\u0430\u0446\u0438\u044f Zakazy",n,n,n,A.A(n,n,n,n,n,n,n,n,n,n,n,32,n,C.H,n,n,!0,n,n,n,n,n,n,n),n,n,n),l=Z.t(C.d,40),k=L.dC(n,new F.cQ(4,C.an,C.av),n,n,n,n,n,!0,n,n,n,n,n,n,n,n,n,n,n,!0,n,n,n,n,n,n,n,n,L.bI(C.mA,n,n),!1,n,n,"Email",n,n,n,n,n,n,n,n,n,n,n),j=!o.e
+v:function(a,b){var s,r,q,p,o=this,n=null,m=L.u("\u0410\u0432\u0442\u043e\u0440\u0438\u0437\u0430\u0446\u0438\u044f",n,n,n,A.A(n,n,n,n,n,n,n,n,n,n,n,32,n,C.H,n,n,!0,n,n,n,n,n,n,n),n,n,n),l=Z.t(C.d,40),k=L.dC(n,new F.cQ(4,C.an,C.av),n,n,n,n,n,!0,n,n,n,n,n,n,n,n,n,n,n,!0,n,n,n,n,n,n,n,n,L.bI(C.mA,n,n),!1,n,n,"Email",n,n,n,n,n,n,n,n,n,n,n),j=!o.e
 k=T.B(E.ed(!1,o.f,k,j,n,n,n,n,1,n,!1,n,n,n),n,300)
 s=Z.t(C.d,20)
 r=L.bI(C.mD,n,n)
@@ -100500,7 +100500,7 @@ V.arL.prototype={
 $2:function(a,b){var s,r,q,p=null
 if(b.b==null)return M.H(p,p,C.i,p,p,p,p,p,p,p,p,p,p,p)
 s=t.w
-r=a.J(s).f.a.a>=900?new T.a7(new V.W(24,32,24,14),L.u("Zakazy-CRM V2.98",p,p,p,A.A(p,p,p,p,p,p,p,p,p,p,p,24,p,C.x,p,p,!0,p,p,p,p,p,p,p),p,p,p),p):M.H(p,p,C.i,p,p,p,p,p,p,p,p,p,p,p)
+r=a.J(s).f.a.a>=900?new T.a7(new V.W(24,32,24,14),L.u("Zakazy-CRM V2.99",p,p,p,A.A(p,p,p,p,p,p,p,p,p,p,p,24,p,C.x,p,p,!0,p,p,p,p,p,p,p),p,p,p),p):M.H(p,p,C.i,p,p,p,p,p,p,p,p,p,p,p)
 if(a.J(s).f.a.a>=900){s=b.gW()
 s=new T.a7(new V.W(24,24,24,24),M.H(p,T.N(H.c([new L.dc(s,120,p),Z.t(C.d,15),L.u(H.e(s.d)+" "+H.e(s.e)+" "+H.e(s.f),p,p,p,A.A(p,p,p,p,p,p,p,p,p,p,p,18,p,C.H,p,p,!0,p,p,p,p,p,p,p),p,p,p),Z.t(C.d,5),L.u(A.aLg(A.bO(s.ch)),p,p,p,p,p,p,p)],t.p),C.r,C.at,C.h,C.k),C.i,p,new S.aI(0,200,0,1/0),p,p,p,p,p,p,p,p,p),p)}else s=M.H(p,p,C.i,p,p,p,p,p,p,p,p,p,p,p)
 q=t.p

@@ -123,7 +123,7 @@ class _LoginCardState extends State<LoginCard> {
     );
   }
 
-  _authTitle() => Text("Авторизация Zakazy",
+  _authTitle() => Text("Авторизация",
       style: TextStyle(fontSize: 32, fontWeight: FontWeight.w500));
 
   _emailFiled() {
