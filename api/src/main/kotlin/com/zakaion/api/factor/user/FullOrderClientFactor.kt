@@ -48,11 +48,8 @@ class FullOrderClientFactor(user: UserEntity,
                 },
                 order = UserOrder.create(orders = orders).apply {
                    this.count.declined = run {
-                       val findAll = orderHistoryDao.findAll(id)
-                       val orderIds = findAll.map { it.order.id }
-                       findAll.filter {
-                           orderIds.contains(it.order.id) && it.type == OrderHistoryType.CANCEL_EXECUTOR
-                       }.size
+                       val canceledExecutorListHis = orderHistoryDao.findAll(id).filter { it.type == OrderHistoryType.CANCEL_EXECUTOR }
+                       canceledExecutorListHis.size
                    }
                 },
                 passport = passportDao.findAll().find { it.user.id == id }?.toInfoJson(),
