@@ -3,6 +3,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:zakazy_crm_v2/screen/HomeScreen.dart';
 import 'package:zakazy_crm_v2/screen/create_order/create_order_vm.dart';
+import 'package:zakazy_crm_v2/screen/create_order/done_create_order.dart';
 import 'package:zakazy_crm_v2/screen/create_order/fill_order_client_info.dart';
 import 'package:zakazy_crm_v2/screen/create_order/fill_order_info.dart';
 import 'package:zakazy_crm_v2/screen/create_order/fill_order_price.dart';
@@ -38,11 +39,14 @@ class _CreateOrderState
     );
   }
 
-  MyButton buildNextButton() => MyButton(
+  Widget buildNextButton() => _currentState == CreateOrderState.DONE
+  ? Container()
+  : MyButton(
       title:
-          (_currentState == CreateOrderState.CLIENT) ? "Опубликовать" : "Далее",
+      (_currentState == CreateOrderState.CLIENT) ? "Опубликовать" : "Далее",
       onPressed: () => _currentScreenState?.nextClick(),
-      isEnable: true);
+      isEnable: true
+  );
 
   Widget buildBackButton() => _currentState == CreateOrderState.CATEGORY
       ? Container()
@@ -115,7 +119,14 @@ class _CreateOrderState
         break;
       case CreateOrderState.CLIENT:
         _currentScreenState =
-            FillOrderClientInfo(() => _viewModel.publish(context));
+            FillOrderClientInfo(() {
+              _viewModel.publish(context);
+              _setCurrentState(CreateOrderState.DONE);
+            });
+        break;
+      case CreateOrderState.DONE:
+        _currentScreenState =
+            DoneCreateOrder();
         break;
     }
     return _currentScreenState!;
@@ -146,7 +157,8 @@ enum CreateOrderState {
   ADDRESS, // 40%
   INFORMATION, // 60%
   PRICE, // 90%
-  CLIENT // 100%
+  CLIENT, // 100%,
+  DONE
 }
 
 class OrderInfoData {

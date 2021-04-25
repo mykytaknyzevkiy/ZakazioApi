@@ -3,7 +3,6 @@
     <div class="executor__avatar" style="
     display: flex;
     justify-content: center;
-    align-items: center;
     overflow: hidden;
 ">
 
