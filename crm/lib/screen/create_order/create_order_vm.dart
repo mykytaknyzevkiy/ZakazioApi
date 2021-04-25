@@ -54,9 +54,9 @@ class CreateOrderNewViewModel extends ZakazyViewModel {
 
     isloading.add(false);
 
-    if (data) {
+    /*if (data) {
       ZakazioNavigator.push(context, "order/all");
-    }
+    }*/
   }
 
   @override
