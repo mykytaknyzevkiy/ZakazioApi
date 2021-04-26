@@ -110,36 +110,22 @@ class SelectOrderCategoryScreen extends CreateOrderStateScreen {
           padding: const EdgeInsets.all(24),
           child: SizedBox(
             width: 225,
-            height: 300,
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               buildParentHead(globalCategory.parent),
               SizedBox(
                 height: 16,
               ),
-              ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: (globalCategory.childList.length > 5)
-                      ? 5
-                      : globalCategory.childList.length,
-                  itemBuilder: (_, index) => buildChild(
-                      globalCategory.childList[index],
-                      globalCategory.childList[index].id == selected?.id)),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: List.generate(globalCategory.childList.length, (index) => buildChild(
+                    globalCategory.childList[index],
+                    globalCategory.childList[index].id == selected?.id)),
+              ),
               SizedBox(
                 height: 16,
-              ),
-              (globalCategory.childList.length > 5)
-                  ? MouseRegion(
-                      cursor: SystemMouseCursors.click,
-                      child: GestureDetector(
-                        onTap: () => {},
-                        child: Text(
-                          "Еще",
-                          style: TextStyle(fontSize: 16, color: primaryColor),
-                        ),
-                      ),
-                    )
-                  : Container()
+              )
             ]),
           ),
         ),
