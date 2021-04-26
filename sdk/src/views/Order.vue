@@ -154,7 +154,7 @@
       <input
         v-model="ORDER_FORM.price"
         class="order__input"
-        inputmode="numeric"
+        inputmode="tel"
         placeholder="Стоимость в рублях"
       />
       <button
