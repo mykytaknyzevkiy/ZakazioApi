@@ -203,10 +203,10 @@
       </div>
       <button
         class="order__next"
-        :disabled="!isValidStepSix"
+        :disabled="!isValidStepSix || loading"
         @click="makeOrder"
       >
-        Создать заказ
+        {{!loading ? 'Создать заказ' : 'Создание заказа...'}}
       </button>
     </div>
     <div v-show="step === 7" class="order">
@@ -268,6 +268,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       step: 0,
       currentRegion: null,
       currentCity: null,
@@ -386,8 +387,10 @@ export default {
       });
     },
     makeOrder() {
+      this.loading = true
       axios.post(`${url}/app/${appId}/order/add`, this.ORDER_FORM).then(() => {
         this.step = 7;
+        this.loading = false;
         this.ORDER_FORM = { ...{}, ...ORDER_FORM };
       });
     },
