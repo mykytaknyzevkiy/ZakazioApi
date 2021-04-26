@@ -32,7 +32,7 @@ class _RegisterPhoneCardState
   }
 
   @override
-  String description() => "Ведите ваш email";
+  String description() => "Введите ваш email";
 
   _phoneNumberFiled() {
     return SizedBox(
@@ -64,7 +64,7 @@ class _RegisterPhoneCardState
     final phoneNumber = _inputPhoneNumber();
 
     if (!phoneNumber.isValidEmail()) {
-      showError("Не вервий email");
+      showError("Не верный email");
       return;
     }
 
