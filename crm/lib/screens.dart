@@ -214,10 +214,13 @@ class ZakazioNavigator {
 
       print("popstate $url");
 
-      final screen = _findScreen(url);
+      ZakazioScreens? screen = _findScreen(url);
 
       if (screen == null) {
-        return;
+        screen = ZakazioScreens(
+            route: "user/profile/my",
+            builder: (_) => MyUserProfileScreen(),
+            drawerID: 12);
       }
 
       runScreen(screen);
