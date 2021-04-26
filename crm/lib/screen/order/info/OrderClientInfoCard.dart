@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:zakazy_crm_v2/model/user/UserInfoModel.dart';
 import 'package:zakazy_crm_v2/model/user/client/ClientModel.dart';
 import 'package:zakazy_crm_v2/widget/user/UserAvater.dart';
+import 'dart:js' as js;
 
 class OrderClientInfoCard extends StatelessWidget {
   final UserInfoModel _clientInfo;
@@ -57,7 +58,12 @@ class OrderClientInfoCard extends StatelessWidget {
                   width: 10,
                   color: Colors.transparent,
                 ),
-                Text(_clientInfo.email)
+                GestureDetector(
+                  onTap: ()  {
+                    js.context.callMethod("openEmail", [_clientInfo.email]);
+                  },
+                  child: Text(_clientInfo.email)
+                )
               ],
             ),
             Divider(
@@ -73,7 +79,12 @@ class OrderClientInfoCard extends StatelessWidget {
                   width: 10,
                   color: Colors.transparent,
                 ),
-                Text(_clientInfo.phoneNumber)
+                GestureDetector(
+                  onTap: () {
+                    js.context.callMethod("openTel", [_clientInfo.phoneNumber]);
+                  },
+                  child: Text(_clientInfo.phoneNumber),
+                )
               ],
             )
           ],

@@ -37,8 +37,13 @@ abstract class RoleUserController(private val userDao: UserDao,
         if (body.email.isNullOrEmpty())
             throw BadParams()
 
-        if (userDao.findAll().any { it.email == body.email && it.password.isNotEmpty()}) {
-            throw BadParams()
+        val user = userDao.findByEmail(body.email).orElseGet { null }
+
+        if (user != null) {
+            if (user.role != roleType)
+                throw BadParams()
+            if (user.password.isNotEmpty())
+                throw BadParams()
         }
 
         val code = authTokenService.generateAuthCode()
@@ -82,7 +87,12 @@ abstract class RoleUserController(private val userDao: UserDao,
             }
         }
 
-        var user = userDao.findByRole(roleType.ordinal).find { it.email == email }
+        var user = userDao.findByEmail(email).orElseGet { null }
+
+        if (user != null) {
+            if (user.role != roleType)
+                throw BadParams()
+        }
 
         user = if (user == null) {
             userDao.save(body.copy(

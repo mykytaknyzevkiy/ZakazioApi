@@ -196,7 +196,7 @@
           class="order__input"
           placeholder="Телефон"
           inputmode="tel"
-          v-mask="'+7 ##########'"
+          v-maska="'8 ##########'"
           type="text"
         />
       </div>

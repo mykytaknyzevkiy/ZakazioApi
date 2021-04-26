@@ -19,7 +19,9 @@ class _SlashScreenState extends State<SlashScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        body: SplashBanner(),
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
       );
 
   _loadData() async {

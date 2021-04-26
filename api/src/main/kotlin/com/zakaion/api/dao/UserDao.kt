@@ -16,6 +16,9 @@ interface UserDao : PagingAndSortingRepository<UserEntity, Long> {
     @Query(value = "select * from user where role = :role", nativeQuery = true)
     fun findByRole(@Param("role") roleType: Int) : Iterable<UserEntity>
 
+    @Query(value = "select * from user where email = :email", nativeQuery = true)
+    fun findByEmail(@Param("email") email: String) : Optional<UserEntity>
+
     @Query(value = "select * from user where role = :role and masterID = :masterID", nativeQuery = true)
     fun findByRole(@Param("role") roleType: Int,
                            @Param("masterID") masterID: Long,

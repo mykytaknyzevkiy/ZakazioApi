@@ -4,6 +4,8 @@ import 'package:zakazy_crm_v2/screen/HomeScreen.dart';
 import 'package:zakazy_crm_v2/screen/order/info/OrderInfoViewModel.dart';
 import 'package:zakazy_crm_v2/widget/MaterialButton.dart';
 import 'package:zakazy_crm_v2/widget/user/UserAvater.dart';
+import 'dart:js' as js;
+
 
 class OrderExecutorInfoCard extends StatelessWidget {
   late OrderInfoViewModel _viewModel = ViewModelProvider<OrderInfoViewModel>().build(() => OrderInfoViewModel());
@@ -105,7 +107,12 @@ class OrderExecutorInfoCard extends StatelessWidget {
                 width: 10,
                 color: Colors.transparent,
               ),
-              Text(_executorInfo!.email)
+              GestureDetector(
+                  onTap: ()  {
+                    js.context.callMethod("openEmail", [_executorInfo!.email]);
+                  },
+                  child: Text(_executorInfo!.email)
+              )
             ],
           ),
           Divider(
@@ -121,7 +128,12 @@ class OrderExecutorInfoCard extends StatelessWidget {
                 width: 10,
                 color: Colors.transparent,
               ),
-              Text(_executorInfo!.phoneNumber)
+              GestureDetector(
+                onTap: () {
+                  js.context.callMethod("openTel", [_executorInfo!.phoneNumber]);
+                },
+                child: Text(_executorInfo!.phoneNumber),
+              )
             ],
           )
         ],
