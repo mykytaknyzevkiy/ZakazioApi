@@ -485,7 +485,7 @@ class _OrderInfoScreenState
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Вам необходимо оплатить в систему часть стоимость заказа в размере ${order.toShareSum} руб.",
+                      "Вам необходимо оплатить в систему часть стоимости заказа в размере ${order.toShareSum} руб.",
                       style: TextStyle(color: Colors.white),
                     ),
                     Divider(

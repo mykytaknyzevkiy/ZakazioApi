@@ -42,7 +42,7 @@ class _OrderInfoBoxState extends State<OrderInfoBox> {
 
   final _dateLine = ZTextField(hint: "Предпологаемая дата завершения", maxLength: 25);
 
-  final _price = ZTextField(hint: "Стомиость в руб.");
+  final _price = ZTextField(hint: "Стоимость в руб.");
 
   @override
   Widget build(BuildContext context) => Card(

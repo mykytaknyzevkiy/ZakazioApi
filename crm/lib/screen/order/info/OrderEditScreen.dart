@@ -31,7 +31,7 @@ class OrderEditScreen extends StatelessWidget {
 
     _dateLine = ZTextField(hint: "Предполагаемая дата завершения", txt: order.dateLine);
 
-    _price = ZTextField(hint: "Стомиость в руб.", txt: order.price.toString());
+    _price = ZTextField(hint: "Стоимость в руб.", txt: order.price.toString());
   }
 
   @override
