@@ -9,6 +9,7 @@ import 'package:zakazy_crm_v2/widget/MaterialButton.dart';
 import 'package:zakazy_crm_v2/widget/user/UserAvater.dart';
 import 'package:zakazy_crm_v2/unit/Expensions.dart';
 import 'dart:html' as html;
+import 'dart:js' as js;
 
 class PasportRequestInfoScreen extends StatelessWidget {
   final PasportModel _pasportModel;
@@ -155,10 +156,7 @@ class PasportRequestInfoScreen extends StatelessWidget {
                     child: IconButton(
                         icon: Icon(Icons.open_in_new),
                         onPressed: () {
-                          html.AnchorElement anchorElement = html.AnchorElement();
-                          anchorElement.href = fileUrl(_pasportModel.files[index]);
-                          anchorElement.download = _pasportModel.files[index];
-                          anchorElement.click();
+                          js.context.callMethod("openInNewTab", [fileUrl(_pasportModel.files[index])]);
                         }),
                   )
                 ],
