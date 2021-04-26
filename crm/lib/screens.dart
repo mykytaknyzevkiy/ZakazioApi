@@ -209,15 +209,6 @@ class ZakazioNavigator {
 
   static init() async {
     //await urlController.go(0);
-    final url = await js.context.callMethod("currentPath");
-    final screen = _findScreen(url);
-
-    if (screen == null) {
-      return;
-    }
-
-    runScreen(screen);
-
     urlController.addPopStateListener((event) {
       final url = urlController.getPath().substring(1, window.location.pathname.toString().length);
 
@@ -231,6 +222,15 @@ class ZakazioNavigator {
 
       runScreen(screen);
     });
+
+    final url = await js.context.callMethod("currentPath");
+    final screen = _findScreen(url);
+
+    if (screen == null) {
+      return;
+    }
+
+    runScreen(screen);
 
     return true;
   }
