@@ -17,6 +17,7 @@ import 'package:zakazy_crm_v2/screen/order/info/OrderLogsList.dart';
 import 'package:zakazy_crm_v2/screen/order/info/OrderShareSumScreen.dart';
 import 'package:zakazy_crm_v2/unit/Expensions.dart';
 import 'package:zakazy_crm_v2/widget/MaterialButton.dart';
+import 'package:zakazy_crm_v2/widget/ZTextField.dart';
 import 'package:zakazy_crm_v2/widget/order/OrderFeedBackViewHolder.dart';
 import 'package:zakazy_crm_v2/widget/order/OrderFileViewHolder.dart';
 // ignore: avoid_web_libraries_in_flutter
@@ -424,26 +425,33 @@ class _OrderInfoScreenState
   @override
   OrderInfoViewModel viewModelInstancer() => OrderInfoViewModel();
 
-  showDefuseExecutorAlert() => showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-            title: Text("Вы уверены что хотите отказаться?"),
-            content: Text(
-                "Если вы превысите лимит отказов на заказы - вы будете заблокированы"),
-            actions: [
-              FlatButton(
-                  child: Padding(
-                      padding: EdgeInsets.all(16), child: Text("Отменить")),
-                  onPressed: () => {Navigator.of(context).pop()}),
-              FlatButton(
-                  child: Padding(
-                      padding: EdgeInsets.all(16), child: Text("Отказаться")),
-                  onPressed: () {
-                    _viewModel.defuseExecutor();
-                    Navigator.of(context).pop();
-                  })
-            ],
-          ));
+  showDefuseExecutorAlert() {
+    final commentTxtField = ZTextField(hint: "Причина", isMultiline: true);
+
+    showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text("Опишите пожалуйста причину отказа"),
+          content: commentTxtField,
+          actions: [
+            FlatButton(
+                child: Padding(
+                    padding: EdgeInsets.all(16), child: Text("Отменить")),
+                onPressed: () => {Navigator.of(context).pop()}),
+            FlatButton(
+                child: Padding(
+                    padding: EdgeInsets.all(16), child: Text("Отказаться")),
+                onPressed: () async {
+                  if (commentTxtField.text().isEmpty) {
+                    commentTxtField.setError("");
+                    return;
+                  }
+                  _viewModel.defuseExecutorFull(commentTxtField.text());
+                  Navigator.of(context).pop();
+                })
+          ],
+        ));
+  }
 
   showStartWorkAlert() => showDialog(
       context: context,
