@@ -152,9 +152,9 @@
       />
       <div class="order__title">Укажите стоимость в рублях</div>
       <input
-        v-model="ORDER_FORM.price"
+        v-model.number="ORDER_FORM.price"
+        type="number"
         class="order__input"
-        inputmode="tel"
         placeholder="Стоимость в рублях"
       />
       <button
@@ -226,7 +226,7 @@ import AutoComplete from "../components/AutoComplete";
 const ORDER_FORM = {
   title: "",
   content: "",
-  price: 0,
+  price: null,
   dateLine: "",
   regionID: null,
   cityID: null,
@@ -438,6 +438,13 @@ export default {
         })
         .catch((error) => console.log("error", error));
     },
+    onlyNumber ($event) {
+      //console.log($event.keyCode); //keyCodes value
+      let keyCode = ($event.keyCode ? $event.keyCode : $event.which);
+      if ((keyCode < 48 || keyCode > 57) && keyCode !== 46) { // 46 is dot
+        $event.preventDefault();
+      }
+    }
   },
   created() {
     this.getRegions();
