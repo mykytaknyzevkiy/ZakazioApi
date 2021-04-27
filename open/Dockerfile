@@ -1,5 +1,4 @@
 FROM node:latest
-RUN apk add g++ make python
 
 # create destination directory
 RUN mkdir -p /usr/src/nuxt-app
@@ -7,8 +6,13 @@ WORKDIR /usr/src/nuxt-app
 
 # copy the app, note .dockerignore
 COPY . /usr/src/nuxt-app/
-RUN npm install
 
+RUN apk add --no-cache --virtual .gyp \
+        python \
+        make \
+        g++ \
+    && npm install \
+    && apk del .gyp
 # build necessary, even if no static files are needed,
 # since it builds the server as well
 RUN npm run build
