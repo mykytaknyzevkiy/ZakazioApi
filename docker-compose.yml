@@ -37,7 +37,6 @@ services:
 
 
   open:
-    network_mode: host
     build: open
     container_name: open
     ports:
