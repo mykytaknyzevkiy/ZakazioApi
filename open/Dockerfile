@@ -1,24 +1,11 @@
-FROM node:latest
+FROM node:10-alpine
 
-# create destination directory
-RUN mkdir -p /usr/src/nuxt-app
-WORKDIR /usr/src/nuxt-app
+ENV APP_ROOT /web
 
-# copy the app, note .dockerignore
-COPY . /usr/src/nuxt-app/
-RUN npm install
+WORKDIR ${APP_ROOT}
+ADD . ${APP_ROOT}
 
-# build necessary, even if no static files are needed,
-# since it builds the server as well
+RUN npm ci
 RUN npm run build
 
-# expose 5000 on container
-EXPOSE 3737
-
-# set app serving to permissive / assigned
-ENV NUXT_HOST=0.0.0.0
-# set app port
-ENV NUXT_PORT=3737
-
-# start the app
-CMD [ "npm", "start" ]
+CMD ["npm", "run", "start"]
