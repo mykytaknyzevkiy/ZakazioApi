@@ -1,4 +1,4 @@
-version: '3'
+version: '3.4'
 
 services:
 
@@ -37,6 +37,7 @@ services:
 
 
   open:
+    network_mode: host
     build: open
     container_name: open
     ports:
