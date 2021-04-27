@@ -1,4 +1,4 @@
-FROM node:7.11.1
+FROM node:latest
 
 # create destination directory
 RUN mkdir -p /usr/src/nuxt-app
