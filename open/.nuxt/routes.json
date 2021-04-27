@@ -1,0 +1,44 @@
+[
+  {
+    "name": "blog",
+    "path": "/blog",
+    "component": "/Users/mykyta/Documents/ZakazioApi/open/pages/blog/index.vue",
+    "chunkName": "pages/blog/index",
+    "_name": "_0d981dd8"
+  },
+  {
+    "name": "executors",
+    "path": "/executors",
+    "component": "/Users/mykyta/Documents/ZakazioApi/open/pages/executors/index.vue",
+    "chunkName": "pages/executors/index",
+    "_name": "_9fc70ab8"
+  },
+  {
+    "name": "orders",
+    "path": "/orders",
+    "component": "/Users/mykyta/Documents/ZakazioApi/open/pages/orders/index.vue",
+    "chunkName": "pages/orders/index",
+    "_name": "_0f1f5a52"
+  },
+  {
+    "name": "blog-id",
+    "path": "/blog/:id",
+    "component": "/Users/mykyta/Documents/ZakazioApi/open/pages/blog/_id.vue",
+    "chunkName": "pages/blog/_id",
+    "_name": "_5973287c"
+  },
+  {
+    "name": "executors-id",
+    "path": "/executors/:id",
+    "component": "/Users/mykyta/Documents/ZakazioApi/open/pages/executors/_id.vue",
+    "chunkName": "pages/executors/_id",
+    "_name": "_fdde53e8"
+  },
+  {
+    "name": "index",
+    "path": "/",
+    "component": "/Users/mykyta/Documents/ZakazioApi/open/pages/index.vue",
+    "chunkName": "pages/index",
+    "_name": "_5410899a"
+  }
+]
