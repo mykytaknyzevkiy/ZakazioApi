@@ -1,4 +1,4 @@
-FROM node:8.12-alpine
+FROM node:7.5.4
 RUN apk add g++ make python
 
 # create destination directory
