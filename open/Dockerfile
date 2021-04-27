@@ -6,7 +6,6 @@ WORKDIR /usr/src/nuxt-app
 
 # copy the app, note .dockerignore
 COPY . /usr/src/nuxt-app/
-RUN npm install
 
 # build necessary, even if no static files are needed,
 # since it builds the server as well
