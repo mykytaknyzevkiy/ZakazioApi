@@ -35,12 +35,6 @@ services:
     environment:
       CRM_URL: https://crm.zakazy.online
 
-  open:
-    build: open
-    container_name: open
-    ports:
-      - 3737:3737
-
     #Nginx Service
   webserver:
     image: nginx:alpine
