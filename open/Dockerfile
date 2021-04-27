@@ -1,25 +1,10 @@
-FROM node:7.5.0-alpine
-RUN apk add g++ make python
-
-# create destination directory
-RUN mkdir -p /usr/src/nuxt-app
-WORKDIR /usr/src/nuxt-app
-
-# copy the app, note .dockerignore
-COPY . /usr/src/nuxt-app/
+FROM node:12.13.0-alpine
+RUN mkdir -p /opt/app
+WORKDIR /opt/app
+RUN adduser -S app
+COPY addressbook/ .
 RUN npm install
-
-# build necessary, even if no static files are needed,
-# since it builds the server as well
-RUN npm run build
-
-# expose 5000 on container
-EXPOSE 3737
-
-# set app serving to permissive / assigned
-ENV NUXT_HOST=0.0.0.0
-# set app port
-ENV NUXT_PORT=3737
-
-# start the app
-CMD [ "npm", "start" ]
+RUN chown -R app /opt/app
+USER app
+EXPOSE 3000
+CMD [ "npm", "run", "pm2" ]
