@@ -49,7 +49,7 @@ object Preference {
         get() {
             val key = "executorPartnerPercent"
 
-            return properties.getInt(key, 5)
+            return properties.getInt(key, 10)
         }
         set(value) {
             val key = "executorPartnerPercent"

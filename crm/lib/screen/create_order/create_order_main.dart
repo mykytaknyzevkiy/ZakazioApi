@@ -65,39 +65,21 @@ class _CreateOrderState
   }
 
   @override
-  Widget body() => SizedBox(
-      width: MediaQuery.of(context).size.width,
-      child: StreamBuilder(
-          stream: _viewModel.isloading,
-          builder: (context, snapShot) {
-            if (snapShot.data == true)
-              return Center(child: CircularProgressIndicator());
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 60 / 100,
-                  child: SingleChildScrollView(child: buildContent()),
-                ),
-                Divider(
-                  height: 25,
-                  color: Colors.transparent,
-                ),
-                Row(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    buildBackButton(),
-                    VerticalDivider(
-                      color: Colors.transparent,
-                      width: 25,
-                    ),
-                    buildNextButton()
-                  ],
-                )
-              ],
-            );
-          }));
+  Widget body() => StreamBuilder(
+      stream: _viewModel.isloading,
+      builder: (context, snapShot) {
+        if (snapShot.data == true)
+          return Center(child: CircularProgressIndicator());
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              width: MediaQuery.of(context).size.width,
+              child: buildContent(),
+            )
+          ],
+        );
+      });
 
   CreateOrderStateScreen buildContent() {
     switch (_currentState) {
@@ -134,17 +116,36 @@ class _CreateOrderState
 
   @override
   Widget top() => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Text(
-            "Создать заказ",
-            style: TextStyle(fontWeight: FontWeight.w500, fontSize: 36),
+          SizedBox(
+            width: double.infinity,
+            child: Text(
+              "Создать заказ",
+              style: TextStyle(fontWeight: FontWeight.w500, fontSize: 36),
+            ),
           ),
           Divider(
             height: 15,
             color: Colors.transparent,
           ),
-          buildProgressBar()
+          buildProgressBar(),
+          Divider(
+            height: 25,
+            color: Colors.transparent,
+          ),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              buildBackButton(),
+              VerticalDivider(
+                color: Colors.transparent,
+                width: 25,
+              ),
+              buildNextButton()
+            ],
+          )
         ],
       );
 

@@ -2,7 +2,6 @@ package com.zakaion.api.service
 
 import com.zakaion.api.dao.UserDao
 import com.zakaion.api.entity.user.UserEntity
-import com.zakaion.api.entity.user.UserStatus
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import io.jsonwebtoken.security.Keys
@@ -114,6 +113,12 @@ class AuthTokenService (private val userDao: UserDao) {
         )
     }
 
-    fun generateAuthCode() = "1234"
+    fun generateAuthCode() = generatePIN()
 
+
+    private fun generatePIN(): String {
+        var x = (Math.random() * 9).toInt()
+        x += 1
+        return x.toString() + "" + ((Math.random() * 1000).toInt().toString() + "")
+    }
 }

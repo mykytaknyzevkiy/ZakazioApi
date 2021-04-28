@@ -346,6 +346,30 @@ class OrderInfoViewModel extends ZakazyViewModel {
     }
   }
 
+  defuseExecutorFull(String comment) async {
+    if (!orderData.hasValue) {
+      return;
+    }
+
+    final orderID = orderData.value!.id;
+
+    onDefuseExecutor.add(false);
+
+    exLoading.add(true);
+
+    orderData.add(null);
+
+    final dataCom = await _orderRepository.addComment(orderID, comment);
+
+    final data = await _orderRepository.getOrderRest().cancelExecutor(orderID);
+
+    exLoading.add(false);
+
+    if (data.success) {
+      loadData(orderID);
+    }
+  }
+
   defuseExecutor() async {
     if (!orderData.hasValue) {
       return;

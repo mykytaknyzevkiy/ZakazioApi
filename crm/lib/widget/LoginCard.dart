@@ -53,8 +53,6 @@ class _LoginCardState extends State<LoginCard> {
   @override
   void initState() {
     super.initState();
-    _emailController.text = "super_admin@zakazy.online";
-    _passwordController.text = "eiucvojkochoer";
   }
 
   @override

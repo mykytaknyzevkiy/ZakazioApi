@@ -37,7 +37,7 @@ class _CategorySelectWidgetState extends State<CategorySelectWidget> {
       BehaviorSubject<List<ChildCategoryModel>>.seeded([]);
 
   late ZTextField _searchField =
-      ZTextField(hint: "Ведите название категории", onEdit: _onSearch);
+      ZTextField(hint: "Введите название категории", onEdit: _onSearch);
 
   _onSearch(String text) async {
     final data = await _categoryRepository.searchActive(text);
