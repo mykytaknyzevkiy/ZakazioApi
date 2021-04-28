@@ -1,0 +1,74 @@
+{
+  "Register": {
+    "description": "Auto imported from /components/Register.vue"
+  },
+  "LazyRegister": {
+    "description": "Auto imported from /components/Register.vue"
+  },
+  "TheFooter": {
+    "description": "Auto imported from /components/TheFooter.vue"
+  },
+  "LazyTheFooter": {
+    "description": "Auto imported from /components/TheFooter.vue"
+  },
+  "TheHeader": {
+    "description": "Auto imported from /components/TheHeader.vue"
+  },
+  "LazyTheHeader": {
+    "description": "Auto imported from /components/TheHeader.vue"
+  },
+  "TheMain": {
+    "description": "Auto imported from /components/TheMain.vue"
+  },
+  "LazyTheMain": {
+    "description": "Auto imported from /components/TheMain.vue"
+  },
+  "Paginator": {
+    "description": "Auto imported from /components/common/Paginator.vue"
+  },
+  "LazyPaginator": {
+    "description": "Auto imported from /components/common/Paginator.vue"
+  },
+  "Rate": {
+    "description": "Auto imported from /components/common/Rate.vue"
+  },
+  "LazyRate": {
+    "description": "Auto imported from /components/common/Rate.vue"
+  },
+  "ExecutorCard": {
+    "description": "Auto imported from /components/executors/ExecutorCard.vue"
+  },
+  "LazyExecutorCard": {
+    "description": "Auto imported from /components/executors/ExecutorCard.vue"
+  },
+  "ExecutorsCard": {
+    "description": "Auto imported from /components/executors/ExecutorsCard.vue"
+  },
+  "LazyExecutorsCard": {
+    "description": "Auto imported from /components/executors/ExecutorsCard.vue"
+  },
+  "OrderCard": {
+    "description": "Auto imported from /components/orders/OrderCard.vue"
+  },
+  "LazyOrderCard": {
+    "description": "Auto imported from /components/orders/OrderCard.vue"
+  },
+  "UserAvatar": {
+    "description": "Auto imported from /components/user/UserAvatar.vue"
+  },
+  "LazyUserAvatar": {
+    "description": "Auto imported from /components/user/UserAvatar.vue"
+  },
+  "UserFeedbacks": {
+    "description": "Auto imported from /components/user/UserFeedbacks.vue"
+  },
+  "LazyUserFeedbacks": {
+    "description": "Auto imported from /components/user/UserFeedbacks.vue"
+  },
+  "UserOrderCard": {
+    "description": "Auto imported from /components/user/UserOrderCard.vue"
+  },
+  "LazyUserOrderCard": {
+    "description": "Auto imported from /components/user/UserOrderCard.vue"
+  }
+}

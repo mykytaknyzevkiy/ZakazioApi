@@ -10,8 +10,8 @@
   text-transform: uppercase;
   font-size: 3.5vw;
   color: #ffcd00;
-  margin-bottom: .2vw;
-  text-align: start;
+  margin-bottom: 1vw;
+  text-align: center;
 }
 
 .cover__qube {
@@ -26,11 +26,7 @@
 }
 
 .cover__blocks {
-  display: flex;
   margin-bottom: .5vw;
-  flex-wrap: wrap;
-  justify-content: start;
-
 }
 
 .cover__block {
@@ -39,6 +35,7 @@
   font-size: 2.5vw;
   margin-left: 1.5vw;
   margin-right: 1.5vw;
+  display: block;
 
   &:last-child {
     margin-right: 0;
@@ -201,12 +198,22 @@
 }
 
 @include media-breakpoint-down(lg) {
+  .cover {
+    flex-wrap: wrap;
+  }
+  .cover__title {
+    font-size: 5vw;
+    margin-bottom: 20px;
+  }
   .cover__side {
     min-width: 100%;
     padding: 20px;
   }
+  .cover__block {
+    font-size: 3vw;
+  }
   .cover__qube {
-    display: none;
+    width: 100%;
     padding: 20px;
   }
   .cover__register-btn {

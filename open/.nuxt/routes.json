@@ -1,0 +1,44 @@
+[
+  {
+    "name": "blog",
+    "path": "/blog",
+    "component": "/Users/avenikolay/Projects/ZakazioApi/open/pages/blog/index.vue",
+    "chunkName": "pages/blog/index",
+    "_name": "_7d378bd0"
+  },
+  {
+    "name": "executors",
+    "path": "/executors",
+    "component": "/Users/avenikolay/Projects/ZakazioApi/open/pages/executors/index.vue",
+    "chunkName": "pages/executors/index",
+    "_name": "_41183568"
+  },
+  {
+    "name": "orders",
+    "path": "/orders",
+    "component": "/Users/avenikolay/Projects/ZakazioApi/open/pages/orders/index.vue",
+    "chunkName": "pages/orders/index",
+    "_name": "_ec0fa2da"
+  },
+  {
+    "name": "blog-id",
+    "path": "/blog/:id",
+    "component": "/Users/avenikolay/Projects/ZakazioApi/open/pages/blog/_id.vue",
+    "chunkName": "pages/blog/_id",
+    "_name": "_69d64238"
+  },
+  {
+    "name": "executors-id",
+    "path": "/executors/:id",
+    "component": "/Users/avenikolay/Projects/ZakazioApi/open/pages/executors/_id.vue",
+    "chunkName": "pages/executors/_id",
+    "_name": "_208471d0"
+  },
+  {
+    "name": "index",
+    "path": "/",
+    "component": "/Users/avenikolay/Projects/ZakazioApi/open/pages/index.vue",
+    "chunkName": "pages/index",
+    "_name": "_45d54a12"
+  }
+]

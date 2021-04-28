@@ -3,7 +3,8 @@
     <template v-if="step === 0">
       <button
         class="cover__register-btn cover__register-btn_partner"
-        @click="openCrm()">
+        @click="openCrm()"
+      >
         Войти в личный кабинет
       </button>
     </template>
@@ -147,7 +148,7 @@ export default {
       this.step = 0
     },
     openCrm() {
-      window.open("https://crm.zakazy.online/","_self")
+      window.open('https://crm.zakazy.online/', '_self')
     },
     registerEmail() {
       const { email } = this.form
