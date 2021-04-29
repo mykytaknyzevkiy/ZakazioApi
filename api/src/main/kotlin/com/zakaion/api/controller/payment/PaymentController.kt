@@ -78,14 +78,14 @@ class PaymentController(
         println(Gson().toJson(makePayment))
 
         if (!makePayment.success) {
-            if (makePayment.model?.acsUrl == null ||
+            /*if (makePayment.model?.acsUrl == null ||
                 makePayment.model.paReq == null ||
                 makePayment.model.transactionId == null)
                 return DataResponse(
                     success = false,
                     data = null,
                     error = "cloud payment model null ${makePayment.model == null}"
-                )
+                )*/
             return DataResponse.ok(makePayment.model)
         }
 

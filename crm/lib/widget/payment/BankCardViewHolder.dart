@@ -24,7 +24,7 @@ class BankCardViewHolder extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "****  ****  ****  ${item.endNum.substring(11)}",
+                "****  ****  ****  ${item.endNum.substring(12)}",
                 style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold
