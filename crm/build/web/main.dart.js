@@ -100358,7 +100358,7 @@ V.arG.prototype={
 $2:function(a,b){var s,r,q,p=null
 if(b.b==null)return M.H(p,p,C.i,p,p,p,p,p,p,p,p,p,p,p)
 s=t.w
-r=a.J(s).f.a.a>=900?new T.a7(new V.W(24,32,24,14),L.u("Zakazy-CRM v1.0",p,p,p,A.A(p,p,p,p,p,p,p,p,p,p,p,24,p,C.x,p,p,!0,p,p,p,p,p,p,p),p,p,p),p):M.H(p,p,C.i,p,p,p,p,p,p,p,p,p,p,p)
+r=a.J(s).f.a.a>=900?new T.a7(new V.W(24,32,24,14),L.u("Zakazy-CRM v1.1",p,p,p,A.A(p,p,p,p,p,p,p,p,p,p,p,24,p,C.x,p,p,!0,p,p,p,p,p,p,p),p,p,p),p):M.H(p,p,C.i,p,p,p,p,p,p,p,p,p,p,p)
 if(a.J(s).f.a.a>=900){s=b.gW()
 s=new T.a7(new V.W(24,24,24,24),M.H(p,T.N(H.c([new L.db(s,120,p),Z.t(C.d,15),L.u(H.f(s.d)+" "+H.f(s.e)+" "+H.f(s.f),p,p,p,A.A(p,p,p,p,p,p,p,p,p,p,p,18,p,C.G,p,p,!0,p,p,p,p,p,p,p),p,p,p),Z.t(C.d,5),L.u(A.aL7(A.bO(s.ch)),p,p,p,p,p,p,p)],t.p),C.r,C.av,C.h,C.k),C.i,p,new S.aI(0,200,0,1/0),p,p,p,p,p,p,p,p,p),p)}else s=M.H(p,p,C.i,p,p,p,p,p,p,p,p,p,p,p)
 q=t.p

@@ -8,7 +8,7 @@ function createCyptograf(cardNum, cardExpMount, cardExpYear, cardHoldenName, car
 
     checkout = new cp.Checkout(
         // public id из личного кабинета
-        "pk_8507dee1d9c8b1519a3f5b5b3d872",
+        "pk_81a3630bdf32633b8b1e1626dea96",
         // тег, содержащий поля данных карты
         document.getElementById("paymentFormSample"));
 
