@@ -103,4 +103,20 @@ class PaymentRest extends ZakazioRest {
       return DataResponse(success: false);
     }
   }
+
+  Future<DataResponse<Null?>> outSum(int bankCardID, double amount) async {
+    final json = await post("/out/sum", {}, {
+      "bankCardID": bankCardID.toString(),
+      "amount": amount.toString()
+    });
+
+    try {
+      return DataResponse.fromJson(
+          json,
+              (_) => null
+      );
+    } catch (e) {
+      return DataResponse(success: false);
+    }
+  }
 }

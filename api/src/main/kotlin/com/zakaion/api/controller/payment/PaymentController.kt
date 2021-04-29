@@ -16,6 +16,7 @@ import com.zakaion.api.factor.user.UserFactory
 import com.zakaion.api.model.AddCardModel
 import com.zakaion.api.model.AddPayModel
 import com.zakaion.api.model.DataResponse
+import com.zakaion.api.model.OutSumRequestBody
 import com.zakaion.api.service.CloudPaymentModel
 import com.zakaion.api.service.CloudPaymentService
 import com.zakaion.api.service.TransactionService
@@ -192,6 +193,37 @@ class PaymentController(
                 "</html>"
 
         return html.toByteArray()
+    }
+
+    @PostMapping("/out/sum")
+    fun outSum(@RequestBody body: OutSumRequestBody): DataResponse<Nothing?> {
+        val bankCard = bankCardDao.findById(body.bankCardID).orElseGet {
+            throw NotFound()
+        }
+
+        val myUser = userFactory.myUser
+
+        if (myUser.id != bankCard.user.id)
+            throw NoPermittedMethod()
+
+        val userBalance = transactionService.userBalance(myUser.id)
+
+        if (userBalance < body.amount)
+            throw BadParams()
+
+        cloudPaymentService.outSum(
+            cardCrypto = bankCard.crypto,
+            amount = body.amount,
+            userID = myUser.id,
+            cardHolderName = "${myUser.firstName} ${myUser.lastName}"
+        ).let {
+            if (it == null)
+                throw BadParams()
+            else if (!it.success)
+                throw BadParams()
+        }
+
+        return DataResponse.ok(null)
     }
 
 }

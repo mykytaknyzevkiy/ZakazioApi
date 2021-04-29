@@ -153,6 +153,10 @@ abstract class UserProfileViewModel<USER extends UserInfoModel> extends ZakazyVi
     return data;
   }
 
+  onOutBalance() {
+    toEditData.add(ToEditData(ToEditEnum.OUT_BALANCE, null));
+  }
+
   onAddBalance() {
     toEditData.add(ToEditData(ToEditEnum.ADD_BALANCE, null));
   }
@@ -180,6 +184,21 @@ abstract class UserProfileViewModel<USER extends UserInfoModel> extends ZakazyVi
         toEditData.add(null);
         isToEditDataLoading.add(false);
       });
+    }
+  }
+
+  outBalance(int amount, int cardID) async {
+    isToEditDataLoading.add(true);
+
+    final data = await _paymentRepository.paymentRest.outSum(cardID, amount);
+
+    if (data.success) {
+      reloadUser();
+      toEditData.add(null);
+      isToEditDataLoading.add(false);
+    } else {
+      toEditDataError.add("Ошибка трансакции, обратитесь в банк");
+      isToEditDataLoading.add(false);
     }
   }
 
@@ -256,6 +275,7 @@ enum ToEditEnum {
   ADD_PORTFOLIO,
   CHANGE_PASSWORD,
   ADD_BALANCE,
+  OUT_BALANCE,
   VIEW_PORTFOLIO
 }
 

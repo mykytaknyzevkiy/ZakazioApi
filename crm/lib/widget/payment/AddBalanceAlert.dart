@@ -17,8 +17,9 @@ import '../../conts.dart';
 
 class AddBalanceAlert extends StatefulWidget {
   final UserProfileViewModel viewModel;
+  bool? isOut = false;
 
-  AddBalanceAlert(this.viewModel);
+  AddBalanceAlert(this.viewModel, {this.isOut});
 
   @override
   State<StatefulWidget> createState() => _AddBalanceAlert(viewModel);
@@ -28,7 +29,9 @@ class _AddBalanceAlert extends State<AddBalanceAlert> {
   final UserProfileViewModel viewModel;
 
   late _SelectBankCardWidget _selectBankCardWidget = _SelectBankCardWidget(
-    onSelect: (card) => _nextBtn.setEnable(_amountTextFiled.text().isNumeric()),
+    onSelect: (card) => (widget.isOut == true)
+        ? _amountTextFiled.text().isNumeric() && _selectBankCardWidget.selectedCard() != null && (double.parse(_amountTextFiled.text()) <= userBalance)
+        : _amountTextFiled.text().isNumeric() && _selectBankCardWidget.selectedCard() != null,
   );
 
   late ZTextField _amountTextFiled = ZTextField(
@@ -37,16 +40,26 @@ class _AddBalanceAlert extends State<AddBalanceAlert> {
     inputFormatters: [
       WhitelistingTextInputFormatter.digitsOnly
     ],
-    onEdit: (txt) => _nextBtn.setEnable(txt.isNumeric() && _selectBankCardWidget.selectedCard() != null),
+    onEdit: (txt) => _nextBtn.setEnable(
+        (widget.isOut == true)
+            ? txt.isNumeric() && _selectBankCardWidget.selectedCard() != null && (double.parse(txt) <= userBalance)
+            : txt.isNumeric() && _selectBankCardWidget.selectedCard() != null
+    ),
   );
 
   late MyButton _nextBtn = MyButton(
-    title: "Оплатить",
+    title: (widget.isOut ?? false) ? "Вывести" : "Оплатить",
     onPressed: () => onPay(),
     isEnable: false,
   );
 
+  double userBalance = 0;
+
   _AddBalanceAlert(this.viewModel);
+
+  load() async {
+    userBalance = await viewModel.balance();
+  }
 
   @override
   Widget build(BuildContext context) => Card(
@@ -59,7 +72,7 @@ class _AddBalanceAlert extends State<AddBalanceAlert> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              Text("Пополнить баланс",
+              Text((widget.isOut ?? false) ? "Вывести на карту" : "Пополнить баланс",
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               Divider(
                 color: Colors.transparent,

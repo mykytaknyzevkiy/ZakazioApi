@@ -94,6 +94,29 @@ class CloudPaymentService(
 
         return postForEntity ?: "NO"
     }
+
+    fun outSum(cardCrypto: String,
+               amount: Float,
+               userID: Long,
+               cardHolderName: String): CloudPaymentResponse? {
+        val url = "https://api.cloudpayments.ru/payments/cards/topup"
+
+        // create a map for post parameters
+        val map = HashMap<String, Any>().apply {
+            this["Name"] = cardCrypto
+            this["CardCryptogramPacket"] = cardCrypto
+            this["Amount"] = amount
+            this["AccountId"] = userID.toString()
+            this["Currency"] = "RUB"
+        }
+
+        // build the request
+        val entity: HttpEntity<Map<String, Any>> = HttpEntity(map, headers)
+
+        val postForEntity = restTemplate.postForObject(url, entity, String::class.java)
+
+        return Gson().fromJson(postForEntity, CloudPaymentResponse::class.java)
+    }
 }
 
 data class CloudPaymentResponse(
