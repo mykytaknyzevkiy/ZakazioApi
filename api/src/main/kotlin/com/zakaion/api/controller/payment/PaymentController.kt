@@ -184,7 +184,7 @@ class PaymentController(
                 "</form>\n" +
                 "\n" +
                 "<script>\n" +
-                "    window.onload = submitForm;\n" +
+               // "    window.onload = submitForm;\n" +
                 "    function submitForm() { downloadForm.submit(); }\n" +
                 "</script>\n" +
                 "</body>\n" +
