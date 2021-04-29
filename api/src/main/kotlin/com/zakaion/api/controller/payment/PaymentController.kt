@@ -153,7 +153,7 @@ class PaymentController(
         return ExFuncs.getResourceFileAsString("templates/success_payed.html").replace("{{CRM_URL}}", constService.crmUrl).toByteArray()
     }
 
-    @GetMapping("/{userID}/cloudpayment/3ds/{cardID}", produces = [MediaType.TEXT_HTML_VALUE])
+    @PostMapping("/{userID}/cloudpayment/3ds/{cardID}", produces = [MediaType.TEXT_HTML_VALUE])
     fun getWebCloudPayment3ds(
         @PathVariable("userID") userID: Long,
         @RequestParam("transactionId") transactionId: Int,

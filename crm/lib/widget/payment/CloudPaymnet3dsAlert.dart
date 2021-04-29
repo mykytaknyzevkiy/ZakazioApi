@@ -14,13 +14,23 @@ class CloudPaymnet3dsAlert extends StatelessWidget {
       int bankID,
       Function() onCLose) {
 
-    String dsUrl = "$appUrl/payment/$userID/cloudpayment/3ds/$bankID";
+    js.context.callMethod(
+        "open3ds",
+        [
+          "$appUrl/payment/$userID/cloudpayment/3ds/$bankID",
+          cloudPayment3dsModel.transactionId,
+          cloudPayment3dsModel.paReq,
+          cloudPayment3dsModel.acsUrl
+        ]
+    );
+
+/*    String dsUrl = "$appUrl/payment/$userID/cloudpayment/3ds/$bankID";
     dsUrl += "?";
     dsUrl += "transactionId=${cloudPayment3dsModel.transactionId}&";
-    dsUrl += "paReq=${cloudPayment3dsModel.paReq.substring(1, cloudPayment3dsModel.paReq.length)}&";
+    dsUrl += "paReq=${cloudPayment3dsModel.paReq}&";
     dsUrl += "acsUrl=${cloudPayment3dsModel.acsUrl}";
 
-    html.window.open(dsUrl,"_self");
+    html.window.open(dsUrl,"_self");*/
 
     /*showDialog(
         context: context,

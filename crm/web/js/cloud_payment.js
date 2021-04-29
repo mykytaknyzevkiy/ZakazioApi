@@ -30,3 +30,32 @@ function copy(text) {
     document.body.removeChild(input);
     return result;
 }
+
+function open3ds(dsUrl, transactionId, paReq, acsUrl) {
+    var form = document.createElement("form");
+    form.method = "POST";
+    form.action = dsUrl;
+    form.style.display = "none";
+
+    var input = document.createElement("input");
+    input.type = "hidden";
+    input.name = "transactionId";
+    input.value = transactionId;
+    form.appendChild(input);
+
+    var input2 = document.createElement("input");
+    input2.type = "hidden";
+    input2.name = "paReq";
+    input2.value = paReq;
+    form.appendChild(input2);
+
+    var input3 = document.createElement("input");
+    input3.type = "hidden";
+    input3.name = "acsUrl";
+    input3.value = acsUrl;
+    form.appendChild(input3);
+
+    document.body.appendChild(form);
+    form.submit();
+    document.body.removeChild(form);
+}
