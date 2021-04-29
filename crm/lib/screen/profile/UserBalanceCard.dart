@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:zakazy_crm_v2/repository/UserRepository.dart';
 import 'package:zakazy_crm_v2/screen/dashboard/NewDashboardScreen.dart';
 import 'package:zakazy_crm_v2/screen/profile/UserProfileViewModel.dart';
 import 'package:zakazy_crm_v2/screens.dart';
@@ -40,17 +41,20 @@ class UserBalanceCard extends StatelessWidget {
                 "${formatNumber(snapShot.requireData.toInt())} руб.",
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
-              (viewModel.userInfo.value!.canBeEdit())
-                  ? Row(
+              (viewModel.userInfo.value!.id == UserRepository.instance().myUserLiveData.value.id)
+              ? Column(
                 children: [
-                  Expanded(child: Container()),
-                  FloatingActionButton(
-                    onPressed: () => viewModel.onAddBalance(),
-                    child: Icon(Icons.add),
-                  )
+                  SizedBox(
+                    height: 25,
+                  ),
+                  MyButton(title: "Пополнить", onPressed: () => viewModel.onAddBalance(), isEnable: true),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  MyButton(title: "Вывести", onPressed: () => viewModel.onOutBalance(), isEnable: snapShot.requireData > 0)
                 ],
               )
-                  : Container()
+              : Container()
             ],
           ),
         );

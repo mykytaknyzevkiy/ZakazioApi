@@ -55,7 +55,9 @@ class _AddBalanceAlert extends State<AddBalanceAlert> {
 
   double userBalance = 0;
 
-  _AddBalanceAlert(this.viewModel);
+  _AddBalanceAlert(this.viewModel) {
+    load();
+  }
 
   load() async {
     userBalance = await viewModel.balance();
@@ -140,11 +142,15 @@ class _AddBalanceAlert extends State<AddBalanceAlert> {
       return;
     }
 
-    viewModel.addBalance(
-        context,
-        amount.toInt(),
-        card.id
-    );
+    if (widget.isOut == true) {
+      viewModel.outBalance(amount, card.id);
+    } else {
+      viewModel.addBalance(
+          context,
+          amount.toInt(),
+          card.id
+      );
+    }
 
   }
 

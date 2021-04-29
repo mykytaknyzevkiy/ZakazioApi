@@ -175,7 +175,7 @@ abstract class UserProfileViewModel<USER extends UserInfoModel> extends ZakazyVi
       isToEditDataLoading.add(false);
     }
     else {
-      CloudPaymnet3dsAlert.show(
+      /*CloudPaymnet3dsAlert.show(
           context,
           data.data!,
           userID,
@@ -183,11 +183,11 @@ abstract class UserProfileViewModel<USER extends UserInfoModel> extends ZakazyVi
         reloadUser();
         toEditData.add(null);
         isToEditDataLoading.add(false);
-      });
+      });*/
     }
   }
 
-  outBalance(int amount, int cardID) async {
+  outBalance(double amount, int cardID) async {
     isToEditDataLoading.add(true);
 
     final data = await _paymentRepository.paymentRest.outSum(cardID, amount);

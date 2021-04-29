@@ -75,6 +75,9 @@ VM extends UserProfileViewModel<USER>> extends HomeScreen<T, VM> {
       else if (data.method == ToEditEnum.ADD_BALANCE) {
         return AddBalanceAlert(viewModel());
       }
+      else if (data.method == ToEditEnum.OUT_BALANCE) {
+        return AddBalanceAlert(viewModel(), isOut: true);
+      }
       else {
         return findExRightDialog(data);
       }
