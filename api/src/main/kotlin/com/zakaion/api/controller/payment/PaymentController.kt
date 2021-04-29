@@ -162,7 +162,7 @@ class PaymentController(
         @PathVariable("cardID") bankCardID: Long
     ): ByteArray {
 
-        val paReq = "+$paReqN"
+        val paReq = "$paReqN"
 
         val html = "<html>\n" +
                 "\n" +
