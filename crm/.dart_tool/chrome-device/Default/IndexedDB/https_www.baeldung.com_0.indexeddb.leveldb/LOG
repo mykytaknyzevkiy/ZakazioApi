@@ -1,0 +1,6 @@
+2021/04/18-03:54:47.775 26603 Creating DB /private/var/folders/32/n_dk6p515s3__15yjy0dblp40000gn/T/flutter_tools.yKmXLC/flutter_tools_chrome_device.AAauoa/Default/IndexedDB/https_www.baeldung.com_0.indexeddb.leveldb since it was missing.
+2021/04/18-03:54:47.925 26603 Reusing MANIFEST /private/var/folders/32/n_dk6p515s3__15yjy0dblp40000gn/T/flutter_tools.yKmXLC/flutter_tools_chrome_device.AAauoa/Default/IndexedDB/https_www.baeldung.com_0.indexeddb.leveldb/MANIFEST-000001
+2021/04/18-03:55:00.641 26603 Level-0 table #5: started
+2021/04/18-03:55:00.670 26603 Level-0 table #5: 342 bytes OK
+2021/04/18-03:55:00.719 26603 Delete type=0 #3
+2021/04/18-03:55:00.721 26603 Manual compaction at level-0 from (begin) .. (end); will stop at (end)

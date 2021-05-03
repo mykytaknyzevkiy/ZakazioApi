@@ -3,9 +3,5 @@
 /socket/build/
 /.gradle/
 /.idea/
-/build/
-/.gradle/
-/.idea/
 /gradle/
-/crm/.dart_tool/
 /opent/node_modules/
