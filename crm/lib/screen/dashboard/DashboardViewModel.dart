@@ -34,7 +34,7 @@ class DashboardViewModel extends ZakazyViewModel {
     DateInto? dateInto = selectedDate();
 
     final data =
-        await _dashboardRest.executors(dateInto!.startStr(), dateInto.endStr());
+        await _dashboardRest.executors(dateInto.startStr(), dateInto.endStr());
 
     return data.data!;
   }
@@ -42,7 +42,7 @@ class DashboardViewModel extends ZakazyViewModel {
   Future<DashBoardAnalytic> analytic() async {
     DateInto? dateInto = selectedDate();
 
-    final data = await _dashboardRest.analytic(dateInto!.startStr(), dateInto.endStr());
+    final data = await _dashboardRest.analytic(dateInto.startStr(), dateInto.endStr());
 
     return data.data!;
   }

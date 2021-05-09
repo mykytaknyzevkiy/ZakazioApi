@@ -8,7 +8,10 @@
           </h1>
           <hr />
           <div class="profile__rate">Рейтинг: {{ user.rate }}</div>
-          <div class="profile__city">Город: {{ city }}</div>
+          <div class="profile__city">
+            Город: {{ city }}, <br />
+            Регион: {{ region }}
+          </div>
         </div>
         <a href="https://crm.zakazy.online/login" class="profile__order-btn"
           >Заказать работу</a
@@ -137,6 +140,9 @@ export default {
   computed: {
     city() {
       return this.user?.city?.name || 'не указан'
+    },
+    region() {
+      return this.user?.city?.region?.name
     },
     currentPortFolio() {
       return this.portfolio.find((i) => i.id === this.showPortfolioId) || null

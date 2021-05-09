@@ -105,7 +105,7 @@ class PaymentRest extends ZakazioRest {
   }
 
   Future<DataResponse<Null?>> outSum(int bankCardID, double amount) async {
-    final json = await post("/out/sum", {}, {
+    final json = await post("$route/out/sum", {}, {
       "bankCardID": bankCardID.toString(),
       "amount": amount.toString()
     });

@@ -55,12 +55,12 @@ export default {
     }
   },
   head: {
-    title: 'ZAKAZIO',
+    title: 'ZAKAZYO - CRM И ERP для заказов и исполнителей',
     meta: [
       {
         hid: 'description',
         name: 'description',
-        content: 'ПАРТНЕРСТВО ЗА % С ДОГОВОРА',
+        content: 'Партнерство за % с договора',
       },
     ],
   },

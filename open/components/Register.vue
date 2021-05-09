@@ -1,12 +1,12 @@
 <template>
   <div class="cover__register-btns">
     <template v-if="step === 0">
-      <button
+      <a
         class="cover__register-btn cover__register-btn_partner"
-        @click="openCrm()"
+        href="https://crm.zakazy.online"
       >
-        Войти в личный кабинет
-      </button>
+        Присоединиться
+      </a>
     </template>
     <div class="register">
       <template v-if="step === 1">

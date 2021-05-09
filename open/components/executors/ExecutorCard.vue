@@ -19,8 +19,8 @@
       <div class="executor__rate"><Rate :value="user.rate" /></div>
     </div>
     <div class="executor__map">
-      Россия, <br />
-      Москва
+      {{ region }}, <br />
+      {{ city }}
     </div>
     <div class="executor__stats">
       <span class="executors__stats-n">{{ user.order.count.open }}</span>
@@ -39,6 +39,14 @@ export default {
   props: {
     // eslint-disable-next-line vue/require-default-prop
     user: Object,
+  },
+  computed: {
+    region() {
+      return this.user?.city?.region?.name
+    },
+    city() {
+      return this.user?.city?.name
+    },
   },
 }
 </script>
