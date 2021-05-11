@@ -17,7 +17,7 @@ import java.util.HashMap
 
 @Service
 class CloudPaymentService(
-    restTemplateBuilder: RestTemplateBuilder,
+    private val restTemplateBuilder: RestTemplateBuilder,
     constService: ConstService
 ) {
 
@@ -99,6 +99,12 @@ class CloudPaymentService(
                amount: Float,
                userID: Long,
                cardHolderName: String): CloudPaymentResponse? {
+        val restTemplate = restTemplateBuilder.build().apply {
+            interceptors.add(
+                BasicAuthorizationInterceptor("pk_f99204e4f93226fab0fb854caa689", "bea41d186cd7ca8c78e70b7ec7e6a501")
+            )
+        }
+
         val url = "https://api.cloudpayments.ru/payments/cards/topup"
 
         // create a map for post parameters
