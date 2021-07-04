@@ -58,3 +58,20 @@ services:
       - /home/storage:/home/storage
     depends_on:
       - api
+
+    nginx:
+      container_name: nginx
+      build:
+        context: ./nginx
+        network: host
+        args:
+          - CERTBOT_EMAIL=hello@yourcompany.com #replace with your own email
+          - DOMAIN_LIST=api.zakazy.online,socket.zakazy.online,file.zakazy.online,crm.zakazy.online,sdk.zakazy.online,zakazy.online #replace with your own domains
+domains
+  restart: always
+  volumes:
+    - ./nginx/config/conf.d/prod:/etc/nginx/conf.d
+    - letsencrypt:/etc/letsencrypt
+  ports:
+    - "80:80"
+    - "443:443"
