@@ -67,3 +67,6 @@ services:
       - ./data/certbot/conf:/etc/letsencrypt
       - ./data/certbot/www:/var/www/certbot
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+
+
+    certbot certonly --webroot --agree-tos --no-eff-email --email neka1dev@gmail.com --config-dir ./data/certbot/conf --logs-dir ./data/certbot/var/log/letsencrypt -w ./data/certbot/www -d api.zakazy.online
