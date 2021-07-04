@@ -43,9 +43,9 @@ services:
       - 3737:3737
 
     #Nginx Service
-  nginx:
+  webserver:
     image: nginx:alpine
-    container_name: nginx
+    container_name: webserver
     ports:
       - "80:80"
       - "443:443"
@@ -67,3 +67,6 @@ services:
       - ./data/certbot/conf:/etc/letsencrypt
       - ./data/certbot/www:/var/www/certbot
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+
+
+    certbot certonly --webroot --agree-tos --no-eff-email --email neka1dev@gmail.com --config-dir ./data/certbot/conf --logs-dir ./data/certbot/var/log/letsencrypt -w ./data/certbot/www -d api.zakazy.online
