@@ -45,13 +45,12 @@ services:
 
   nginx:
     container_name: nginx
-    build:
-      context: ./nginx
-      network: host
-      args:
-        - CERTBOT_EMAIL=hello@yourcompany.com #replace with your own email
-        - DOMAIN_LIST=api.zakazy.online,socket.zakazy.online,file.zakazy.online,crm.zakazy.online,sdk.zakazy.online,zakazy.online #replace with your own domains
-    restart: always
+    image: staticfloat/nginx-certbot
+      ports:
+        - 80:80/tcp
+        - 443:443/tcp
+      environment:
+        CERTBOT_EMAIL: owner@company.com
     volumes:
       - ./etc/nginx/conf.d:/etc/nginx/conf.d
       - ./etc/letsencrypt:/etc/letsencrypt
@@ -59,6 +58,3 @@ services:
       - ./crm/build/web:/site/crm
       - ./sdk/build:/site/sdk
       - /home/storage:/home/storage
-    ports:
-      - "80:80"
-      - "443:443"
