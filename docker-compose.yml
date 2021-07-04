@@ -43,23 +43,6 @@ services:
     ports:
       - 3737:3737
 
-    #Nginx Service
-  webserver:
-    image: nginx:alpine
-    container_name: webserver
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./etc/var/www/data:/var/www/data
-      - ./etc/letsencrypt:/etc/letsencrypt
-      - ./etc/nginx/conf.d:/etc/nginx/conf.d
-      - ./crm/build/web:/site/crm
-      - ./sdk/build:/site/sdk
-      - /home/storage:/home/storage
-    depends_on:
-      - api
-
   nginx:
     container_name: nginx
     build:
@@ -70,8 +53,12 @@ services:
         - DOMAIN_LIST=api.zakazy.online,socket.zakazy.online,file.zakazy.online,crm.zakazy.online,sdk.zakazy.online,zakazy.online #replace with your own domains
     restart: always
     volumes:
-      - ./etc/nginx/config/conf.d/prod:/etc/nginx/conf.d
+      - ./etc/nginx/conf.d:/etc/nginx/conf.d
       - ./etc/letsencrypt:/etc/letsencrypt
+      - ./etc/var/www/data:/var/www/data
+      - ./crm/build/web:/site/crm
+      - ./sdk/build:/site/sdk
+      - /home/storage:/home/storage
     ports:
       - "80:80"
       - "443:443"
