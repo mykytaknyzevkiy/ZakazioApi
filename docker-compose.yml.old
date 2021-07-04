@@ -1,4 +1,4 @@
-version: '3'
+version: '3.4'
 
 services:
 
@@ -11,18 +11,10 @@ services:
     ports:
       - "3307:3306"
 
-  sms_db:
-    image: mysql:8.0.17
-    container_name: sms_db
-    environment:
-      MYSQL_ROOT_PASSWORD: k6G1tgJLM9hMXvwR
-      MYSQL_DATABASE: sms_db
-    ports:
-      - "3306:3306"
-
   api:
     build: api
     container_name: api
+    restart: always
     ports:
       - 8080:8080
     depends_on:
@@ -30,8 +22,9 @@ services:
     environment:
       API_URL: https://api.zakazy.online/api/v1
       CRM_URL: https://crm.zakazy.online
-      CLOUD_PAYMENT_PUBLIC: pk_8507dee1d9c8b1519a3f5b5b3d872
-      CLOUD_PAYMENT_PRIVATE: 0e9f48b377588f22f628825b7f1e42f0
+      CLOUD_PAYMENT_PUBLIC: pk_81a3630bdf32633b8b1e1626dea96
+      CLOUD_PAYMENT_PRIVATE: 4aef85996813fe9d42b5a9585ce9eda5
+      EXTRA_FILE_URL: https://file.zakazy.online
     volumes:
       - /home/storage:/home/storage
 
@@ -43,10 +36,43 @@ services:
     environment:
       CRM_URL: https://crm.zakazy.online
 
-  sms:
-    build: sms
-    container_name: sms
+
+  open:
+    build: open
+    container_name: open
     ports:
-      - 8282:8282
-    depends_on:
-      - sms_db
+      - 3737:3737
+
+  nginx:
+    container_name: nginx
+    image: nginx:latest
+    restart: unless-stopped
+    networks:
+      nginx_net:
+    volumes:
+      - ./data/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+      - ./crm/build/web:/site/crm
+      - ./sdk/build:/site/sdk
+      - /home/storage:/home/storage
+      - ./etc/var/www/data:/var/www/data
+    ports:
+      - 80:80
+      - 443:443
+    command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
+
+  certbot:
+    container_name: certbot
+    image: certbot/certbot
+    restart: unless-stopped #+++
+    networks:
+      nginx_net:
+    volumes:
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+
+networks:
+  nginx_net:
+    name: nginx_net
