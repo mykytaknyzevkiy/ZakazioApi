@@ -46,11 +46,11 @@ services:
   nginx:
     container_name: nginx
     image: staticfloat/nginx-certbot
-      ports:
-        - 80:80/tcp
-        - 443:443/tcp
-      environment:
-        CERTBOT_EMAIL: owner@company.com
+    ports:
+      - 80:80/tcp
+      - 443:443/tcp
+    environment:
+      CERTBOT_EMAIL: owner@company.com
     volumes:
       - ./etc/nginx/conf.d:/etc/nginx/conf.d
       - ./etc/letsencrypt:/etc/letsencrypt
