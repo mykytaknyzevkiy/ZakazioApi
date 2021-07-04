@@ -1,6 +1,6 @@
 #!/bin/bash
 
-domains=("api.zakazy.online www.api.zakazy.online" "socket.zakazy.online www.socket.zakazy.online" "file.zakazy.online www.file.zakazy.online" "crm.zakazy.online www.crm.zakazy.online" "sdk.zakazy.online www.sdk.zakazy.online" "zakazy.online www.zakazy.online")
+domains=("api.zakazy.online" "socket.zakazy.online" "file.zakazy.online" "crm.zakazy.online" "sdk.zakazy.online" "zakazy.online")
 email="neka1dev@gmail.com" # Adding a valid address is strongly recommended
 staging=1 # Set to 1 if you're testing your setup to avoid hitting request limits
 
