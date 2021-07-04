@@ -43,9 +43,9 @@ services:
       - 3737:3737
 
     #Nginx Service
-  webserver:
+  nginx:
     image: nginx:alpine
-    container_name: webserver
+    container_name: nginx
     ports:
       - "80:80"
       - "443:443"
