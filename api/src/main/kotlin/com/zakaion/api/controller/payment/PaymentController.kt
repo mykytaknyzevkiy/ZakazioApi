@@ -226,12 +226,8 @@ class PaymentController(
         return DataResponse.ok(null)
     }
 
-    @RequestMapping(
-        value = ["/on/payment"],
-        method = [RequestMethod.POST],
-        consumes = ["text/plain"]
-    )
-    fun onPayment(@RequestBody body: String): DataResponse<Nothing?> {
+    @PostMapping("/on/payment")
+    fun onPayment(@RequestBody body: com.fasterxml.jackson.databind.JsonNode): DataResponse<Nothing?> {
 
         println("onPayment body is $body")
 
