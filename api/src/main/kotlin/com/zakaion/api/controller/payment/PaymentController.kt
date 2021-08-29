@@ -226,10 +226,14 @@ class PaymentController(
         return DataResponse.ok(null)
     }
 
-    @PostMapping("/on/payment")
-    fun onPayment(): DataResponse<Nothing?> {
+    @RequestMapping(
+        value = ["/on/payment"],
+        method = [RequestMethod.POST],
+        consumes = ["text/plain"]
+    )
+    fun onPayment(@RequestBody body: String): DataResponse<Nothing?> {
 
-        println("onPayment body is ")
+        println("onPayment body is $body")
 
         return DataResponse.ok(null)
     }
