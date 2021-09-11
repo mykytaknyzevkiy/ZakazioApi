@@ -44,19 +44,12 @@ services:
 
     #Nginx Service
   nginx:
+    image: nginx:alpine
     container_name: nginx
-    build:
-      context: nginx
-      network: host
-      args:
-        - CERTBOT_EMAIL=neka1dev@gmail.com
-        - DOMAIN_LIST=zakazy.online,file.zakazy.online,crm.zakazy.online,api.zakazy.online
     ports:
       - "80:80"
       - "443:443"
-    restart: always
     volumes:
-      - ./data/certbot/conf:/etc/letsencrypt
       - ./data:/etc/nginx/conf.d
       - ./crm/build/web:/site/crm
       - ./sdk/build:/site/sdk
