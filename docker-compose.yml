@@ -56,9 +56,3 @@ services:
       - /home/storage:/home/storage
     depends_on:
       - api
-    networks:
-      - docker-network
-
-  networks:
-    docker-network:
-      driver: bridge
