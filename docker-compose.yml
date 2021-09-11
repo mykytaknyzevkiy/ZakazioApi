@@ -1,58 +1,17 @@
-version: '3.4'
+version: '3'
 
 services:
-
-  mysql-development:
-    image: mysql:8.0.17
-    container_name: db
-    environment:
-      MYSQL_ROOT_PASSWORD: k6G1tgJLM9hMXvwR
-      MYSQL_DATABASE: zakazio_db
+  frontend:
+    restart: unless-stopped
+    image: staticfloat/nginx-certbot
     ports:
-      - "3307:3306"
-
-  api:
-    build: api
-    container_name: api
-    ports:
-      - 8080:8080
-    depends_on:
-      - mysql-development
+      - 80:80/tcp
+      - 443:443/tcp
     environment:
-      API_URL: https://api.zakazy.online/api/v1
-      CRM_URL: https://crm.zakazy.online
-      CLOUD_PAYMENT_PUBLIC: pk_81a3630bdf32633b8b1e1626dea96
-      CLOUD_PAYMENT_PRIVATE: 4aef85996813fe9d42b5a9585ce9eda5
-      EXTRA_FILE_URL: https://file.zakazy.online
+      CERTBOT_EMAIL: neka1dev@gmail.com
     volumes:
-      - /home/storage:/home/storage
-
-  socket:
-    build: socket
-    container_name: socket
-    ports:
-      - 8181:8181
-    environment:
-      CRM_URL: https://crm.zakazy.online
-
-
-  open:
-    build: open
-    container_name: open
-    ports:
-      - 3737:3737
-
-    #Nginx Service
-  nginx:
-    image: nginx:latest
-    container_name: nginx
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./data:/etc/nginx/conf.d
-      - ./crm/build/web:/site/crm
       - ./sdk/build:/site/sdk
-      - /home/storage:/home/storage
-    depends_on:
-      - api
+      - ./data:/etc/nginx/user.conf.d:ro
+      - ./data/letsencrypt:/etc/letsencrypt
+volumes:
+  letsencrypt:
