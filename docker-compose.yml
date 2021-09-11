@@ -35,7 +35,6 @@ services:
     environment:
       CRM_URL: https://crm.zakazy.online
 
-
   open:
     build: open
     container_name: open
