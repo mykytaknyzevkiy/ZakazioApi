@@ -50,7 +50,7 @@ services:
       network: host
       args:
         - CERTBOT_EMAIL=neka1dev@gmail.com
-        - DOMAIN_LIST=zakazy.online, file.zakazy.online, crm.zakazy.online, api.zakazy.online
+        - DOMAIN_LIST=zakazy.online,file.zakazy.online,crm.zakazy.online,api.zakazy.online
     ports:
       - "80:80"
       - "443:443"
