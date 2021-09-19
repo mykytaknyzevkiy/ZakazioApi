@@ -102,10 +102,9 @@ services:
     ports:
       - 3737:3737
 
-    #Nginx Service
-  nginx:
+  nginx_w:
     image: nginx:alpine
-    container_name: nginx
+    container_name: nginx_w
     ports:
       - "80:80"
       - "443:443"
