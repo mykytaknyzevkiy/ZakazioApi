@@ -56,28 +56,6 @@
           <img src="https://file.zakazy.online/document/2021-09-11%2001.56.03.jpg" style="width: 100px;"/>
         </div>
       </div>
-      <div class="footer__col">
-        <div class="footer__socials">
-          <a
-            target="_blank"
-            class="footer__social footer__social_vk"
-            :href="contacts.linkedIn"
-            >Zakazio в VK</a
-          >
-          <a
-            target="_blank"
-            class="footer__social footer__social_inst"
-            :href="contacts.instagram"
-            >Zakazio в Instagram</a
-          >
-          <a
-            target="_blank"
-            class="footer__social footer__social_whtsp"
-            :href="contacts.twitter"
-            >Zakazio в Whatsapp</a
-          >
-        </div>
-      </div>
     </div>
   </footer>
 </template>
