@@ -41,19 +41,18 @@ services:
     ports:
       - 3737:3737
 
-  ngnix:
-    restart: unless-stopped
-    image: staticfloat/nginx-certbot
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
     ports:
-      - 80:80/tcp
-      - 443:443/tcp
-    environment:
-      CERTBOT_EMAIL: neka1dev@gmail.com
+      - "80:80"
+      - "443:443"
     volumes:
-      - ./sdk/build:/site/sdk
+      - ./etc/var/www/data:/var/www/data
+      - ./data/letsencrypt/conf:/etc/letsencrypt
+      - ./data:/etc/nginx/conf.d
       - ./crm/build/web:/site/crm
+      - ./sdk/build:/site/sdk
       - /home/storage:/home/storage
-      - ./data:/etc/nginx/user.conf.d:ro
-      - ./data/letsencrypt:/etc/letsencrypt
-volumes:
-  letsencrypt:
+    depends_on:
+      - api
