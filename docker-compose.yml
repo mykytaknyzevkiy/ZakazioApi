@@ -48,8 +48,7 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./etc/var/www/data:/var/www/data
-      - ./data/letsencrypt/conf:/etc/letsencrypt
+      - ./data/letsencrypt:/etc/letsencrypt
       - ./data:/etc/nginx/conf.d
       - ./crm/build/web:/site/crm
       - ./sdk/build:/site/sdk
