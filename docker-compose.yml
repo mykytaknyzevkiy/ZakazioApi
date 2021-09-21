@@ -102,18 +102,19 @@ services:
     ports:
       - 3737:3737
 
-  nginx_w:
-    image: nginx:alpine
-    container_name: nginx_w
+  ngnix:
+    restart: unless-stopped
+    image: staticfloat/nginx-certbot
     ports:
-      - "80:80"
-      - "443:443"
+      - 80:80/tcp
+      - 443:443/tcp
+    environment:
+      CERTBOT_EMAIL: neka1dev@gmail.com
     volumes:
-      - ./etc/var/www/data:/var/www/data
-      - ./data/letsencrypt:/etc/letsencrypt
-      - ./data:/etc/nginx/conf.d
-      - ./crm/build/web:/site/crm
       - ./sdk/build:/site/sdk
+      - ./crm/build/web:/site/crm
       - /home/storage:/home/storage
-    depends_on:
-      - api
+      - ./data:/etc/nginx/user.conf.d:ro
+      - ./data/letsencrypt:/etc/letsencrypt
+volumes:
+  letsencrypt:
