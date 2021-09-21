@@ -35,25 +35,55 @@
       </div>
       <div class="footer__col">
         <div class="footer__links">
-          <a
-            href="https://file.zakazy.online/document/Пользовательское соглашение.pdf"
-            >Пользовательское соглашение
-          </a>
-          <a
-            href="https://file.zakazy.online/document/Оферта_между_Партнером_и_Пользователем.pdf"
-            >Оферта между Партнером и Пользователем</a
-          >
-          <a
-            href="https://file.zakazy.online/document/Политика  конфиденциальности.pdf"
-          >
-            Политика конфиденциальности</a
-          >
-          <a href="https://file.zakazy.online/document/Оферта БС.pdf">Оферта БС</a>
+          <p>
+            <a
+              href="https://file.zakazy.online/document/Пользовательское соглашение.pdf"
+            >
+              Пользовательское соглашение
+            </a>
+          </p>
+          <p>
+            <a
+              href="https://file.zakazy.online/document/Оферта_между_Партнером_и_Пользователем.pdf"
+            >Оферта между Партнером и Пользователем</a>
+          </p>
+          <p>
+            <a
+              href="https://file.zakazy.online/document/Политика  конфиденциальности.pdf"
+            >
+              Политика конфиденциальности</a>
+          </p>
+          <p>
+            <a href="https://file.zakazy.online/document/Оферта БС.pdf"
+            >Оферта БС</a>
+          </p>
         </div>
       </div>
       <div class="footer__col">
         <div class="footer__visa">
           <img src="https://file.zakazy.online/document/2021-09-11%2001.56.03.jpg" style="width: 100px;"/>
+        </div>
+      </div>
+      <div class="footer__col">
+        <div class="footer__socials">
+          <a
+            target="_blank"
+            class="footer__social footer__social_vk"
+            :href="contacts.linkedIn"
+            >Zakazio в VK</a
+          >
+          <a
+            target="_blank"
+            class="footer__social footer__social_inst"
+            :href="contacts.instagram"
+            >Zakazio в Instagram</a
+          >
+          <a
+            target="_blank"
+            class="footer__social footer__social_whtsp"
+            :href="contacts.twitter"
+            >Zakazio в Whatsapp</a
+          >
         </div>
       </div>
     </div>
