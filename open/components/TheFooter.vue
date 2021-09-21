@@ -55,7 +55,7 @@
           </p>
           <p>
             <a href="https://file.zakazy.online/document/Оферта БС.pdf"
-            >Оферта БС</a>
+            >Оферта безопасной сделки</a>
           </p>
         </div>
       </div>
