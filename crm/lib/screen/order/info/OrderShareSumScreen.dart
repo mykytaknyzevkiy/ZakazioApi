@@ -22,61 +22,38 @@ class OrderShareSumScreen extends StatelessWidget {
       elevation: 12,
       child: Padding(
         padding: EdgeInsets.only(left: 24, right: 24, bottom: 48, top: 48),
-        child: FutureBuilder<double>(
-            future: _viewModel.myBalance(),
-            builder: (context, snapShot) {
-              if (!snapShot.hasData) {
-                return Center(child: CircularProgressIndicator());
-              }
-              myBalance = snapShot.requireData;
-
-              payBtn.setEnable(myBalance >= _viewModel.orderData.value!.toShareSum);
-
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("Оплатить комиссию за заказ",
-                      style:
-                      TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                  Divider(
-                    color: Colors.transparent,
-                    height: 20,
-                  ),
-                  Text("Вам необходимо оплать ${_viewModel.orderData.value!.toShareSum} руб."),
-                  Divider(
-                    color: Colors.transparent,
-                    height: 40,
-                  ),
-                  Text("Ваш баланс ${formatNumber(myBalance.toInt())} руб."),
-                  Divider(
-                    color: Colors.transparent,
-                    height: 15,
-                  ),
-                  SmallButton(
-                      title: "Пополнить баланс",
-                      onPressed: () => {
-                        ZakazioNavigator.push(context, "user/profile/my")
-                      },
-                      isEnable: true),
-                  Divider(
-                    color: Colors.transparent,
-                    height: 25,
-                  ),
-                  StreamBuilder<bool>(
-                    stream: _viewModel.exLoading,
-                    builder: (context, snapShot) {
-                      if (!snapShot.hasData || snapShot.requireData == false)
-                        return _btnColum();
-                      else
-                        return Center(
-                          child: CircularProgressIndicator(),
-                        );
-                    },
-                  )
-                ],
-              );
-            }
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("Оплатить комиссию за заказ",
+                style:
+                TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            Divider(
+              color: Colors.transparent,
+              height: 20,
+            ),
+            Text("Вам необходимо оплать ${_viewModel.orderData.value!.toShareSum} руб."),
+            Divider(
+              color: Colors.transparent,
+              height: 40,
+            ),
+            Divider(
+              color: Colors.transparent,
+              height: 25,
+            ),
+            StreamBuilder<bool>(
+              stream: _viewModel.exLoading,
+              builder: (context, snapShot) {
+                if (!snapShot.hasData || snapShot.requireData == false)
+                  return _btnColum();
+                else
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+              },
+            )
+          ],
         ),
       ),
     ),

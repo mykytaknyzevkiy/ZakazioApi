@@ -119,4 +119,19 @@ class PaymentRest extends ZakazioRest {
       return DataResponse(success: false);
     }
   }
+
+  Future<DataResponse<String>> paymentUrl(int orderID, double amount) async {
+    final json = await post("$route/create/payment/url", {}, {
+      "orderID": orderID.toString(),
+      "amount": amount.toString()
+    });
+
+    try {
+      return DataResponse.fromJsonSingle(
+          json
+      );
+    } catch (e) {
+      return DataResponse(success: false);
+    }
+  }
 }

@@ -18,6 +18,7 @@ import 'package:zakazy_crm_v2/rest/PaymentRest.dart';
 import 'package:zakazy_crm_v2/screen/ZakazyViewModel.dart';
 import 'package:zakazy_crm_v2/unit/FileSelect.dart';
 import 'package:zakazy_crm_v2/widget/HelpMessageBubleWidget.dart';
+import 'dart:js' as js;
 
 class OrderInfoViewModel extends ZakazyViewModel {
   final _orderRepository = OrderRepository();
@@ -443,6 +444,23 @@ class OrderInfoViewModel extends ZakazyViewModel {
     if (data.success) {
       loadData(orderID);
     }
+  }
+
+  makingPayming() async {
+    if (!orderData.hasValue) {
+      return;
+    }
+
+    final orderID = orderData.value!.id;
+
+    onDefuseExecutor.add(false);
+
+    exLoading.add(true);
+
+    final data =
+    await PaymentRest().paymentUrl(orderID, orderData.value!.toShareSum)
+
+    js.context.callMethod("openInNewTab", [data]);
   }
 
   close() {

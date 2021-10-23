@@ -19,6 +19,7 @@ import com.zakaion.api.model.DataResponse
 import com.zakaion.api.model.OutSumRequestBody
 import com.zakaion.api.service.CloudPaymentModel
 import com.zakaion.api.service.CloudPaymentService
+import com.zakaion.api.service.TinkoffPaymentService
 import com.zakaion.api.service.TransactionService
 import org.springframework.core.io.ClassPathResource
 import org.springframework.data.domain.Page
@@ -38,7 +39,8 @@ class PaymentController(
         private val transactionInDao: TransactionInDao,
         private val bankCardDao: BankCardDao,
         private val cloudPaymentService: CloudPaymentService,
-        private val constService: ConstService
+        private val constService: ConstService,
+        private val tinkoffPaymentService: TinkoffPaymentService
 ) : BaseController() {
 
     @GetMapping("/{userID}/balance")
@@ -198,7 +200,7 @@ class PaymentController(
 
     @PostMapping("/out/sum")
     fun outSum(@RequestBody body: OutSumRequestBody): DataResponse<Nothing?> {
-        val bankCard = bankCardDao.findById(body.bankCardID).orElseGet {
+        val bankCard = bankCardDao.findById(body.bankCardID!!).orElseGet {
             throw NotFound()
         }
 
@@ -233,6 +235,19 @@ class PaymentController(
         println("onPayment body is $body")
 
         return ResponseEntity.ok("OK")
+    }
+
+    @PostMapping("/create/payment/url")
+    fun createPaymentUrl(@RequestBody body: OutSumRequestBody): DataResponse<String> {
+        val myUser = userFactory.myUser
+
+        return DataResponse.ok(
+            tinkoffPaymentService.createPaymentUrl(
+                amount = body.amount.toDouble(),
+                orderID = body.orderID!!,
+                userID = myUser.id
+            )
+        )
     }
 
 }
