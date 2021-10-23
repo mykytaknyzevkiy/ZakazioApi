@@ -76,6 +76,8 @@ class TinkoffPaymentService(private val restTemplateBuilder: RestTemplateBuilder
         // build the request
         val entity: HttpEntity<Map<String, Any>> = HttpEntity(map)
 
+        println(Gson().toJson(map))
+
         val postForEntity = restTemplate.postForObject(url + "GetState/", entity, String::class.java)
 
         println(postForEntity)
