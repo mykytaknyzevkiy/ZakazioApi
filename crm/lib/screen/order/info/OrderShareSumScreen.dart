@@ -60,7 +60,7 @@ class OrderShareSumScreen extends StatelessWidget {
   );
 
   _onSaveClick() async {
-    _viewModel.shareSum();
+    _viewModel.makingPayming();
   }
 
   _onCancelCLick() {

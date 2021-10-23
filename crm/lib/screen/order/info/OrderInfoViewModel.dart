@@ -458,7 +458,7 @@ class OrderInfoViewModel extends ZakazyViewModel {
     exLoading.add(true);
 
     final data =
-    await PaymentRest().paymentUrl(orderID, orderData.value!.toShareSum)
+    await PaymentRest().paymentUrl(orderID, orderData.value!.toShareSum);
 
     js.context.callMethod("openInNewTab", [data]);
   }

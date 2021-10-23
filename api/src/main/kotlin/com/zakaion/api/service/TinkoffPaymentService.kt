@@ -42,6 +42,8 @@ class TinkoffPaymentService(private val restTemplateBuilder: RestTemplateBuilder
 
         val postForEntity = restTemplate.postForObject(url, entity, String::class.java)
 
+        println(postForEntity)
+
         val fromJson = Gson().fromJson(postForEntity, CreatePaymentResponse::class.java)
 
         tinkoffPaymentDao.save(
