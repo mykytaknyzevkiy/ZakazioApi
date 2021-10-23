@@ -40,7 +40,7 @@ class TinkoffPaymentService(private val restTemplateBuilder: RestTemplateBuilder
         // build the request
         val entity: HttpEntity<Map<String, Any>> = HttpEntity(map)
 
-        val postForEntity = restTemplate.postForObject(url, entity, String::class.java)
+        val postForEntity = restTemplate.postForObject(url + "Init/", entity, String::class.java)
 
         println(postForEntity)
 
