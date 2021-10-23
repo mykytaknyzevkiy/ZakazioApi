@@ -71,7 +71,7 @@ class TinkoffPaymentService(private val restTemplateBuilder: RestTemplateBuilder
         val map = HashMap<String, Any>()
         map["TerminalKey"] = terminalKey
         map["PaymentId"] = paymentId
-        map["Token"] = (password + paymentId + terminalKey).sha256()
+        map["Token"] = (password + paymentId + terminalKey).sha256().toLowerCase()
 
         // build the request
         val entity: HttpEntity<Map<String, Any>> = HttpEntity(map)
