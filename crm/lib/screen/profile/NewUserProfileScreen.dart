@@ -187,7 +187,7 @@ VM extends UserProfileViewModel<USER>> extends HomeScreen<T, VM> {
           color: Colors.grey,
         ),
       ),
-      balanceInfo(snapShot.requireData),
+     // balanceInfo(snapShot.requireData),
       SizedBox(
         width: 300,
         child: Divider(
