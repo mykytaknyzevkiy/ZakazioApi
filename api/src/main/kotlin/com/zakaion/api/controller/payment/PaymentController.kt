@@ -24,6 +24,7 @@ import org.springframework.core.io.ClassPathResource
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.util.ResourceUtils
 import org.springframework.web.bind.annotation.*
 
@@ -227,11 +228,11 @@ class PaymentController(
     }
 
     @PostMapping("/on/payment")
-    fun onPayment(@RequestBody body: com.fasterxml.jackson.databind.JsonNode): DataResponse<Nothing?> {
+    fun onPayment(@RequestBody body: com.fasterxml.jackson.databind.JsonNode): ResponseEntity<Nothing?> {
 
         println("onPayment body is $body")
 
-        return DataResponse.ok(null)
+        return ResponseEntity.ok(null)
     }
 
 }
