@@ -228,11 +228,11 @@ class PaymentController(
     }
 
     @PostMapping("/on/payment")
-    fun onPayment(@RequestBody body: com.fasterxml.jackson.databind.JsonNode): ResponseEntity<Nothing?> {
+    fun onPayment(@RequestBody body: com.fasterxml.jackson.databind.JsonNode): ResponseEntity<String> {
 
         println("onPayment body is $body")
 
-        return ResponseEntity.ok(null)
+        return ResponseEntity.ok("OK")
     }
 
 }
