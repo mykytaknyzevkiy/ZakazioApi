@@ -232,11 +232,11 @@ class PaymentController(
 
     @PostMapping("/on/payment", produces = ["text/plain"])
     @ResponseBody
-    fun onPayment(@RequestBody body: com.fasterxml.jackson.databind.JsonNode): String {
+    fun onPayment(@RequestBody body: com.fasterxml.jackson.databind.JsonNode): ByteArray {
 
         //tinkoffPaymentService.encodeNotification(body)
 
-        return "OK"
+        return "OK".toByteArray()
     }
 
     @PostMapping("/create/payment/url")
