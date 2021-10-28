@@ -230,12 +230,9 @@ class PaymentController(
         return DataResponse.ok(null)
     }
 
-    @PostMapping("/on/payment")
+    @RequestMapping(value = ["/on/payment"], method = [RequestMethod.POST], produces = ["text/plain;charset=UTF-8"])
     @ResponseBody
-    fun onPayment(@RequestBody body: com.fasterxml.jackson.databind.JsonNode, response: HttpServletResponse): String {
-
-        response.contentType = "text/plain;charset=UTF-8"
-
+    fun onPayment(@RequestBody body: com.fasterxml.jackson.databind.JsonNode): String {
         tinkoffPaymentService.encodeNotification(body)
 
         return "OK"
