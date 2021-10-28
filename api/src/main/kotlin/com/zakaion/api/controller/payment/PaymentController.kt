@@ -229,7 +229,7 @@ class PaymentController(
         return DataResponse.ok(null)
     }
 
-    @PostMapping("/on/payment")
+    @PostMapping("/on/payment", produces = [MediaType.TEXT_HTML_VALUE])
     @ResponseBody
     fun onPayment(@RequestBody body: com.fasterxml.jackson.databind.JsonNode): String {
 
