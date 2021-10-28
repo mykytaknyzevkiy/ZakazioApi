@@ -230,15 +230,13 @@ class PaymentController(
         return DataResponse.ok(null)
     }
 
-    @PostMapping("/on/payment")
+    @PostMapping("/on/payment", produces = ["text/plain"])
     @ResponseBody
-    fun onPayment(@RequestBody body: com.fasterxml.jackson.databind.JsonNode, response: HttpServletResponse): ResponseEntity<String> {
-        val responseHeaders = HttpHeaders()
-        responseHeaders.add("Content-Type", "text/plain; charset=utf-8")
+    fun onPayment(@RequestBody body: com.fasterxml.jackson.databind.JsonNode): String {
 
-        tinkoffPaymentService.encodeNotification(body)
+        //tinkoffPaymentService.encodeNotification(body)
 
-        return ResponseEntity("OK", responseHeaders, HttpStatus.OK)
+        return "OK"
     }
 
     @PostMapping("/create/payment/url")
