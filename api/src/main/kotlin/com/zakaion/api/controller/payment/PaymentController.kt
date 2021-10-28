@@ -28,6 +28,7 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.util.ResourceUtils
 import org.springframework.web.bind.annotation.*
+import javax.servlet.http.HttpServletResponse
 
 @RestController
 @CrossOrigin(origins = ["*"], maxAge = 3600)
@@ -229,9 +230,11 @@ class PaymentController(
         return DataResponse.ok(null)
     }
 
-    @PostMapping("/on/payment", produces = [MediaType.TEXT_HTML_VALUE])
+    @PostMapping("/on/payment")
     @ResponseBody
-    fun onPayment(@RequestBody body: com.fasterxml.jackson.databind.JsonNode): String {
+    fun onPayment(@RequestBody body: com.fasterxml.jackson.databind.JsonNode, response: HttpServletResponse): String {
+
+        response.contentType = "text/plain;charset=UTF-8"
 
         tinkoffPaymentService.encodeNotification(body)
 
