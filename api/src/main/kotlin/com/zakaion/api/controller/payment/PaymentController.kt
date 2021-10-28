@@ -230,6 +230,7 @@ class PaymentController(
     }
 
     @PostMapping("/on/payment")
+    @ResponseBody
     fun onPayment(@RequestBody body: com.fasterxml.jackson.databind.JsonNode): String {
 
         tinkoffPaymentService.encodeNotification(body)
