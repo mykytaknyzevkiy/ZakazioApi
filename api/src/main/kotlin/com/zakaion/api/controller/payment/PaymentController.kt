@@ -234,7 +234,7 @@ class PaymentController(
     @ResponseBody
     fun onPayment(@RequestBody body: com.fasterxml.jackson.databind.JsonNode): ByteArray {
 
-        //tinkoffPaymentService.encodeNotification(body)
+        tinkoffPaymentService.encodeNotification(body)
 
         return "OK".toByteArray()
     }
