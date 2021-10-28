@@ -86,6 +86,9 @@ class TinkoffPaymentService(private val restTemplateBuilder: RestTemplateBuilder
 
         val tinPay = tinkoffPaymentDao.findByPaymentID(paymentId).get()
 
+        if (tinPay.status == TinkoffPaymentStatus.CONFIRM)
+            return
+
         if (fromJson.status == "CONFIRMED" || fromJson.status == "AUTHORIZED") {
             tinkoffPaymentDao.save(
                 tinPay.copy(status = TinkoffPaymentStatus.CONFIRM)
@@ -99,6 +102,8 @@ class TinkoffPaymentService(private val restTemplateBuilder: RestTemplateBuilder
                     order = tinPay.order
                 )
             )
+
+
         } else {
             tinkoffPaymentDao.save(
                 tinPay.copy(status = TinkoffPaymentStatus.FAIL)
