@@ -21,12 +21,12 @@ import com.zakaion.api.service.CloudPaymentModel
 import com.zakaion.api.service.CloudPaymentService
 import com.zakaion.api.service.TinkoffPaymentService
 import com.zakaion.api.service.TransactionService
-import org.springframework.core.io.ClassPathResource
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.util.ResourceUtils
 import org.springframework.web.bind.annotation.*
 import javax.servlet.http.HttpServletResponse
 
@@ -230,12 +230,15 @@ class PaymentController(
         return DataResponse.ok(null)
     }
 
-    @RequestMapping(value = ["/on/payment"], method = [RequestMethod.POST], produces = ["text/plain;charset=UTF-8"])
+    @PostMapping("/on/payment")
     @ResponseBody
-    fun onPayment(@RequestBody body: com.fasterxml.jackson.databind.JsonNode): String {
+    fun onPayment(@RequestBody body: com.fasterxml.jackson.databind.JsonNode, response: HttpServletResponse): ResponseEntity<String> {
+        val responseHeaders = HttpHeaders()
+        responseHeaders.add("Content-Type", "text/plain; charset=utf-8")
+
         tinkoffPaymentService.encodeNotification(body)
 
-        return "OK"
+        return ResponseEntity("OK", responseHeaders, HttpStatus.OK)
     }
 
     @PostMapping("/create/payment/url")
