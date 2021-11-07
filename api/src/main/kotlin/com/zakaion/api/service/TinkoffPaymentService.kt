@@ -11,6 +11,7 @@ import com.zakaion.api.entity.TinkoffPaymentEntity
 import com.zakaion.api.entity.TinkoffPaymentStatus
 import com.zakaion.api.entity.transaction.TransactionOutEntity
 import org.springframework.boot.web.client.RestTemplateBuilder
+import org.springframework.core.io.ClassPathResource
 import org.springframework.http.HttpEntity
 import org.springframework.stereotype.Service
 import org.springframework.util.Base64Utils.encodeToString
@@ -179,7 +180,7 @@ class TinkoffPaymentService(
     }
 
     fun privateKey(filename: String): PrivateKey {
-        val keyBytes: ByteArray = javaClass.getResource(filename).file.toByteArray()
+        val keyBytes: ByteArray = ClassPathResource(filename).file.readBytes()
         val spec = PKCS8EncodedKeySpec(keyBytes)
         val kf: KeyFactory = KeyFactory.getInstance("RSA")
         return kf.generatePrivate(spec)
