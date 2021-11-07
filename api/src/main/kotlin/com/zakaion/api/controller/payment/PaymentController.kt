@@ -121,6 +121,15 @@ class PaymentController(
         return DataResponse.ok(null)
     }
 
+    @PostMapping("/add/card/request")
+    fun addCardRequest() : DataResponse<String> {
+        val myUser = userFactory.myUser
+
+        val url = tinkoffPaymentService.addCard(myUser.id)
+
+        return DataResponse.ok(url)
+    }
+
     @GetMapping("/{userID}/card/list")
     fun userCards(pageable: Pageable, @PathVariable("userID") userID: Long) : DataResponse<Page<BankCardEntity>> {
         return DataResponse.ok(
