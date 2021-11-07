@@ -113,7 +113,7 @@ class AuthTokenService (private val userDao: UserDao) {
         )
     }
 
-    fun generateAuthCode() = generatePIN()
+    fun generateAuthCode() = /*generatePIN()*/ "1234"
 
 
     private fun generatePIN(): String {

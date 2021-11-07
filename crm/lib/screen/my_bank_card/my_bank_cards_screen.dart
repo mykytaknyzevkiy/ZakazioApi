@@ -75,7 +75,7 @@ class _MyBankCardScreen
           MyButton(
             title: "Добавить карту",
             isEnable: true,
-            onPressed: () => _viewModel.onAddBankCard.add(true),
+            onPressed: () => _viewModel.addCard(),
           )
         ],
       );
@@ -91,6 +91,13 @@ class _MyBankCardViewModel extends ZakazyViewModel {
       BehaviorSubject<PagedListModel<BankCardModel>>.seeded(null);
 
   final _paymentRepository = PaymentRepository();
+
+  addCard() async {
+   final data = await _paymentRepository.paymentRest.addBankCardRequest();
+   final url = data.data;
+
+   js.context.callMethod("openInNewTab", [url]);
+  }
 
   saveNewCard(
       {required int userID,

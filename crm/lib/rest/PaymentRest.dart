@@ -55,10 +55,10 @@ class PaymentRest extends ZakazioRest {
       String crypto) async {
     final json = await post(
         "$route/add/card", {}, {
-        "num": num,
-        "expMonth": expMonth,
-        "expYear": expYear,
-        "crypto": crypto
+      "num": num,
+      "expMonth": expMonth,
+      "expYear": expYear,
+      "crypto": crypto
     });
 
     try {
@@ -67,7 +67,19 @@ class PaymentRest extends ZakazioRest {
       return DataResponse(success: false);
     }
   }
-  
+
+  Future<DataResponse<String>> addBankCardRequest() async {
+    final json = await post("$route/add/card/request", {}, {});
+
+    try {
+      return DataResponse.fromJsonSingle(
+          json
+      );
+    } catch (e) {
+      return DataResponse(success: false);
+    }
+  }
+
   Future<DataResponse<PagedListModel<TransactionModelImp>>> userList(int userID, int pageIndex) async {
     final json = await get("/transaction/user/$userID/list", {}, {
       "page": pageIndex.toString(),
