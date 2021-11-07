@@ -10,19 +10,15 @@ import com.zakaion.api.entity.TinkoffPaymentDao
 import com.zakaion.api.entity.TinkoffPaymentEntity
 import com.zakaion.api.entity.TinkoffPaymentStatus
 import com.zakaion.api.entity.transaction.TransactionOutEntity
-import com.zakaion.api.unit.RsaCryptoMapi
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.http.HttpEntity
 import org.springframework.stereotype.Service
 import org.springframework.util.Base64Utils.encodeToString
 import java.nio.file.Files
 import java.nio.file.Paths
-import java.security.KeyFactory
-import java.security.KeyStore
-import java.security.MessageDigest
-import java.security.PrivateKey
+import java.security.*
 import java.security.spec.PKCS8EncodedKeySpec
-import java.util.*
+import java.util.stream.Collectors
 
 
 @Service
@@ -152,9 +148,9 @@ class TinkoffPaymentService(
             put("CustomerKey", userID.toString())
             put("CheckType", "3DSHOLD")
 
-            val data = RsaCryptoMapi().concatValues(this)
+            val data = concatValues(this)
 
-            val digestData = RsaCryptoMapi().calcDigest(data.toByteArray())
+            val digestData = calcDigest(data.toByteArray())
 
             put("DigestValue", encodeToString(digestData))
 
@@ -162,7 +158,7 @@ class TinkoffPaymentService(
 
             val pKey = privateKey(keyFile)
 
-            val signatureValue = RsaCryptoMapi().calcSignature(
+            val signatureValue = calcSignature(
                 pKey,
                 digestData
             )
@@ -173,7 +169,7 @@ class TinkoffPaymentService(
         }
 
         // build the request
-        val postForEntity = restTemplate.postForObject(url + "AddCard/", HttpEntity(rBody), String::class.java)
+        val postForEntity = restTemplate.postForObject(e2eUrl + "AddCard/", HttpEntity(rBody), String::class.java)
 
         println(postForEntity)
 
@@ -182,11 +178,49 @@ class TinkoffPaymentService(
         return fromJson.paymentURL!!
     }
 
-    fun privateKey(filename: String): PrivateKey? {
+    fun privateKey(filename: String): PrivateKey {
         val keyBytes: ByteArray = Files.readAllBytes(Paths.get(filename))
         val spec = PKCS8EncodedKeySpec(keyBytes)
         val kf: KeyFactory = KeyFactory.getInstance("RSA")
         return kf.generatePrivate(spec)
+    }
+
+    fun concatValues(data: Map<String, String>): String {
+        return data.keys.stream().sorted().map { o: String? ->
+            data[o]
+        }.collect(Collectors.joining())
+    }
+
+    /**
+     * Вычисляет хеш-значение от переданных данных.
+     *
+     * @param data                сырые данные.
+     * @return вычисленное хеш-значение.
+     * @throws NoSuchAlgorithmException в случае если необходимый алгоритм не был найден в окружении.
+     */
+    @Throws(NoSuchAlgorithmException::class)
+    fun calcDigest(data: ByteArray): ByteArray {
+        val messageDigest = MessageDigest.getInstance("SHA-256")
+        messageDigest.update(data)
+        return messageDigest.digest()
+    }
+
+    /**
+     * Формирует подпись для переданных данных.
+     *
+     * @param key               ключ для формирования подписи.
+     * @param data              сырые данные.
+     * @return сформированную подпись.
+     * @throws NoSuchAlgorithmException в случае если необходимый алгоритм не был найден в окружении.
+     * @throws InvalidKeyException      в случае если передан неправильный закрытуый ключ.
+     * @throws SignatureException       в случае если при формировании подписи произошла ошибка.
+     */
+    @Throws(NoSuchAlgorithmException::class, InvalidKeyException::class, SignatureException::class)
+    fun calcSignature(key: PrivateKey, data: ByteArray): ByteArray {
+        val signature = Signature.getInstance("SHA256withRSA")
+        signature.initSign(key)
+        signature.update(data)
+        return signature.sign()
     }
 }
 
