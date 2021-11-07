@@ -155,7 +155,7 @@ class TinkoffPaymentService(
 
             put("DigestValue", encodeToString(digestData))
 
-            val keyFile = "keystore/tin_cert.pem"
+            val keyFile = "keystore/tin_cert_n.pem"
 
             val pKey = privateKey(keyFile)
 
@@ -180,7 +180,7 @@ class TinkoffPaymentService(
     }
 
     fun privateKey(filename: String): PrivateKey {
-        val keyBytes: ByteArray = ClassPathResource(filename).file.readBytes()
+        val keyBytes: ByteArray = com.zakaion.api.ExFuncs.getResourceFileAsInputStream(filename).readAllBytes()
         val spec = PKCS8EncodedKeySpec(keyBytes)
         val kf: KeyFactory = KeyFactory.getInstance("RSA")
         return kf.generatePrivate(spec)
