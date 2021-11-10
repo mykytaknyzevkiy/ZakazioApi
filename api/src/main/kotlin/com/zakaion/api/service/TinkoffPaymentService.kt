@@ -15,8 +15,8 @@ import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.stereotype.Service
-import org.springframework.util.MultiValueMap
 import java.io.BufferedReader
 import java.io.StringReader
 import java.security.*
@@ -147,6 +147,8 @@ class TinkoffPaymentService(
     }
 
     fun addCard(userID: Long): String {
+        restTemplate.messageConverters.add(getMappingJackson2HttpMessageConverter())
+
         val rBody = hashMapOf<String, String>().apply {
             put("TerminalKey", terminalKey)
             put("CustomerKey", userID.toString())
@@ -185,6 +187,13 @@ class TinkoffPaymentService(
         println(body)
         
         return Gson().fromJson(body!!, CreatePaymentResponse::class.java).paymentURL!!
+    }
+
+    private fun getMappingJackson2HttpMessageConverter(): MappingJackson2HttpMessageConverter? {
+        val mappingJackson2HttpMessageConverter = MappingJackson2HttpMessageConverter()
+        mappingJackson2HttpMessageConverter.supportedMediaTypes =
+            Collections.singletonList(MediaType.APPLICATION_FORM_URLENCODED)
+        return mappingJackson2HttpMessageConverter
     }
 
     fun privateKey(): PrivateKey {
