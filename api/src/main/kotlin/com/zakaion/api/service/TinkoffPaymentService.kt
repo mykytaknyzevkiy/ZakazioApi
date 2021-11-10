@@ -11,15 +11,16 @@ import com.zakaion.api.entity.TinkoffPaymentEntity
 import com.zakaion.api.entity.TinkoffPaymentStatus
 import com.zakaion.api.entity.transaction.TransactionOutEntity
 import org.springframework.boot.web.client.RestTemplateBuilder
-import org.springframework.core.io.ClassPathResource
 import org.springframework.http.HttpEntity
 import org.springframework.stereotype.Service
 import org.springframework.util.Base64Utils.encodeToString
-import java.nio.file.Files
-import java.nio.file.Paths
+import java.io.BufferedReader
+import java.io.StringReader
 import java.security.*
 import java.security.spec.PKCS8EncodedKeySpec
+import java.util.*
 import java.util.stream.Collectors
+import java.util.Base64;
 
 
 @Service
@@ -155,9 +156,7 @@ class TinkoffPaymentService(
 
             put("DigestValue", encodeToString(digestData))
 
-            val keyFile = "keystore/private.key"
-
-            val pKey = privateKey(keyFile)
+            val pKey = privateKey()
 
             val signatureValue = calcSignature(
                 pKey,
@@ -179,11 +178,64 @@ class TinkoffPaymentService(
         return fromJson.paymentURL!!
     }
 
-    fun privateKey(filename: String): PrivateKey {
-        val keyBytes: ByteArray = com.zakaion.api.ExFuncs.getResourceFileAsInputStream(filename).readAllBytes()
-        val spec = PKCS8EncodedKeySpec(keyBytes)
-        val kf: KeyFactory = KeyFactory.getInstance("RSA")
-        return kf.generatePrivate(spec)
+    fun privateKey(): PrivateKey {
+        val PRIVATE_KEY = "-----BEGIN PRIVATE KEY-----\n" +
+                "MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDReeY5n1sIh5El\n" +
+                "EHPhuweYXdfwF/3VvNjjy+CqEu5mThTSfG+jQya5ogz13/wSqZLmDVNDbzbfalJ6\n" +
+                "ED88VA493IndQJRT0ucVvXgVVYCggaog9XoO7BoAcvAumGrrXR+j6lssk4SUwerU\n" +
+                "CyUHNSYEn6gPt/JS+JY9YJL9NQHLtZzkN5wPCxvvOuFWl+aDIfOpWIC84bOd8lzf\n" +
+                "5SFLS/Zx4w+uXjFFEoe05VUZD+e5stDrfsisgmn0iR2iLQNVZhAlyxveyDY68qf1\n" +
+                "rxsLj6Zf0Ll77ao0gCPoqhHBqXe96BW4ny9IjlNpEM8W+F6GejYyuQ8uaZnJjV+K\n" +
+                "wbkAPW3HAgMBAAECggEANpBpHtNalBM0BJKPjNn59X9kUx78uKMTX+roX4TE4pMu\n" +
+                "K1HMhptkR/BlLdqlP3s6T4BjEuqyQWnhh/gZcK54czayFpbOzDLgjLIoyG3YLnb4\n" +
+                "CNPIcoCfmURXOdvr5dkA9+KA01CttU35zDgG8iSu/X9U+JsynNgx0lUIlLos+JGh\n" +
+                "+GQ6d4SABdtIyC6NNqBkZXbPxbiyF3T5RBBj9mb9u3WR4/uyOFoHYFjEvRdsdp3c\n" +
+                "EwKwZXktbMK+DWA56jfbTMCCUTqzPyVIXrDMFOXq/DuySWssuZlK2QDwtAuhFaXO\n" +
+                "sX6TeAk0gWQ+KKoby98DRjn2JCbH6xSjIqnkbR7lIQKBgQD7p7dJftO2LwCRIQ+D\n" +
+                "kRhQqUT/N7RSxgftdoTukpo1IAhV5GtH6mfh7Cz2CHmvJrE/QuR1ACbtAL89cIhd\n" +
+                "lmj9gFrXu+56csKh6F8a+nLPALnePoCi8fQBPr4w76Ad7QpycsYkwwU1z0Zij+Gq\n" +
+                "SB5PF1/r7i1ncIXI2NnXeE5XlwKBgQDVF8HyrnbWl4YE/wgWkTK513agkcCGE6Eu\n" +
+                "1mNkVPxBFJ7TYQqtbbzumZXCREa3xXamHYgdiNpP+soO+vKnPS9Y6MY5KbBDDMmI\n" +
+                "LKMVJBzjVg0lZPbEJ8dondZwI6fjfeS50pVCRK6VPxUgcDsAwSTGSqSEnpekdLRL\n" +
+                "617rXkjhUQKBgF4EFnGatDWH8cpGc6lPd6oK0wAWK4QQ/70zXg5TLtFSGkscfwfr\n" +
+                "Bsxck5+HIw7Qgb+Emh0r5V79vHSTqh5spuSuI0Idr8aHQTeDvKQzlNjJCKeC6kP1\n" +
+                "6JbefeeCXmtPt2tyfZwWT8f+m+kOn9wh/VDHBsr5vHS8kP6sJRZel8YZAoGBAMfa\n" +
+                "TUsm90vRtp8O9W385b9IZfi4WgElfeEorvUVg7Qh+8ex1srLBgwdPUiCsnR+nQW0\n" +
+                "4skYZe/m/QTJtTTGfJZ9UhOglrB72LN/ccBNK07HkPLGW22jBTGH/usTdc01cIQb\n" +
+                "DWOmeLp+/Hh86cmOW8ghj2TWPNC/p60gZdiHiADRAoGAXEo+HS+calb6P8YULe59\n" +
+                "ImBGO+lOkugwAKax24Xr5pZH16J2DpolSkNqoxtjir3/Y7apDbyblT8rT+r8lczz\n" +
+                "JMcBXLV0J5NoGUiTj/cG0QZ2LafOJCf+Pa7CsDk0JLXghRqUw+JrrarExxgXcCvs\n" +
+                "MXFX2otKZ2tTlu3F68su428=\n" +
+                "-----END PRIVATE KEY-----\n"
+        val pkcs8Lines = StringBuilder()
+        val rdr = BufferedReader(StringReader(PRIVATE_KEY))
+        var line: String?
+        while (rdr.readLine().also { line = it } != null) {
+            pkcs8Lines.append(line)
+        }
+
+        // Remove the "BEGIN" and "END" lines, as well as any whitespace
+
+
+        // Remove the "BEGIN" and "END" lines, as well as any whitespace
+        var pkcs8Pem = pkcs8Lines.toString()
+        pkcs8Pem = pkcs8Pem.replace("-----BEGIN PRIVATE KEY-----", "")
+        pkcs8Pem = pkcs8Pem.replace("-----END PRIVATE KEY-----", "")
+        pkcs8Pem = pkcs8Pem.replace("\\s+".toRegex(), "")
+
+        // Base64 decode the result
+
+
+        // Base64 decode the result
+        val pkcs8EncodedBytes: ByteArray = Base64.getDecoder().decode(pkcs8Pem)
+
+        // extract the private key
+
+
+        // extract the private key
+        val keySpec = PKCS8EncodedKeySpec(pkcs8EncodedBytes)
+        val kf = KeyFactory.getInstance("RSA")
+        return kf.generatePrivate(keySpec)
     }
 
     fun concatValues(data: Map<String, String>): String {
