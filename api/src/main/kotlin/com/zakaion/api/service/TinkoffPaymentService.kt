@@ -155,7 +155,7 @@ class TinkoffPaymentService(
 
             put("DigestValue", encodeToString(digestData))
 
-            val keyFile = "keystore/tin_cert_n.pem"
+            val keyFile = "keystore/private.key"
 
             val pKey = privateKey(keyFile)
 
