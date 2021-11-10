@@ -154,7 +154,7 @@ class TinkoffPaymentService(
 
             val digestData = calcDigest(data.toByteArray())
 
-            put("DigestValue", encodeToString(digestData))
+            put("DigestValue", Base64.getEncoder().encodeToString(digestData))
 
             val pKey = privateKey()
 
@@ -163,7 +163,7 @@ class TinkoffPaymentService(
                 digestData
             )
 
-            put("SignatureValue", encodeToString(signatureValue))
+            put("SignatureValue", Base64.getEncoder().encodeToString(signatureValue))
 
             put("X509SerialNumber", "6b0000044dbff2245749c2be0f00000000044d")
         }
