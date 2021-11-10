@@ -168,10 +168,10 @@ class TinkoffPaymentService(
             put("X509SerialNumber", "6b0000044dbff2245749c2be0f00000000044d")
         }
 
+        print(Gson().toJson(rBody))
+
         // build the request
         val postForEntity = restTemplate.postForObject(e2eUrl + "AddCard/", HttpEntity(rBody), String::class.java)
-
-        println(postForEntity)
 
         val fromJson = Gson().fromJson(postForEntity, CreatePaymentResponse::class.java)
         
