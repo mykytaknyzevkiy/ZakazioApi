@@ -39,7 +39,7 @@ class TinkoffPaymentService(
 
     private val e2eUrl = "https://securepay.tinkoff.ru/e2c/v2/"
 
-    private val terminalKey = "1620645292011"
+    private val terminalKey = "1620645292011E2C"
 
     private val password = "kn3u1su9vq89j9b3"
 
