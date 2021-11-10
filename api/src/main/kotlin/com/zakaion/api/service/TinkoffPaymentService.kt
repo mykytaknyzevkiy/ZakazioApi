@@ -12,15 +12,17 @@ import com.zakaion.api.entity.TinkoffPaymentStatus
 import com.zakaion.api.entity.transaction.TransactionOutEntity
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.http.HttpEntity
+import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpMethod
+import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
-import org.springframework.util.Base64Utils.encodeToString
+import org.springframework.util.MultiValueMap
 import java.io.BufferedReader
 import java.io.StringReader
 import java.security.*
 import java.security.spec.PKCS8EncodedKeySpec
 import java.util.*
 import java.util.stream.Collectors
-import java.util.Base64;
 
 
 @Service
@@ -37,7 +39,7 @@ class TinkoffPaymentService(
 
     private val url = "https://securepay.tinkoff.ru/v2/"
 
-    private val e2eUrl = "https://securepay.tinkoff.ru/e2c/v2/"
+    private val e2eUrl = "https://rest-api-test.tinkoff.ru/e2c/"
 
     private val terminalKey = "1620645292011E2C"
 
@@ -168,14 +170,19 @@ class TinkoffPaymentService(
             put("X509SerialNumber", "6b0000044dbff2245749c2be0f00000000044d")
         }
 
-        print(Gson().toJson(rBody))
+        val headers = HttpHeaders()
+        headers.contentType = MediaType.APPLICATION_FORM_URLENCODED
 
-        // build the request
-        val postForEntity = restTemplate.postForObject(e2eUrl + "AddCard/", HttpEntity(rBody), String::class.java)
+        val entity = HttpEntity(rBody, headers)
 
-        val fromJson = Gson().fromJson(postForEntity, CreatePaymentResponse::class.java)
+        val fromJson = restTemplate.exchange(
+            e2eUrl + "AddCard/",
+            HttpMethod.POST,
+            entity,
+            CreatePaymentResponse::class.java
+        ).body
         
-        return fromJson.paymentURL!!
+        return fromJson?.paymentURL!!
     }
 
     fun privateKey(): PrivateKey {
