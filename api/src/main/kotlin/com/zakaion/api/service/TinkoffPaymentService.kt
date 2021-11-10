@@ -175,14 +175,16 @@ class TinkoffPaymentService(
 
         val entity = HttpEntity(rBody, headers)
 
-        val fromJson = restTemplate.exchange(
+        val body = restTemplate.exchange(
             e2eUrl + "AddCard/",
             HttpMethod.POST,
             entity,
-            CreatePaymentResponse::class.java
+            String::class.java
         ).body
+
+        println(body)
         
-        return fromJson?.paymentURL!!
+        return Gson().fromJson(body!!, CreatePaymentResponse::class.java).paymentURL!!
     }
 
     fun privateKey(): PrivateKey {
